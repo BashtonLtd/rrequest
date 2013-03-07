@@ -1,0 +1,122 @@
+<template name="groups">
+  {{#if showCreateGroupDialog}}
+    {{> createGroupDialog}}
+  {{/if}}
+
+  {{#if showEditGroupDialog}}
+    {{> editGroupDialog}}
+  {{/if}}
+
+  {{#if showDeleteGroupDialog}}
+    {{> deleteGroupDialog}}
+  {{/if}}
+
+  <div class="span10">
+    <div class="row">
+      <div class="span5">
+        <h1>Groups</h1>
+        <button class="btn new-group">Add Group</button>
+      </div>
+    </div>
+    {{> grouplist}}
+  </div>
+
+</template>
+
+<template name="grouplist">
+  <div class="groups">
+    <table class="table table-striped">
+      <thead>
+        <tr><th>Name</th><th>Members</th><th></th></tr>
+      </thead>
+      <tbody>
+      {{#each groups}}
+      <tr>
+        <td>{{name}}</td>
+        <td>{{membercount}}</td>
+        <td>
+          <div class="btn-toolbar">
+            <div class="btn-group">
+              <button class="btn edit-group"><i class="icon-edit"></i></button>
+              <button class="btn delete-group"><i class="icon-trash"></i></button>
+            </div>
+          </div>
+        </td>
+      </tr>
+      {{/each}}
+      </tbody>
+    </table>
+  </div>
+</template>
+
+<template name="createGroupDialog">
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close cancel">&times;</button>
+      <h3>Add group</h3>
+    </div>
+
+    <div class="modal-body">
+      {{#if error}}
+        <div class="alert alert-error">{{error}}</div>
+      {{/if}}
+
+      <label>Name</label>
+      <input type="text" class="name span5">
+
+    </div>
+
+    <div class="modal-footer">
+      <a href="#" class="btn cancel">Cancel</a>
+      <a href="#" class="btn btn-primary save">Next</a>
+    </div>
+  </div>
+</template>
+
+<template name="editGroupDialog">
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close cancel">&times;</button>
+      <h3>Edit group</h3>
+    </div>
+
+    <div class="modal-body">
+      {{#if error}}
+        <div class="alert alert-error">{{error}}</div>
+      {{/if}}
+      <label>Name</label>
+      <input type="text" value="{{groupname}}" class="name span5">
+
+    </div>
+
+    <div class="modal-footer">
+      <a href="#" class="btn cancel">Cancel</a>
+      <a href="#" class="btn btn-primary save">Save</a>
+    </div>
+  </div>
+</template>
+
+<template name="deleteGroupDialog">
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close cancel">&times;</button>
+      <h3>Delete group</h3>
+    </div>
+
+    <div class="modal-body">
+      {{#if error}}
+        <div class="alert alert-error">{{error}}</div>
+      {{/if}}
+      <p>Are you sure you want to delete the <strong>"{{groupname}}"</strong> group.</p>
+
+    </div>
+
+    <div class="modal-footer">
+      <a href="#" class="btn cancel">Cancel</a>
+      <a href="#" class="btn btn-primary save">Delete</a>
+    </div>
+  </div>
+</template>

@@ -1,0 +1,29 @@
+<template name="nav">
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <a class="brand" href="/">rrequest</a>
+      <ul class="nav">
+        {{#if is_active 'dashboard'}}
+        <li class="active"><a href="/">Dashboard</a></li>
+        {{else}}
+        <li><a href="/">Dashboard</a></li>
+        {{/if}}
+
+        {{#if is_active 'tickets'}}
+        <li class="active"><a href="/tickets">Tickets</a></li>
+        {{else}}
+        <li><a href="/tickets">Tickets</a></li>
+        {{/if}}
+
+        {{#if is_active 'groups'}}
+        <li class="active"><a href="/groups">Groups</a></li>
+        {{else}}
+        <li><a href="/groups">Groups</a></li>
+        {{/if}}
+
+
+        <li class="pull-right"><a>{{loginButtons align="right"}}</a></li>
+      </ul>
+    </div>
+  </div>
+</template>
