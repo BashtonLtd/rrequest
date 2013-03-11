@@ -15,15 +15,24 @@
         <li><a href="/tickets">Tickets</a></li>
         {{/if}}
 
-        {{#if is_active 'groups'}}
-        <li class="active"><a href="/groups">Groups</a></li>
-        {{else}}
-        <li><a href="/groups">Groups</a></li>
+        {{#if currentUser.profile.isStaff}}
+          {{#if is_active 'groups'}}
+          <li class="active"><a href="/groups">Groups</a></li>
+          {{else}}
+          <li><a href="/groups">Groups</a></li>
+          {{/if}}
         {{/if}}
 
-
-        <li class="pull-right"><a>{{loginButtons align="right"}}</a></li>
+        {{#if currentUser.isAdmin}}
+          {{#if is_active 'users'}}
+          <li class="active"><a href="/users">Users</a></li>
+          {{else}}
+          <li><a href="/users">Users</a></li>
+          {{/if}}
+        {{/if}}
       </ul>
+      <p class="pull-right"><a>{{loginButtons align="right"}}</a></p>
+
     </div>
   </div>
 </template>

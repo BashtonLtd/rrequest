@@ -1,0 +1,97 @@
+<template name="users">
+  {{#if showEditUserDialog}}
+    {{> editUserDialog}}
+  {{/if}}
+
+  {{#if showDisableUserDialog}}
+    {{> disableUserDialog}}
+  {{/if}}
+
+  <div class="span10">
+    <div class="row">
+      <div class="span5">
+        <h1>Users</h1>
+      </div>
+    </div>
+    {{> userlist}}
+  </div>
+</template>
+
+<template name="userlist">
+  <div class="users">
+    <table class="table table-striped">
+      <thead>
+        <tr><th>Email Address</th><th>Usertype</th><th></th></tr>
+      </thead>
+      <tbody>
+      {{#each users}}
+      <tr>
+        <td>{{profile.email}}</td>
+        <td>{{usertype}}</td>
+        <td>
+          <div class="btn-toolbar">
+            <div class="btn-group">
+              <button class="btn edit-user"><i class="icon-edit"></i></button>
+            </div>
+          </div>
+        </td>
+      </tr>
+      {{/each}}
+      </tbody>
+    </table>
+  </div>
+</template>
+
+<template name="editUserDialog">
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close cancel">&times;</button>
+      <h3>Edit user</h3>
+    </div>
+
+    <div class="modal-body">
+      {{#if error}}
+        <div class="alert alert-error">{{error}}</div>
+      {{/if}}
+      <label>Email</label>
+      <input type="text" value="{{email}}" class="email span5" disabled>
+      <label>Name</label>
+      <input type="text" value="{{profilename}}" class="profilename span5">
+      <label>User Level</label>
+      <div class="btn-group" data-toggle="buttons-radio">
+        <button type="button" value="requester" class="btn userlevel {{usereditrequester}}">Requester</button>
+        <button type="button" value="staff" class="btn userlevel {{usereditstaff}}">Staff</button>
+        <button type="button" value="admin" class="btn userlevel {{usereditadmin}}">Admin</button>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <a href="#" class="btn cancel">Cancel</a>
+      <a href="#" class="btn btn-primary save">Save</a>
+    </div>
+  </div>
+</template>
+
+<template name="disableUserDialog">
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close cancel">&times;</button>
+      <h3>Disable user</h3>
+    </div>
+
+    <div class="modal-body">
+      {{#if error}}
+        <div class="alert alert-error">{{error}}</div>
+      {{/if}}
+      <p>Are you sure you want to disable the <strong>"{{username}}"</strong> user.</p>
+
+    </div>
+
+    <div class="modal-footer">
+      <a href="#" class="btn cancel">Cancel</a>
+      <a href="#" class="btn btn-primary save">Disable</a>
+    </div>
+  </div>
+</template>

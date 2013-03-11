@@ -3,16 +3,36 @@ Meteor.Router.add({
 
   '/tickets': 'tickets',
   '/ticket/:id': function(id) {
-    Session.set('ticketId', id);
+    Session.set('viewticketId', id);
     return 'ticket';
   },
 
   '/groups': 'groups',
   '/group/:id': function(id) {
-    Session.set('groupId', id);
+    Session.set('viewgroupId', id);
     return 'group';
+  },
+
+  '/users': 'users',
+  'user/:id': function(id) {
+    Session.set('viewuserId', id);
+    return 'user';
+  }
+
+});
+
+Meteor.Router.filters({
+  requireAdmin: function(page) {
+    return is_admin(Meteor.user()) ? page : "not_allowed";
+  },
+  requireStaff: function(page) {
+    return is_staff(Meteor.user()) ? page : "not_allowed";
   }
 });
+
+Meteor.Router.filter('requireAdmin', {only: ['users']});
+Meteor.Router.filter('requireStaff', {only: ['groups']});
+
 
 Meteor.startup(function() {
   Meteor.autorun(function() {

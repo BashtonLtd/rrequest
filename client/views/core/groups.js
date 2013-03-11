@@ -67,6 +67,11 @@ Template.createGroupDialog.events({
   }
 });
 
+Template.editGroupDialog.created = function () {
+  Session.set('availableMemberSearchTerm', "");
+  Session.set('existingMemberSearchTerm', "");
+};
+
 Template.editGroupDialog.groupname = function () {
   var group_id = Session.get("selectedGroup");
   var group = Groups.findOne({_id:group_id});
@@ -90,8 +95,70 @@ Template.editGroupDialog.events({
 
   'click .cancel': function () {
     Session.set("showEditGroupDialog", false);
+  },
+
+  'click .removefromgroup': function (event, template) {
+    var selectbox = template.find(".groupmembers");
+    var memberstoremove = [];
+    while(selectbox.selectedIndex != -1) {
+      memberstoremove.push(selectbox.options[selectbox.selectedIndex].value);
+      selectbox.options[selectbox.selectedIndex].selected = false;
+    }
+    Meteor.call('removeGroupMembers', {
+      _id: Session.get("selectedGroup"),
+      members: memberstoremove
+    }, function (error, group) {
+      if (! error) {
+
+      }
+    });
+  },
+
+  'click .addtogroup': function (event, template) {
+    var selectbox = template.find(".availablerequesters");
+    var memberstoadd = [];
+    while(selectbox.selectedIndex != -1) {
+      memberstoadd.push(selectbox.options[selectbox.selectedIndex].value);
+      selectbox.options[selectbox.selectedIndex].selected = false;
+    }
+    Meteor.call('addGroupMembers', {
+      _id: Session.get("selectedGroup"),
+      members: memberstoadd
+    }, function (error, group) {
+      if (! error) {
+
+      }
+    });
+  },
+
+  'input .availableMemberSearch': function (event, template) {
+    var searchterm = template.find(".availableMemberSearch").value;
+    Session.set('availableMemberSearchTerm', searchterm);
+  },
+
+  'input .existingMemberSearch': function (event, template) {
+    var searchterm = template.find(".existingMemberSearch").value;
+    Session.set('existingMemberSearchTerm', searchterm);
   }
 });
+
+Template.editGroupDialog.groupMembers = function () {
+  var group_id = Session.get("selectedGroup");
+  var searchterm = Session.get("existingMemberSearchTerm");
+  var group = Groups.findOne({_id:group_id});
+  if (group !== undefined) {
+    return Meteor.users.find({$and: [{"profile.name": {$regex: ".*"+ searchterm +".*", $options: 'i'}}, {"profile.isStaff": false}, {_id: {$in: group.members}}]});
+  }
+};
+
+Template.editGroupDialog.possibleGroupMembers = function () {
+  var group_id = Session.get("selectedGroup");
+  var searchterm = Session.get("availableMemberSearchTerm");
+  var group = Groups.findOne({_id:group_id});
+  if (group !== undefined) {
+    return Meteor.users.find({$and: [{"profile.name": {$regex: ".*"+ searchterm +".*", $options: 'i'}}, {"profile.isStaff": false}, {_id: {$nin: group.members}}]});
+  }
+};
 
 Template.deleteGroupDialog.groupname = function () {
   var group_id = Session.get("selectedGroup");
