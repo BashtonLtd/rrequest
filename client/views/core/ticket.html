@@ -1,0 +1,66 @@
+<template name="ticket">
+  {{#with ticket}}
+  <div class="row">
+    <div class="span10">
+      <div class="well well-small">
+        <h3>{{subject}}</h3>
+        <span>Requester:  </span><span>{{getUserEmail requester}}</span><br/>
+        <span>Created:   </span><span title="{{ticketcreated}}">{{ticketage}}</span><br/>
+        {{#if currentUser.profile.isStaff}}
+          <form class="form-inline">
+            <label>Status:  </label>
+            <span>
+              <select class="ticketstatus">
+                {{#each ticketstatus}}
+                  <option value="{{name}}" {{selectedstatus name}}>{{name}}</option>
+                {{/each}}
+              </select>
+              <button class="btn update-status">Update Status</button>
+            </span>
+          </form>
+        {{else}}
+          <span>Status:  </span><span>{{status}}</span></br>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="span10">
+      {{#each posted_replies}}
+        {{#if displayreply type}}
+        <div class="well well-small {{isMuted type}}">
+          {{#if displayname type}}<p><strong>{{getUserEmail posted_by}}</strong>{{/if}}
+          <span class="pull-right" title="{{replycreated}}">{{replyage}}</span></p>
+          {{body}}
+        </div>
+        {{/if}}
+      {{/each}}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="span10">
+      <div class="well well-small">
+        <div class="modal-body">
+          <input type="hidden" class="ticketreplyId" value="{{unposted_reply._id}}">
+          <input type="hidden" class="ticketreplylevel" value="{{unposted_reply.level}}">
+          <textarea id="replybody" rows="10" class="ticketreplybody span9">{{unposted_reply.body}}</textarea>
+        </div>
+        <div class="modal-footer">
+          <div class="btn-group">
+            <button class="btn post-reply"><i class="icon-edit"></i> Reply</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{/with}}
+</template>
+
+<template name="reply">
+  <div class="well well-small">
+    <p><strong>{{getUserEmail requester}}</strong></p>
+    {{body}}
+  </div>
+</template>

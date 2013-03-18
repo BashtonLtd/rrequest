@@ -1,3 +1,103 @@
 <template name="tickets">
-  Tickets listed here
+  {{#if showCreateTicketDialog}}
+    {{> createTicketDialog}}
+  {{/if}}
+
+  <div class="span10">
+    <div class="row">
+      <div class="span5">
+        <h1>Tickets</h1>
+        <button class="btn new-ticket">Create Ticket</button>
+      </div>
+    </div>
+    {{> ticketlist}}
+  </div>
+
+</template>
+
+<template name="ticketlist">
+  <div class="tickets">
+    <table class="table table-striped">
+
+      <tbody>
+      {{#each tickets}}
+      <tr>
+        <td>
+          {{#if ticketready}}
+            <strong><a href="/ticket/{{_id}}">{{subject}}</a></strong>
+          {{else}}
+            <strong>{{subject}}</strong>
+          {{/if}}
+          <br/>{{requester_email}}
+        </td>
+        <td>{{ticketstatus}}</td>
+        <td><span title="{{created}}">{{age created}}</span></td>
+      </tr>
+      {{/each}}
+      </tbody>
+    </table>
+  </div>
+</template>
+
+<template name="createTicketDialog">
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close cancel">&times;</button>
+      <h3>Create Ticket</h3>
+    </div>
+
+    <div class="modal-body">
+      {{#if error}}
+        <div class="alert alert-error">{{error}}</div>
+      {{/if}}
+
+      <label>Subject</label>
+      <input id="ticketsubject" type="text" class="subject span5">
+
+      {{#if currentUser.profile.isStaff}}
+      <label>Requester</label>
+      <div class="input-prepend">
+        <span class="add-on">Search</span>
+        <input class="span2 ticketrequestersearch" id="ticketrequesters" type="text">
+      </div>
+      <select class="ticketrequester" disabled>
+        {{#each ticketRequesters}}
+        <option value="{{_id}}">{{profile.name}}</option>
+        {{/each}}
+      </select>
+
+      <label>Group</label>
+      <select class="ticketgroup">
+        {{#each ticketRequesterGroups}}
+        <option value="{{_id}}">{{name}}</option>
+        {{/each}}
+      </select>
+
+      {{else}}
+        <input type="hidden" value="{{currentUser._id}}" class="ticketrequester span5">
+        {{#if in_multiple_groups currentUser}}
+          <label>Group</label>
+          <select class="ticketgroup">
+            {{#each ticketRequesterGroups}}
+            <option value="{{_id}}">{{name}}</option>
+            {{/each}}
+          </select>
+        {{else}}
+          {{#each ticketRequesterGroups}}
+          <input type="hidden" value="{{_id}}" class="ticketgroup span5">
+          {{/each}}
+        {{/if}}
+
+      {{/if}}
+
+    </div>
+
+
+
+    <div class="modal-footer">
+      <a href="#" class="btn cancel">Cancel</a>
+      <a href="#" class="btn btn-primary save">Next</a>
+    </div>
+  </div>
 </template>

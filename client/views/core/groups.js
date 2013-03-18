@@ -1,5 +1,5 @@
 Template.grouplist.groups = function () {
-  return Groups.find();
+  return Groups.find({}, {sort: {'name': 1}});
 };
 
 Template.groups.showCreateGroupDialog = function () {

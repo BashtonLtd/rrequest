@@ -1,5 +1,5 @@
 Template.userlist.users = function () {
-  return Meteor.users.find();
+  return Meteor.users.find({}, {sort: {'profile.email': 1}});
 };
 
 Template.userlist.events({

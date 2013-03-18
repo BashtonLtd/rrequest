@@ -1,9 +1,6 @@
 Accounts.onCreateUser(function(options, user){
   user.profile = options.profile || {};
 
-  console.log(options);
-  console.log(user);
-
   if (options.email) {
     user.profile.email = options.email;
   }
