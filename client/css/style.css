@@ -1,1 +1,16 @@
-body { padding-top: 50px; }
+body {
+  padding-top: 50px;
+}
+
+tr.closed {
+ border-left: 8px solid #fcc;
+}
+
+tr.new {
+  border-left: 8px solid #cfc;
+}
+
+.event {
+  background-color: #fee;
+  color: #999fee;
+}

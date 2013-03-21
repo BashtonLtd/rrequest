@@ -21,7 +21,7 @@
 
       <tbody>
       {{#each tickets}}
-      <tr>
+      <tr class="{{ticketstatus}}">
         <td>
           {{#if ticketready}}
             <strong><a href="/ticket/{{_id}}">{{subject}}</a></strong>
