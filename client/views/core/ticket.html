@@ -49,6 +49,9 @@
         </div>
         <div class="modal-footer">
           <div class="btn-group">
+            {{#each ticket_reply_button}}
+              {{{html}}}
+            {{/each}}
             <button class="btn post-reply"><i class="icon-edit"></i> Reply</button>
           </div>
         </div>

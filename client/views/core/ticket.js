@@ -9,8 +9,10 @@ Template.ticket.unposted_reply = function () {
         user_level = 'staff';
       }
       ticket.replies.forEach(function(reply){
-        if(reply.status == 'unposted' && reply.level == user_level){
-          unposted_reply = reply;
+        if(reply !== {}) {
+          if(reply.status == 'unposted' && reply.level == user_level){
+            unposted_reply = reply;
+          }
         }
       });
 
@@ -30,6 +32,18 @@ Template.ticket.unposted_reply = function () {
   }
 };
 
+Template.ticket.ticket_reply_button = function () {
+  var hooks = Hooks.find({hook:'ticket_reply_button'});
+  var buttons = [];
+  var user_id = Meteor.userId();
+  hooks.forEach(function (hook) {
+    if(window[hook.render]({userId:user_id})) {
+      buttons.push(hook);
+    }
+  });
+  return buttons;
+};
+
 var sortByDate = function( obj1, obj2 ) {
   return new Date(obj2.created) < new Date(obj1.created) ? 1 : -1;
 };
@@ -41,10 +55,24 @@ Template.ticket.posted_replies = function () {
   if (ticket !== undefined) {
     var replies = [];
     ticket.replies.forEach(function(reply){
-      if(reply.status == 'posted') {
-        replies.push(reply);
+      if(reply !== undefined) {
+        if(reply.status == 'posted') {
+          replies.push(reply);
+        }
       }
     });
+
+    // Fetch replies from modules
+    var hooks = Hooks.find({hook:'ticket_replies'});
+    hooks.forEach(function (hook) {
+      var ticketreplies = window[hook.data]({ticketId: Session.get('viewticketId')});
+      ticketreplies.forEach(function(ticketreply) {
+        replies.push(ticketreply);
+      });
+    });
+
+
+
     // Sort array into date order
     replies.sort(sortByDate);
     return replies;
@@ -92,7 +120,7 @@ Template.ticket.events({
     var replyIndex = _.indexOf(_.pluck(ticket.replies, '_id'), replyId);
 
     if (event.keyCode == 32 || event.keyCode == 13) {
-      //space pressed
+      //space or return pressed
       if (Session.get('lastkeypresswasspace')) {
 
       } else {

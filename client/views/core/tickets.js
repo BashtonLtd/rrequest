@@ -94,15 +94,5 @@ Template.ticketlist.helpers({
         return true;
       }
     }
-  },
-
-  selectedstatus: function(statusname){
-    return 'blah';
-    var ticket = Tickets.findOne({_id:this._id});
-    if (ticket !== undefined) {
-      if (ticket.status == statusname) {
-        return 'selected';
-      }
-    }
   }
 });

@@ -31,18 +31,15 @@ Template.grouplist.events({
 });
 
 var openCreateGroupDialog = function () {
-  Session.set('currentScroll',$('body').scrollTop());
   Session.set("showCreateGroupDialog", true);
 };
 
 var openEditGroupDialog = function (group_id) {
-  Session.set('currentScroll',$('body').scrollTop());
   Session.set("selectedGroup", group_id);
   Session.set("showEditGroupDialog", true);
 };
 
 var openDeleteGroupDialog = function (group_id) {
-  Session.set('currentScroll',$('body').scrollTop());
   Session.set("selectedGroup", group_id);
   Session.set("showDeleteGroupDialog", true);
 };

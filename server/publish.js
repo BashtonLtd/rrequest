@@ -126,3 +126,41 @@ Meteor.startup(function(){
     }
   });
 });
+
+//TODO: set publish and permissions for hooks
+Meteor.publish('hooks', function() {
+  return Hooks.find();
+});
+
+Meteor.startup(function(){
+  Hooks.allow({
+    insert: function(userId, doc) {
+      return true;
+    },
+    update: function(userId, docs, fieldNames, modifier) {
+      return true;
+    },
+    remove: function(userId, docs) {
+      return true;
+    }
+  });
+});
+
+//TODO: set publish and permissions for modules
+Meteor.publish('modules', function() {
+  return Modules.find();
+});
+
+Meteor.startup(function(){
+  Modules.allow({
+    insert: function(userId, doc) {
+      return true;
+    },
+    update: function(userId, docs, fieldNames, modifier) {
+      return true;
+    },
+    remove: function(userId, docs) {
+      return true;
+    }
+  });
+});
