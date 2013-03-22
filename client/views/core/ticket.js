@@ -190,7 +190,7 @@ Template.ticket.events({
       if (! error) {
         Meteor.call('insertEvent', {
           ticketId: Session.get('viewticketId'),
-          body: 'Ticket status changed to "' + status + '".'
+          body: 'Ticket status changed to "' + status + '" by ' + useremail(Meteor.userId()) + '.'
         }, function(error, ticketId) {
 
         });
