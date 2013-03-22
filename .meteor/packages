@@ -14,4 +14,5 @@ jquery
 moment
 random
 preserve-inputs
-showdown
+marked
+underscore

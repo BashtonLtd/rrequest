@@ -57,6 +57,7 @@ Template.ticket.posted_replies = function () {
     ticket.replies.forEach(function(reply){
       if(reply !== undefined) {
         if(reply.status == 'posted') {
+          reply.body = marked(reply.body);
           replies.push(reply);
         }
       }
@@ -67,6 +68,7 @@ Template.ticket.posted_replies = function () {
     hooks.forEach(function (hook) {
       var ticketreplies = window[hook.data]({ticketId: Session.get('viewticketId')});
       ticketreplies.forEach(function(ticketreply) {
+        ticketreply.body = marked(ticketreply.body);
         replies.push(ticketreply);
       });
     });
