@@ -17,7 +17,9 @@ Meteor.Router.add({
   'user/:id': function(id) {
     Session.set('viewuserId', id);
     return 'user';
-  }
+  },
+
+  '/settings': 'settings'
 
 });
 

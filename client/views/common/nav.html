@@ -30,6 +30,14 @@
           <li><a href="/users">Users</a></li>
           {{/if}}
         {{/if}}
+
+        {{#if currentUser.isAdmin}}
+          {{#if is_active 'settings'}}
+          <li class="active"><a href="/settings">Settings</a></li>
+          {{else}}
+          <li><a href="/settings">Settings</a></li>
+          {{/if}}
+        {{/if}}
       </ul>
       <ul class="nav pull-right">
         <li><a>{{loginButtons align="right"}}</a></li>

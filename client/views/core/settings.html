@@ -1,0 +1,54 @@
+<template name="settings">
+  <div class="row">
+    <div class="span10">
+      <h1>Settings</h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="span3">
+      <div class="well">
+        <ul class="nav nav-list">
+          <li class="nav-header">Modules</li>
+          {{#if is_active 'moduleactivation'}}
+          <li class="active"><a id="moduleactivation" class="settings-menu" href="#">Module Activation</a></li>
+          {{else}}
+          <li><a id="moduleactivation" class="settings-menu" href="#">Module Activation</a></li>
+          {{/if}}
+
+        <ul>
+      </div>
+    </div>
+
+    <div class="span7">
+      {{{pagecontent}}}
+    </div>
+  </div>
+</template>
+
+
+<template name="moduleactivation">
+  <div class="modules">
+    <table class="table table-striped">
+      <thead>
+        <tr><th>Name</th><th></th></tr>
+      </thead>
+      <tbody>
+        {{#each availablemodules}}
+        <tr>
+          <td>{{name}}</td>
+          <td>
+            <div class="btn-group">
+              {{#if enabled}}
+              <button id="{{_id}}" class="btn disable-module"><i class="icon-remove"></i> Disable Module</button>
+              {{else}}
+              <button id="{{_id}}" class="btn enable-module"><i class="icon-ok"></i> Enable Module</button>
+              {{/if}}
+            </div>
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</template>
