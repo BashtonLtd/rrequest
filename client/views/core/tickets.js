@@ -30,7 +30,10 @@ Template.createTicketDialog.events({
   'click .save': function (event, template) {
     var subject = template.find(".subject").value;
     var requester = template.find(".ticketrequester").value;
-    var group = template.find(".ticketgroup").value;
+    var group = '';
+    if(template.find(".ticketgroup") !== null){
+      group = template.find(".ticketgroup").value;
+    }
 
     Meteor.call('createTicket', {
       subject: subject,
