@@ -1,0 +1,1 @@
+This module requires the meteor email package, install it with meteor add email.
