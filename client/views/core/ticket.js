@@ -175,8 +175,16 @@ Template.ticket.events({
 
             });
           }
+
+          // Fire ticket updated event
+          EventHorizon.fire('ticketreply',{
+            ticketId: Session.get('viewticketId'),
+            replyId: replyId,
+            postedBy: Meteor.userId()
+          });
         }
-      });
+      }
+    );
   },
 
   'click .update-status': function (event, template) {

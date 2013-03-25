@@ -8,7 +8,8 @@
     "basePackages": {
       "router": {},
       "moment": {},
-      "marked": {}
+      "marked": {},
+      "event-horizon": {}
     },
     "packages": {
       "router": {
@@ -25,6 +26,11 @@
         "git": "https://github.com/chuangbo/meteor-marked.git",
         "tag": "v0.2.5",
         "commit": "e435075a3fd4bc9103cb713e8c400b54d4d704fe"
+      },
+      "event-horizon": {
+        "git": "https://github.com/belisarius222/meteor-event-horizon.git",
+        "tag": "v0.1.1",
+        "commit": "f7d19e16bf7527c34d853a9bc9002e9be53bdb9b"
       },
       "page-js-ie-support": {
         "git": "https://github.com/tmeasday/meteor-page-js-ie-support.git",

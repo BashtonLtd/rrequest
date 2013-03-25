@@ -2,6 +2,7 @@
   "packages": {
     "router": {},
     "moment": {},
-    "marked": {}
+    "marked": {},
+    "event-horizon": {}
   }
 }
