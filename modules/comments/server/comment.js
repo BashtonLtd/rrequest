@@ -3,7 +3,8 @@ Meteor.startup(function (){
   Meteor.call('registerModule', {
     name: 'comments',
     callback_enable: 'enable_comments_module',
-    callback_disable: 'disable_comments_module'
+    callback_disable: 'disable_comments_module',
+    description: 'Allows staff to make comments in tickets that are not visible to requesters.'
   }, function(error, module_id) {
     if(!error) {
 

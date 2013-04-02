@@ -4,7 +4,7 @@ EventHorizon.on('ticketreply',function(){
     var postedBy = Meteor.users.findOne({_id: this.postedBy});
     if (postedBy !== undefined) {
       if (postedBy.profile.isStaff) {
-        Meteor.call('send_ticket_updated_email', {
+        Meteor.call('notifier_send_ticket_updated_email', {
           ticketId: this.ticketId
         });
       }
