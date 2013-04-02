@@ -4,12 +4,23 @@ Meteor.methods({
 
     var module = Modules.findOne({name: args.name});
     if (module === undefined) {
+      // Add module document
       Modules.insert({
         name: args.name,
         enabled: false,
         callback_enable: args.callback_enable,
-        callback_disable: args.callback_disable
+        callback_disable: args.callback_disable,
+        description: args.description
       });
+    } else {
+      // update module document
+      Modules.update({name: args.name},
+        {$set: {
+          callback_enable: args.callback_enable,
+          callback_disable: args.callback_disable,
+          description: args.description
+        }}
+      );
     }
   },
 

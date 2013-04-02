@@ -22,7 +22,7 @@ Meteor.methods({
 
   },
 
-  send_ticket_updated_email: function(args) {
+  notifier_send_ticket_updated_email: function(args) {
     args = args || {};
     this.unblock();
 

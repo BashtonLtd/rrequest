@@ -9,6 +9,16 @@ Template.settings.pagecontent = function() {
   }
 };
 
+Template.settings.module_settings_pages = function() {
+  var hooks = Hooks.find({hook:'settings_page'});
+  var pages = [];
+
+  hooks.forEach(function (hook) {
+    var settingspage = window[hook.data]();
+    pages.push(settingspage);
+  });
+  return pages;
+};
 
 Template.settings.helpers({
   is_active: function(pagename) {

@@ -16,6 +16,14 @@
           <li><a id="moduleactivation" class="settings-menu" href="#">Module Activation</a></li>
           {{/if}}
 
+          <li class="nav-header">Module Settings</li>
+          {{#each module_settings_pages}}
+            {{#if is_active content_page}}
+            <li class="active"><a id="{{content_page}}" class="settings-menu" href="#">{{name}}</a></li>
+            {{else}}
+            <li><a id="{{content_page}}" class="settings-menu" href="#">{{name}}</a></li>
+            {{/if}}
+          {{/each}}
         <ul>
       </div>
     </div>
@@ -28,7 +36,7 @@
 
 
 <template name="moduleactivation">
-  <div class="modules">
+  <div class="well well-small">
     <table class="table table-striped">
       <thead>
         <tr><th>Name</th><th></th></tr>
@@ -36,7 +44,7 @@
       <tbody>
         {{#each availablemodules}}
         <tr>
-          <td>{{name}}</td>
+          <td>{{name}}<br/><small>{{description}}</small></td>
           <td>
             <div class="btn-group">
               {{#if enabled}}
