@@ -3,6 +3,7 @@
     "router": {},
     "moment": {},
     "marked": {},
-    "event-horizon": {}
+    "event-horizon": {},
+    "collection-api": {}
   }
 }

@@ -1,0 +1,1 @@
+APISettings = new Meteor.Collection("apisettings");
