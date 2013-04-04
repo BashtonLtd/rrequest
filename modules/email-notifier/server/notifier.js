@@ -4,7 +4,9 @@ Meteor.startup(function (){
     name: 'email-notifier',
     callback_enable: 'enable_notifier_module',
     callback_disable: 'disable_notifier_module',
-    description: 'Sends an email to the ticket requester containing a link to the updated ticket.'
+    description: 'Sends an email to the ticket requester containing a link to the updated ticket.',
+    depends: [],
+    conflicts: ['email-gateway']
   }, function(error, module_id) {
     if(!error) {
 
