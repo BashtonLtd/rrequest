@@ -32,8 +32,110 @@ Template.settings.events({
   }
 });
 
+Template.moduleactivation.helpers({
+  has_depends: function(moduleId) {
+    var module = Modules.findOne({_id: moduleId});
+    var depends = module.depends;
+    var conflicts = module.conflicts;
+    //if (depends === null && conflicts === null) {
+    //  return false;
+    //}
+
+
+    if (module !== undefined) {
+      var required_depends = get_depends(moduleId);
+      var required_conflicts = get_conflicts(moduleId);
+
+      if (required_depends.length > 0 || required_conflicts.length > 0) {
+        return true;
+      } else {
+        // check if this is a depends of another module
+        console.log(module.name + " - " + get_reverse_depends(moduleId).length);
+        if (get_reverse_depends(moduleId).length > 0) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    } else {
+      return true;
+    }
+  }
+});
+
+var get_reverse_depends = function(moduleId) {
+  var module = Modules.findOne({_id: moduleId});
+  var all_modules = Modules.find();
+  var module_list = {};
+  var reverse_depends = [];
+  if (module !== undefined) {
+    all_modules.forEach(function(mod){
+      if (mod.depends !== null) {
+        mod.depends.forEach(function(elem, index){
+          if (elem == module.name && mod.enabled) {
+            reverse_depends.push({name: mod.name});
+          }
+        });
+      }
+    });
+  }
+  return reverse_depends;
+};
+
+var get_depends = function(moduleId) {
+  var module = Modules.findOne({_id: moduleId});
+  var all_modules = Modules.find();
+  var module_list = {};
+  all_modules.forEach(function(mod){
+    module_list[mod.name] = mod.enabled;
+  });
+  var depends_list = [];
+  if (module !== undefined) {
+    if (module.depends !== null) {
+      module.depends.forEach(function(elem, index){
+        if (module_list[elem] === false){
+          depends_list.push({name: elem});
+        }
+      });
+    }
+  }
+  return depends_list;
+};
+
+var get_conflicts = function(moduleId) {
+  var module = Modules.findOne({_id: moduleId});
+  var all_modules = Modules.find();
+  var module_list = {};
+  all_modules.forEach(function(mod){
+    module_list[mod.name] = mod.enabled;
+  });
+  var conflicts_list = [];
+  if (module !== undefined) {
+    if (module.conflicts !== null) {
+      module.conflicts.forEach(function(elem, index){
+        if (module_list[elem] === true){
+          conflicts_list.push({name: elem});
+        }
+      });
+    }
+  }
+  return conflicts_list;
+};
+
+Template.moduleactivation.module_depends = function(moduleId) {
+  return get_depends(moduleId);
+};
+
+Template.moduleactivation.module_conflicts = function(moduleId) {
+  return get_conflicts(moduleId);
+};
+
+Template.moduleactivation.module_reverse_depends = function(moduleId) {
+  return get_reverse_depends(moduleId);
+};
+
 Template.moduleactivation.availablemodules = function() {
-  return Modules.find();
+  return Modules.find({}, {sort: {'name': 1}});
 };
 
 Template.moduleactivation.events({

@@ -46,6 +46,19 @@
         <tr>
           <td>{{name}}<br/><small>{{description}}</small></td>
           <td>
+            {{#if has_depends _id}}
+              {{#if module_depends _id}}
+                <small>Required Dependencies:</small><br/>{{#each module_depends _id}}<span class="label label-info">{{name}}</span> {{/each}}<br/>
+              {{/if}}
+
+              {{#if module_conflicts _id}}
+                <small>Conflicting Modules:</small><br/>{{#each module_conflicts _id}}<span class="label label-important">{{name}}</span> {{/each}}
+              {{/if}}
+
+              {{#if module_reverse_depends _id}}
+                <small>Depending Modules:</small><br/>{{#each module_reverse_depends _id}}<span class="label label-info">{{name}}</span> {{/each}}
+              {{/if}}
+            {{else}}
             <div class="btn-group">
               {{#if enabled}}
               <button id="{{_id}}" class="btn disable-module"><i class="icon-remove"></i> Disable Module</button>
@@ -53,6 +66,7 @@
               <button id="{{_id}}" class="btn enable-module"><i class="icon-ok"></i> Enable Module</button>
               {{/if}}
             </div>
+            {{/if}}
           </td>
         </tr>
         {{/each}}

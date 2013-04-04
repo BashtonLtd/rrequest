@@ -10,7 +10,9 @@ Meteor.methods({
         enabled: false,
         callback_enable: args.callback_enable,
         callback_disable: args.callback_disable,
-        description: args.description
+        description: args.description,
+        depends: args.depends,
+        conflicts: args.conflicts
       });
     } else {
       // update module document
@@ -18,7 +20,9 @@ Meteor.methods({
         {$set: {
           callback_enable: args.callback_enable,
           callback_disable: args.callback_disable,
-          description: args.description
+          description: args.description,
+          depends: args.depends,
+          conflicts: args.conflicts
         }}
       );
     }
