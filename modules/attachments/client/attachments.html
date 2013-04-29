@@ -1,0 +1,41 @@
+<template name="attachments">
+  {{#if hasAttachments replyId}}
+    <strong>Attachments:</strong><br/>
+    <div class="well well-small">
+      {{#each items replyId}}
+        <a id="{{_id}}" class="download-attachment" href="#">{{filename}}</a> ({{niceSize}})<br/>
+      {{/each}}
+    </div>
+  {{/if}}
+</template>
+
+<template name="replyentry_attachments">
+  {{#each Files replyId}}
+    <div class="row">
+      <div class="span2">
+        <strong class="pull-right">{{filename}}</strong>
+      </div>
+      <div class="span1">
+        {{niceSize}}
+      </div>
+      <div class="span5">
+        {{#with progress}}
+        <div class="progress {{barstyle}}">
+          <div class="bar" style="width: {{fileprogress}}%">{{fileprogress}}%</div>
+        </div>
+        {{/with}}
+      </div>
+      <div class="span1">
+        <button class="close pull-left">&times;</button>
+      </div>
+    </div>
+  {{/each}}  
+
+
+  <h4>Select file(s) to upload:</h4>
+  <input name="files" type="file" class="fileUploader" multiple>
+  <input type="hidden" class="replyentry_ticketId" value="{{ticketId}}">
+  <input type="hidden" class="replyentry_replyId" value="{{replyId}}">
+  <input type="hidden" class="replyentry_requester" value="{{requester}}">
+  <input type="hidden" class="replyentry_group" value="{{group}}">
+</template>
