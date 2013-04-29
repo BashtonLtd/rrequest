@@ -2,22 +2,22 @@
  * rrequest
  * http://www.rrequest.com/
  * (C) Copyright Bashton Ltd, 2013
- * 
+ *
  * This file is part of rrequest.
- * 
+ *
  * rrequest is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * rrequest is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
 */
 Meteor.methods({
   updateReply: function (options) {
@@ -67,3 +67,29 @@ Meteor.methods({
     );
   }
 });
+
+create_reply = function(options) {
+  var user_level = 'requester';
+  if(options.user.profile.isStaff) {
+    user_level = 'staff';
+  }
+
+  reply = options.reply;
+  reply['_id'] = Random.id();
+  reply['type'] = 'reply';
+  reply['level'] = user_level;
+  reply['posted_by'] = options.user._id;
+  reply['created'] = new Date();
+
+  Tickets.update(
+    {_id: options.ticketId},
+    {
+      $push: { replies: reply}
+    }
+  );
+  return reply._id;
+};
+
+sortByDate = function(obj1, obj2) {
+  return new Date(obj2.created) < new Date(obj1.created) ? 1 : -1;
+};

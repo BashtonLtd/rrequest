@@ -2,22 +2,22 @@
  * rrequest
  * http://www.rrequest.com/
  * (C) Copyright Bashton Ltd, 2013
- * 
+ *
  * This file is part of rrequest.
- * 
+ *
  * rrequest is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * rrequest is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
 */
 Template.ticket.unposted_reply = function () {
   var user = Meteor.users.findOne({_id: Meteor.userId()});
@@ -65,8 +65,23 @@ Template.ticket.ticket_reply_button = function () {
   return buttons;
 };
 
-var sortByDate = function( obj1, obj2 ) {
-  return new Date(obj2.created) < new Date(obj1.created) ? 1 : -1;
+Template.ticket.footer_items = function(replyId) {
+  var footer_items = [];
+  var hooks = Hooks.find({hook:'reply_footer'});
+  hooks.forEach(function (hook) {
+    footer_items.push({template: Template[hook.template]({replyId:replyId})});
+  });
+  return footer_items;
+};
+
+Template.ticket.replyentryfooter_items = function(replyId) {
+  var replyentryfooter_items = [];
+  var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
+  var hooks = Hooks.find({hook:'replyentry_footer'});
+  hooks.forEach(function (hook) {
+    replyentryfooter_items.push({template: Template[hook.template]({ticketId: ticket._id, replyId:replyId, group:ticket.group, requester:ticket.requester})});
+  });
+  return replyentryfooter_items;
 };
 
 Template.ticket.posted_replies = function () {
@@ -93,8 +108,6 @@ Template.ticket.posted_replies = function () {
         replies.push(ticketreply);
       });
     });
-
-
 
     // Sort array into date order
     replies.sort(sortByDate);

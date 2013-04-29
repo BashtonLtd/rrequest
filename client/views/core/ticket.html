@@ -37,6 +37,9 @@
           {{/if}}
           <span class="pull-right" title="{{replycreated}}">{{replyage}}</span></p>
           {{{body}}}
+          {{#each footer_items _id}}
+            {{{template}}}
+          {{/each}}
         </div>
         {{/if}}
       {{/each}}
@@ -46,19 +49,23 @@
   <div class="row">
     <div class="span10">
       <div class="well well-small">
-        <div class="modal-body">
-          <input type="hidden" class="ticketreplyId" value="{{unposted_reply._id}}">
-          <input type="hidden" class="ticketreplylevel" value="{{unposted_reply.level}}">
-          <textarea id="replybody" rows="10" class="ticketreplybody span9">{{unposted_reply.body}}</textarea>
+        <input type="hidden" class="ticketreplyId" value="{{unposted_reply._id}}">
+        <input type="hidden" class="ticketreplylevel" value="{{unposted_reply.level}}">
+        <textarea id="replybody" rows="10" class="ticketreplybody span9">{{unposted_reply.body}}</textarea>
+
+      {{#each replyentryfooter_items unposted_reply._id}}
+        {{{template}}}
+      {{/each}}
+
+
+      <hr/>
+        <div class="btn-group pull-right">
+          {{#each ticket_reply_button}}
+            {{{html}}}
+          {{/each}}
+          <button class="btn post-reply"><i class="icon-edit"></i> Reply</button>
         </div>
-        <div class="modal-footer">
-          <div class="btn-group">
-            {{#each ticket_reply_button}}
-              {{{html}}}
-            {{/each}}
-            <button class="btn post-reply"><i class="icon-edit"></i> Reply</button>
-          </div>
-        </div>
+        <div class="clearfix"></div>
       </div>
     </div>
   </div>

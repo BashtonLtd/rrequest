@@ -42,7 +42,7 @@ Template.apisettings.authtoken = function() {
   }
 };
 
-var api_settings_page = function(args) {
+api_settings_page = function(args) {
   args = args || {};
 
   return {
