@@ -1,16 +1,15 @@
 <template name="apisettings">
   <div class="well well-small">
-    <div class="modal-body">
-      <label>AuthToken</label>
-      <form class="form-inline">
-        <input type="text" class="span4 api-settings-authtoken" value="{{authtoken}}">
-        <button class="btn generate-auth-token">Generate New Token</button>
-      </form>
+    <label>AuthToken</label>
+    <form class="form-inline">
+      <input type="text" class="span4 api-settings-authtoken" value="{{authtoken}}">
+      <button class="btn generate-auth-token">Generate New Token</button>
+    </form>
+
+    <hr/>
+    <div class="btn-group pull-right">
+      <button class="btn btn-primary api-settings-save"><i class="icon-ok icon-white"></i> Save</button>
     </div>
-    <div class="modal-footer">
-      <div class="btn-group">
-        <button class="btn btn-primary api-settings-save"><i class="icon-ok icon-white"></i> Save</button>
-      </div>
-    </div>
+    <div class="clearfix"></div>
   </div>
 </template>
