@@ -45,12 +45,12 @@ Template.ticket.events({
   }
 });
 
-var comment_replies = function(args) {
+comment_replies = function(args) {
   args = args || {};
   return Comments.find({ticketId: args.ticketId});
 };
 
-var ticket_comment_button = function(args) {
+ticket_comment_button = function(args) {
   args = args || {};
   var user = Meteor.users.findOne({_id: args.userId});
   if(user !== undefined) {
