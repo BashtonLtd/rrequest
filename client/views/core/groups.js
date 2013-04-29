@@ -24,11 +24,11 @@ Template.grouplist.groups = function () {
 };
 
 Template.groups.showCreateGroupDialog = function () {
- return Session.get("showCreateGroupDialog");
+  return Session.get("showCreateGroupDialog");
 };
 
 Template.groups.events({
- 'click .new-group': function (evt) {
+  'click .new-group': function (evt) {
     openCreateGroupDialog();
   }
 });
