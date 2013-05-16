@@ -19,12 +19,4 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  * 
 */
-Meteor.subscribe('currentUser');
-Meteor.subscribe('allUsers');
-Meteor.subscribe('groups');
-Meteor.subscribe('tickets');
-Meteor.subscribe('ticketstatus');
-Meteor.subscribe('modules', function() {
-  EventHorizon.fire('modulescollectionready');
-});
-Meteor.subscribe('hooks');
+UserDashboard = new Meteor.Collection("userdashboard");

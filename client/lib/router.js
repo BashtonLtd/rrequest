@@ -20,7 +20,7 @@
  *
 */
 Meteor.Router.add({
-  '/': 'dashboard',
+  '/': 'home',
 
   '/tickets': 'tickets',
   '/ticket/:id': function(id) {

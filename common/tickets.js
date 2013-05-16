@@ -23,14 +23,16 @@ Meteor.methods({
   updateReply: function (options) {
     options = options || {};
 
+    var now = new Date();
     var modifier = {$set: {}};
+    modifier.$set["modified"] = now;
     modifier.$set["replies." + options.replyIndex + ".body"] = options.body;
     modifier.$set["replies." + options.replyIndex + ".status"] = options.status;
     modifier.$set["replies." + options.replyIndex + ".type"] = options.type;
 
     if (options.userId !== undefined) {
       modifier.$set["replies." + options.replyIndex + ".posted_by"] = options.userId;
-      modifier.$set["replies." + options.replyIndex + ".created"] = new Date();
+      modifier.$set["replies." + options.replyIndex + ".created"] = now;
     }
 
     return Tickets.update(
@@ -51,18 +53,22 @@ Meteor.methods({
   insertEvent: function (options) {
     options = options || {};
 
+    var now = new Date();
+
     var reply = {
       _id: Random.id(),
       status: 'posted',
       type: 'event',
       body: options.body,
       level: 'system',
-      created: new Date()
+      created: now
     };
+
     return Tickets.update(
       {_id: options.ticketId},
       {
-        $push: { replies: reply}
+        $push: { replies: reply},
+        $set: {modified: now}
       }
     );
   }
@@ -74,17 +80,19 @@ create_reply = function(options) {
     user_level = 'staff';
   }
 
+  var now = new Date();
   reply = options.reply;
   reply['_id'] = Random.id();
   reply['type'] = 'reply';
   reply['level'] = user_level;
   reply['posted_by'] = options.user._id;
-  reply['created'] = new Date();
+  reply['created'] = now;
 
   Tickets.update(
     {_id: options.ticketId},
     {
-      $push: { replies: reply}
+      $push: { replies: reply},
+      $set: {modified: now}
     }
   );
   return reply._id;

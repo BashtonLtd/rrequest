@@ -71,7 +71,6 @@ get_user_group=function(user) {
     return false;
   }
   group = Groups.findOne({members: {$in: [user._id]}});
-  console.log(group);
   if (group !== undefined) {
     return group._id;
   } else {

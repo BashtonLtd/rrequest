@@ -1,0 +1,62 @@
+<template name="dashboard">
+  {{#if showSelectWidgetDialog}}
+    {{> selectWidgetDialog}}
+  {{/if}}
+
+  <div class="well well-small">
+    <div class="btn-group pull-right">
+      <button class="btn add_widget">
+        <i class="icon-plus"></i> Add Widget
+      </button>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+  <div class="gridster">
+    <ul>
+      {{#each widgets}}
+        {{> widget}}
+      {{/each}}
+    </ul>
+  </div>
+
+</template>
+
+<template name="widget">
+  <li id="{{_id}}" class="{{template_name}}" data-row="{{row}}" data-col="{{col}}" data-sizex="{{sizex}}" data-sizey="{{sizey}}">
+    <button type="button" class="close widgetremove">&times;</button><br/>
+    {{{template}}}
+  </li>
+</template>
+
+<template name='selectWidgetDialog'>
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close selectWidgetCancel">&times;</button>
+      <h3>Add dashboard widget</h3>
+    </div>
+
+    <div class="modal-body">
+      {{#if error}}
+        <div class="alert alert-error">{{error}}</div>
+      {{/if}}
+
+      <label>Widget</label>
+      <select id="widgetlist" class="widgetlist">
+        <option value="">Select a widget</option>
+        {{#each availablewidgets}}
+          <option value="{{config_template}}" {{widget_selected config_template}}>{{display_name}}</option>
+        {{/each}}
+      </select>
+      <div class="widget_config">
+        {{{widget_config}}}
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <a href="#" class="btn selectWidgetCancel">Cancel</a>
+      <a href="#" class="btn btn-primary save">Add</a>
+    </div>
+  </div>
+
+</template>

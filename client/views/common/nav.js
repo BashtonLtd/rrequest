@@ -20,7 +20,49 @@
  * 
 */
 Template.nav.helpers({
+  navbar: function() {
+    //return navbar;
+    return Session.get('navbar');
+  },
+
   is_active: function(page) {
     return Meteor.Router.page() == page;
+  },
+
+  user_visible: function(user_level) {
+    var user = Meteor.user();
+    if (user == null) {
+      // User not logged in
+      if (user_level == 'all') {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      var current_user_level = 'requester';
+      if (is_staff(user)) {
+        if (is_admin(user)) {
+          current_user_level = 'admin';
+        } else {
+          current_user_level = 'staff';
+        }
+      }
+      switch (current_user_level) {
+        case 'requester':
+          if (user_level == 'all' || user_level == 'loggedin') {
+            return true;
+          } else {
+            return false;
+          }
+        case 'staff':
+          if (user_level == 'all' || user_level == 'loggedin' || user_level == 'staff') {
+            return true;
+          } else {
+            return false;
+          }
+        case 'admin':
+          return true;
+      }
+    }
   }
 });

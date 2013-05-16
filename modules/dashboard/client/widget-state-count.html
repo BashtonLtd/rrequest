@@ -1,0 +1,28 @@
+<template name="widget_state_count">
+  {{#with widget widgetId}}
+    <h1>{{label}}</h1>
+    <h2>{{value}}</h2>
+  {{/with}}
+</template>
+
+<template name="widget_state_count_config">
+<div class="row">
+  <div class="span2">
+    <label>Widget Label</label>
+    <input class="widgetlabel" id="widgetlabel" type="text">
+    <label>Width</label>
+    <input class="widgetwidth" id="widgetwidth" type="number" value="1" min="1" max="12">
+    <label>Height</label>
+    <input class="widgetheight" id="widgetheight" type="number" value="1" min="1" max="12">
+  </div>
+  <div class="span1"></div>
+  <div class="span2">
+    <label>Select States</label>
+    <select class="ticketstates" multiple="multiple" size="9">
+      {{#each ticketstates}}
+      <option value="{{name}}">{{name}}</option>
+      {{/each}}
+    </select>
+  </div>
+</div>
+</template>

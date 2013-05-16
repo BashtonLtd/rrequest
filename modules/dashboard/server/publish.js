@@ -19,12 +19,32 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  * 
 */
-Meteor.subscribe('currentUser');
-Meteor.subscribe('allUsers');
-Meteor.subscribe('groups');
-Meteor.subscribe('tickets');
-Meteor.subscribe('ticketstatus');
-Meteor.subscribe('modules', function() {
-  EventHorizon.fire('modulescollectionready');
+Meteor.publish('userdashboard', function() {
+  //var user = Meteor.users.findOne({_id: this.userId});
+
+  return UserDashboard.find({owner: this.userId});
 });
-Meteor.subscribe('hooks');
+
+Meteor.startup(function(){
+  UserDashboard.allow({
+    insert: function(userId, doc) {
+      if (doc.owner == userId) {
+        return true;
+      }
+      return false;
+    },
+    update: function(userId, doc, fieldNames, modifier) {
+      if (userId !== doc.owner)
+        return false; // not the owner
+      return true;
+    },
+    remove: function(userId, docs) {
+      return ! _.any(docs, function (doc) {
+        if (doc.owner == userId) {
+          return true;
+        }
+        return false;
+      });
+    }
+  });
+});

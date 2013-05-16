@@ -42,13 +42,6 @@ Template.attachments.events({
   'click .download-attachment': function(event, template) {
     event.preventDefault();
     window.location = '/filedownload/'+this._id;
-    //Attachments.retrieveBlob(this._id, function(fileItem) {
-    //  if (fileItem.blob) {
-    //    saveAs(fileItem.blob, fileItem.filename);
-    //  } else {
-    //    saveAs(fileItem.file, fileItem.filename);
-    //  }
-    //});
   }
 });
 
@@ -67,7 +60,6 @@ Template.replyentry_attachments.events({
   },
 
   'click .close': function (event, template) {
-    console.log(this);
     Meteor.call('removeAttachment', {
       id: this._id
     }, function(error, attachmentId) {

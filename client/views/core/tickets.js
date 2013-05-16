@@ -20,7 +20,7 @@
  * 
 */
 Template.ticketlist.tickets = function () {
-  return Tickets.find({}, {sort: {'replies.created': -1}});
+  return Tickets.find({}, {sort: {'modified': -1}});
 };
 
 Template.tickets.showCreateTicketDialog = function () {

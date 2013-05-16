@@ -3,41 +3,15 @@
     <div class="navbar-inner">
       <a class="brand" href="/">rrequest</a>
       <ul class="nav">
-        {{#if is_active 'dashboard'}}
-        <li class="active"><a href="/">Dashboard</a></li>
-        {{else}}
-        <li><a href="/">Dashboard</a></li>
-        {{/if}}
-
-        {{#if is_active 'tickets'}}
-        <li class="active"><a href="/tickets">Tickets</a></li>
-        {{else}}
-        <li><a href="/tickets">Tickets</a></li>
-        {{/if}}
-
-        {{#if currentUser.profile.isStaff}}
-          {{#if is_active 'groups'}}
-          <li class="active"><a href="/groups">Groups</a></li>
-          {{else}}
-          <li><a href="/groups">Groups</a></li>
+        {{#each navbar}}
+        {{#if user_visible user_level}}
+          {{#if is_active name}}
+            <li class="active"><a href="{{pageurl}}">{{display_name}}</a></li>
+            {{else}}
+            <li><a href="{{pageurl}}">{{display_name}}</a></li>
           {{/if}}
         {{/if}}
-
-        {{#if currentUser.isAdmin}}
-          {{#if is_active 'users'}}
-          <li class="active"><a href="/users">Users</a></li>
-          {{else}}
-          <li><a href="/users">Users</a></li>
-          {{/if}}
-        {{/if}}
-
-        {{#if currentUser.isAdmin}}
-          {{#if is_active 'settings'}}
-          <li class="active"><a href="/settings">Settings</a></li>
-          {{else}}
-          <li><a href="/settings">Settings</a></li>
-          {{/if}}
-        {{/if}}
+        {{/each}}
       </ul>
       <ul class="nav pull-right">
         <li><a>{{loginButtons align="right"}}</a></li>

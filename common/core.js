@@ -73,17 +73,17 @@ Meteor.methods({
 
     var module = Modules.findOne({_id: args.module_id});
     if (module !== undefined) {
-      if(module.enabled) {
-        Meteor.call(module.callback_disable, {
-          module_id: module._id
-        }, function(error, module_id) {
-          if(!error) {
-            Modules.update({_id: module._id},
-              {$set: {enabled: false}}
-            );
-          }
-        });
-      }
+      Meteor.call(module.callback_disable, {
+        module_id: module._id
+      }, function(error, module_id) {
+        if(!error) {
+          Modules.update({_id: module._id},
+            {$set: {enabled: false}}
+          );
+        } else {
+          console.log(error);
+        }
+      });
     }
   }
 });

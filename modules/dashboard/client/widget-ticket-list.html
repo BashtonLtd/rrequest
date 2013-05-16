@@ -1,0 +1,54 @@
+<template name="widget_ticket_list">
+  {{#with widget widgetId}}
+    <h1>{{label}}</h1>
+    <table class="table table-striped">
+    <tbody>
+    {{#each tickets}}
+      <tr class="{{status}}">
+        <td><strong><a href="/ticket/{{_id}}">{{subject}}</a></strong></td>
+        <td><small>{{requester_email}}</small></td>
+        <td><small>{{age modified}}</small></td>
+        <td><span title="{{created}}"><small>{{age created}}</small></span></td>
+      </tr>
+    {{/each}}
+    </tbody>
+    </table>
+  {{/with}}
+</template>
+
+<template name="widget_ticket_list_config">
+<div class="row">
+  <div class="span2">
+    <label>Widget Label</label>
+    <input class="widgetlabel" id="widgetlabel" type="text">
+    <label>Width</label>
+    <input class="widgetwidth" id="widgetwidth" type="number" value="1" min="1" max="12">
+    <label>Height</label>
+    <input class="widgetheight" id="widgetheight" type="number" value="1" min="1" max="12">
+  </div>
+  <div class="span1"></div>
+  <div class="span2">
+    <label>Select States</label>
+    <select class="ticketstates" multiple="multiple" size="9">
+      {{#each ticketstates}}
+      <option value="{{name}}">{{name}}</option>
+      {{/each}}
+    </select>
+  </div>
+</div>
+<div class="row">
+  <div class="span5">
+    <label>Sort Order</label>
+    <table>
+      <tr>
+        <td><input type="radio" name="sortorder" value="ageascend">Oldest First</td>
+        <td><input type="radio" name="sortorder" value="agedescend">Newest First</td>
+      </tr>
+      <tr>
+        <td><input type="radio" name="sortorder" value="replyascend">Oldest Reply First</td>
+        <td><input type="radio" name="sortorder" value="replydescend">Newest Reply First</td>
+      </tr>
+    </table>
+  </div>
+</div>
+</template>
