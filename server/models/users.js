@@ -62,7 +62,11 @@ Meteor.methods({
     return Meteor.users.update({_id: options._id},
       {$set: query}
     );
-  }
+  },
+
+  createAutoUser: function (email_address) {
+    return createAutoUser(email_address);
+  } 
 });
 
 createAutoUser = function (email_address) {

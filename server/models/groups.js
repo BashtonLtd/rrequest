@@ -33,7 +33,7 @@ Meteor.methods({
     options = options || {};
 
     return Groups.update({_id: options._id},
-      {$set: {name: options.name}}
+      {$set: {name: options.name, members: options.members}}
     );
   },
 

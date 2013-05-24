@@ -90,9 +90,8 @@ Template.widget_ticket_list.helpers({
     return moment(time).fromNow();
   },
 
-  requester_email: function () {
-    var ticket = Tickets.findOne({_id:this._id});
-    var user = Meteor.users.findOne({_id:ticket.requester});
+  requester_email: function (requesterId) {
+    var user = Meteor.users.findOne({_id:requesterId});
     if (user !== undefined) {
       return user.profile.email;
     }

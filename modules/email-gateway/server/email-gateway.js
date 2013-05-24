@@ -100,12 +100,20 @@ Meteor.methods({
         host:    "127.0.0.1"
       });
 
+      var requesteremails = '';
+      for (var i = 0, l = ticket.requesters.length; i < l; i++) {
+        requesteremails += useremail(ticket.requesters[i]);
+        if (i < ticket.requesters.length -1) {
+          requesteremails += ', ';
+        }
+      }
+
       var message = {
         text: text,
         from: EMAIL_FROM,
-        to: useremail(ticket.requester),
+        to: requesteremails,
         subject: subject,
-        'in-reply-to': get_requester_message_id(ticket._id, ticket.requester),
+        'in-reply-to': get_requester_message_id(ticket._id),
         attachment:
         [
           {data:html, alternative:true}
@@ -116,7 +124,7 @@ Meteor.methods({
   }
 });
 
-var get_requester_message_id = function(ticketId, userId) {
+var get_requester_message_id = function(ticketId) {
   var ticket = Tickets.findOne({_id: ticketId});
   var message_id = '';
 
@@ -133,7 +141,7 @@ var get_requester_message_id = function(ticketId, userId) {
     replies.reverse();
 
     for (var i = 0, l = replies.length; i < l; i++) {
-      if (replies[i].posted_by == userId && replies[i].message_id) {
+      if (replies[i].message_id) {
         message_id = replies[i].message_id;
         break;
       }

@@ -14,3 +14,23 @@ tr.new {
   background-color: #fee;
   color: #999fee;
 }
+
+label {
+  font-weight: bold;
+}
+
+.newrequester {
+  width: 200px;
+}
+
+.ticketrequester {
+  width: 210px;
+}
+
+.help-block {
+  font-size: 11px;
+}
+
+.ticketsubject {
+  line-height: 5px;
+}

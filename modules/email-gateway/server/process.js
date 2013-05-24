@@ -26,9 +26,20 @@ Buffer = Npm.require('buffer').Buffer;
 
 process_mail = function(mail_object) {
   // check from address and try to match to a requester
-  var user = get_or_create_user(mail_object.from[0].address);
+  var requesters = [];
+  var requestfrom = get_or_create_user(mail_object.from[0].address);
+  requesters.push(requestfrom._id);
 
-  var ticket = get_or_create_ticket(user, mail_object.subject);
+  if (mail_object.cc !== undefined) {
+    for (var i = 0, l = mail_object.cc.length; i < l; i++) {
+      if (mail_object.cc[i] !== undefined) {
+        var requester = get_or_create_user(mail_object.cc[i].address);
+        requesters.push(requester._id);
+      }
+    }
+  }
+
+  var ticket = get_or_create_ticket(requesters, mail_object.subject);
 
   var ticketBody = mail_object.text;
   if (mail_object.html !== undefined) {
@@ -41,7 +52,7 @@ process_mail = function(mail_object) {
   }
 
   replyId = create_reply({
-    user: user,
+    user: requestfrom,
     ticketId: ticket._id,
     reply: {
       message_id: mail_object.headers['message-id'],

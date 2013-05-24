@@ -28,7 +28,10 @@
           {{else}}
             <strong>{{subject}}</strong>
           {{/if}}
-          <br/>{{requester_email}}
+          <br/>
+          {{#each requesters}}
+            {{requester_email this}}, 
+          {{/each}}
         </td>
         <td>{{ticketstatus}}</td>
         <td><span title="{{created}}">{{age created}}</span></td>
@@ -55,45 +58,14 @@
       <label>Subject</label>
       <input id="ticketsubject" type="text" class="subject span5">
 
-      {{#if currentUser.profile.isStaff}}
-      <label>Requester</label>
-      <div class="input-prepend">
-        <span class="add-on">Search</span>
-        <input class="span2 ticketrequestersearch" id="ticketrequesters" type="text">
-      </div>
-      <select class="ticketrequester" disabled>
-        {{#each ticketRequesters}}
-        <option value="{{_id}}">{{profile.name}}</option>
-        {{/each}}
-      </select>
-
+      <label>Requesters</label>          
+      <input id="requesterlist" style="width:100%" type="hidden" class="ticketrequester"/>
+      <div class="help-block">To add a brand new requester, type their email address followed by a space.</div>
       <label>Group</label>
-      <select class="ticketgroup">
-        {{#each ticketRequesterGroups}}
-        <option value="{{_id}}">{{name}}</option>
-        {{/each}}
-      </select>
+      <input class="ticketgroup" style="width:100%"/>
 
-      {{else}}
-        <input type="hidden" value="{{currentUser._id}}" class="ticketrequester span5">
-        {{#if in_multiple_groups currentUser}}
-          <label>Group</label>
-          <select class="ticketgroup">
-            {{#each ticketRequesterGroups}}
-            <option value="{{_id}}">{{name}}</option>
-            {{/each}}
-          </select>
-        {{else}}
-          {{#each ticketRequesterGroups}}
-          <input type="hidden" value="{{_id}}" class="ticketgroup span5">
-          {{/each}}
-        {{/if}}
-
-      {{/if}}
-
+      <div class="help-block">All selected groups will be able to see this ticket.</div>
     </div>
-
-
 
     <div class="modal-footer">
       <a href="#" class="btn cancel">Cancel</a>

@@ -1,26 +1,27 @@
 <template name="ticket">
+  {{#if showEditTicketDialog}}
+    {{> editTicketDialog}}
+  {{/if}}
+
   {{#with ticket}}
   <div class="row">
     <div class="span10">
       <div class="well well-small">
-        <h3>{{subject}}</h3>
-        <span>Requester:  </span><span>{{getUserEmail requester}}</span><br/>
-        <span>Created:   </span><span title="{{ticketcreated}}">{{ticketage}}</span><br/>
+        <h3 class="ticketsubject">{{subject}}</h3>
+        <small><span>Created:   </span><span title="{{ticketcreated}}">{{ticketage}}</span><br/></small>
+        <label>Requesters:</label>
+        {{#each requesters}}
+          <span>{{getUserEmail this}}</span><br/>
+        {{/each}}
+        <label>Status:</label>{{status}}</br>
+
         {{#if currentUser.profile.isStaff}}
-          <form class="form-inline">
-            <label>Status:  </label>
-            <span>
-              <select class="ticketstatus">
-                {{#each ticketstatus}}
-                  <option value="{{name}}" {{selectedstatus name}}>{{name}}</option>
-                {{/each}}
-              </select>
-              <button class="btn update-status">Update Status</button>
-            </span>
-          </form>
-        {{else}}
-          <span>Status:  </span><span>{{status}}</span></br>
+        <hr/>
+        <div class="btn-group pull-right">
+          <button class="btn edit-ticket"><i class="icon-wrench"></i> Edit</button>
+        </div>
         {{/if}}
+        <div class="clearfix"></div>
       </div>
     </div>
   </div>
@@ -76,5 +77,38 @@
   <div class="well well-small">
     <p><strong>{{getUserEmail requester}}</strong></p>
     {{body}}
+  </div>
+</template>
+
+<template name="editTicketDialog">
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close cancel">&times;</button>
+      <h3>Edit Ticket</h3>
+    </div>
+
+    <div class="modal-body">
+      {{#with ticket}}
+      <label>Subject</label>
+      <input id="ticketsubject" type="text" value="{{subject}}" class="subject span5">
+
+      <label>Requesters</label>          
+      <input id="requesterlist" style="width:100%" type="hidden" class="ticketrequester"/>
+      <div class="help-block">To add a brand new requester, type their email address followed by a space.</div>
+
+      <select class="ticketstatus">
+        {{#each ticketstatus}}
+          <option value="{{name}}" {{selectedstatus name}}>{{name}}</option>
+        {{/each}}
+      </select>
+
+      {{/with}}
+    </div>
+
+    <div class="modal-footer">
+      <a href="#" class="btn cancel">Cancel</a>
+      <a href="#" class="btn btn-primary save">Save</a>
+    </div>
   </div>
 </template>

@@ -91,7 +91,7 @@ Meteor.publish('tickets', function() {
   if (user && user.profile.isStaff) {
     return Tickets.find();
   } else {
-    return Tickets.find({$or: [{group: {$in: groupids}}, {requester: this.userId}]});
+    return Tickets.find({$or: [{group: {$in: groupids}}, {requesters: {$in: [this.userId]}}]});
   }
 });
 

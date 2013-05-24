@@ -22,8 +22,27 @@
 Meteor.methods({
   createTicket: function (options) {
     return create_ticket(options);
+  },
+
+  updateTicket: function (options) {
+    return update_ticket(options);
+  },
+
+  addTicketRequester: function (options) {
+    return add_ticket_requester(options);
   }
 });
+
+add_ticket_requester = function (options) {
+  options = options || {};
+
+  return Tickets.update(
+    {_id:options.ticketId},
+    {
+      $push: {requesters: options.requesterId}
+    }
+  );
+}
 
 create_ticket = function (options) {
   options = options || {};
@@ -32,20 +51,34 @@ create_ticket = function (options) {
     subject: options.subject,
     created: new Date(),
     status: options.status,
-    requester: options.requester,
+    requesters: options.requesters,
     group: options.group,
     replies: []
   });
-
 };
 
+update_ticket  = function (options) {
+  options = options || {};
 
-get_or_create_ticket = function(user, subject) {
+  return Tickets.update({_id: options._id},
+      {$set: {subject: options.subject, requesters: options.requesters, status:options.status}}
+    );
+};
+
+get_or_create_ticket = function(requesters, subject) {
   var pattern = /(\[)([a-zA-Z0-9]*)/i;
   var result = pattern.exec(subject);
   var ticketId = null;
   var ticket = null;
-  var group = get_user_group(user);
+  var group = null;
+
+  for (var i = 0, l = requesters.length; i < l; i++) {
+    var usergroup = get_user_group(requesters[i]);
+    if (usergroup) {
+      group = usergroup;
+      break;
+    }
+  }
 
   if (result !== null) {
     ticketId = result[2];
@@ -61,7 +94,7 @@ get_or_create_ticket = function(user, subject) {
     var new_ticketId = create_ticket({
       subject: subject,
       status: 'new',
-      requester: user._id,
+      requesters: requesters,
       group: group
     });
     ticket = Tickets.findOne({_id: new_ticketId});

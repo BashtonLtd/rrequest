@@ -79,7 +79,7 @@ Template.ticket.replyentryfooter_items = function(replyId) {
   var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
   var hooks = Hooks.find({hook:'replyentry_footer'});
   hooks.forEach(function (hook) {
-    replyentryfooter_items.push({template: Template[hook.template]({ticketId: ticket._id, replyId:replyId, group:ticket.group, requester:ticket.requester})});
+    replyentryfooter_items.push({template: Template[hook.template]({ticketId: ticket._id, replyId:replyId, group:ticket.group, requester:Meteor.userId()})});
   });
   return replyentryfooter_items;
 };
@@ -221,26 +221,19 @@ Template.ticket.events({
     );
   },
 
-  'click .update-status': function (event, template) {
-    var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
-    var replyId = template.find(".ticketreplyId").value;
-    var status = template.find(".ticketstatus").value;
-    Meteor.call('updateStatus', {
-      ticketId: Session.get('viewticketId'),
-      status: status
-    }, function(error, ticketId) {
-      if (! error) {
-        Meteor.call('insertEvent', {
-          ticketId: Session.get('viewticketId'),
-          body: 'Ticket status changed to "' + status + '" by ' + useremail(Meteor.userId()) + '.'
-        }, function(error, ticketId) {
-
-        });
-      }
-    });
-    return false;
+  'click .edit-ticket': function () {
+    openEditTicketDialog();
   }
 });
+
+var openEditTicketDialog = function () {
+  Session.set('currentScroll',$('body').scrollTop());
+  Session.set("showEditTicketDialog", true);
+};
+
+Template.ticket.showEditTicketDialog = function () {
+ return Session.get("showEditTicketDialog");
+};
 
 Template.ticket.helpers({
   ticket: function(){
@@ -255,15 +248,6 @@ Template.ticket.helpers({
 
   age: function(time){
     return moment(time).fromNow();
-  },
-
-  selectedstatus: function(statusname){
-    var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
-    if (ticket !== undefined) {
-      if (ticket.status == statusname) {
-        return 'selected';
-      }
-    }
   },
 
   displayreply: function(replytype){
@@ -290,5 +274,125 @@ Template.ticket.helpers({
     if (replytype == 'event') {
       return 'muted';
     }
+  }
+});
+
+Template.editTicketDialog.ticketstatus = function() {
+  return TicketStatus.find({});
+};
+
+Template.editTicketDialog.rendered = function () {
+  $(".ticketrequester").select2({
+    placeholder: 'Select requesters',
+    data: get_requesters,
+    multiple: true,
+    tokenSeparators: [" "],
+
+    createSearchChoice:function(term, data) {
+      if ($(data).filter(function() {
+        return this.text.localeCompare(term) === 0;
+      }).length === 0) {
+        return {id:term, text: term, isNew: true};
+      }
+    },
+
+    formatResult: function(term) {
+      if (term.isNew) {
+        return '<span class="label label-important">New</span> ' + term.text;
+      } else {
+        return term.text;
+      }
+    }  
+  });
+
+  var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
+  $(".ticketrequester").val(ticket.requesters).trigger('change');
+};
+
+get_requesters = function (query_opts) {
+  var users = Meteor.users.find({"profile.isStaff": false});
+  var requesters = [];
+  users.forEach(function (user) {
+    requesters.push({id:user._id, text:user.profile.email});
+  });
+  return {results: requesters};
+};
+
+Template.editTicketDialog.helpers({
+  ticket: function(){
+    return Tickets.findOne({_id:Session.get('viewticketId')});
+  },
+
+  selectedstatus: function(statusname){
+    var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
+    if (ticket !== undefined) {
+      if (ticket.status == statusname) {
+        return 'selected';
+      }
+    }
+  }
+});
+
+Template.editTicketDialog.events({
+  'click .cancel': function () {
+    Session.set("showEditTicketDialog", false);
+  },
+
+  'click .save': function (event, template) {
+    var subject = template.find(".subject").value;
+    var requesters = $(".ticketrequester").select2('val');
+    var status = template.find(".ticketstatus").value;
+    var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
+    var original_status = ticket.status;
+
+    var existing_users = [];
+    var new_users = [];
+    requesters.forEach(function (requester){
+      var user = Meteor.users.findOne({_id:requester});
+      if (user !== undefined) {
+        // User already exists in the system
+        existing_users.push(user._id);
+      } else {
+        // User not found, check for valid email address
+        var emailMatcher = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (emailMatcher.test(requester)) {
+          new_users.push(requester);
+        }
+      }
+    });
+
+    Meteor.call('updateTicket', {
+      _id: ticket._id,
+      subject: subject,
+      requesters: existing_users,
+      status: status
+    } , function (error, ticketId) {
+      if (! error) {
+        // create new users
+        new_users.forEach(function (email_address) {
+          Meteor.call('createAutoUser', email_address, function (error, userId) {
+            if (!error) {
+              // Add user to the ticket
+              Meteor.call('addTicketRequester', {
+                ticketId: ticketId,
+                requesterId: userId
+              }, function (error, ticket_id) {
+
+              });
+            }
+          });
+        });
+      }
+    });
+
+    if (status !== original_status) {
+      Meteor.call('insertEvent', {
+        ticketId: Session.get('viewticketId'),
+        body: 'Ticket status changed to "' + status + '" by ' + useremail(Meteor.userId()) + '.'
+      }, function(error, ticketId) {
+
+      });
+    }
+    Session.set("showEditTicketDialog", false);
   }
 });

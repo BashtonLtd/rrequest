@@ -30,7 +30,7 @@ Meteor.publish('attachments', function() {
   if (user && user.profile.isStaff) {
     return Attachments.find();
   } else {
-    return Attachments.find({$or: [{group: {$in: groupids}}, {requester: this.userId}]});
+    return Attachments.find({$or: [{group: {$in: groupids}}, {requesters: {$in: [this.userId]}}]});
   }
 });
 

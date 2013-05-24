@@ -57,8 +57,17 @@ Meteor.methods({
       var text = 'To view your updated ticket please visit ' + ticketurl;
       var html = '<p>To view your updated ticket please visit <a href="' + ticketurl + '">' + ticketurl + '</a>.</p>';
 
+      var requesteremails = '';
+      for (var i = 0, l = ticket.requesters.length; i < l; i++) {
+        requesteremails += useremail(ticket.requesters[i]);
+        if (i < ticket.requesters.length -1) {
+          requesteremails += ', ';
+        }
+      }
+
+
       Email.send({
-        to: useremail(ticket.requester),
+        to: requesteremails,
         from: EMAIL_FROM,
         subject: subject,
         text: text,

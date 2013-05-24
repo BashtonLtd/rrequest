@@ -6,7 +6,11 @@
     {{#each tickets}}
       <tr class="{{status}}">
         <td><strong><a href="/ticket/{{_id}}">{{subject}}</a></strong></td>
-        <td><small>{{requester_email}}</small></td>
+        <td><small>
+          {{#each requesters}}
+            {{requester_email this}}
+          {{/each}}
+        </small></td>
         <td><small>{{age modified}}</small></td>
         <td><span title="{{created}}"><small>{{age created}}</small></span></td>
       </tr>
