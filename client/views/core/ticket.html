@@ -23,11 +23,7 @@
         {{/if}}
         <div class="clearfix"></div>
       </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="span10">
+      
       {{#each posted_replies}}
         {{#if displayreply type}}
         <div class="well well-small {{type}}">
@@ -36,6 +32,10 @@
           {{else}}
             <p><strong>Ticket Event</strong>
           {{/if}}
+          {{#each reply_header_items _id}}
+            {{{template}}}
+          {{/each}}
+
           <span class="pull-right" title="{{replycreated}}">{{replyage}}</span></p>
           {{{body}}}
           {{#each footer_items _id}}
@@ -44,22 +44,23 @@
         </div>
         {{/if}}
       {{/each}}
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="span10">
+    
       <div class="well well-small">
         <input type="hidden" class="ticketreplyId" value="{{unposted_reply._id}}">
         <input type="hidden" class="ticketreplylevel" value="{{unposted_reply.level}}">
         <textarea id="replybody" rows="10" class="ticketreplybody span9">{{unposted_reply.body}}</textarea>
 
-      {{#each replyentryfooter_items unposted_reply._id}}
-        {{{template}}}
-      {{/each}}
+        <form id="ticketreplyextrafields">
+        {{#each replyentryformfields unposted_reply._id}}
+          {{{template}}}
+        {{/each}}
+        </form>
 
+        {{#each replyentryfooter_items unposted_reply._id}}
+          {{{template}}}
+        {{/each}}
 
-      <hr/>
+        <hr/>
         <div class="btn-group pull-right">
           {{#each ticket_reply_button}}
             {{{html}}}
@@ -69,15 +70,13 @@
         <div class="clearfix"></div>
       </div>
     </div>
+    <div class="span2">
+      {{#each sidebaritems}}
+        {{{template}}}
+      {{/each}}
+    </div>
   </div>
   {{/with}}
-</template>
-
-<template name="reply">
-  <div class="well well-small">
-    <p><strong>{{getUserEmail requester}}</strong></p>
-    {{body}}
-  </div>
 </template>
 
 <template name="editTicketDialog">

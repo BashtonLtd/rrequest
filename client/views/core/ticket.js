@@ -65,6 +65,24 @@ Template.ticket.ticket_reply_button = function () {
   return buttons;
 };
 
+Template.ticket.sidebaritems = function() {
+  var sidebar_items = [];
+  var hooks = Hooks.find({hook:'ticket_sidebar'});
+  hooks.forEach(function (hook) {
+    sidebar_items.push({template: Template[hook.template]()});
+  });
+  return sidebar_items;
+};
+
+Template.ticket.reply_header_items = function(replyId) {
+  var header_items = [];
+  var hooks = Hooks.find({hook:'reply_header'});
+  hooks.forEach(function (hook) {
+    header_items.push({template: Template[hook.template]({replyId:replyId})});
+  });
+  return header_items;
+};
+
 Template.ticket.footer_items = function(replyId) {
   var footer_items = [];
   var hooks = Hooks.find({hook:'reply_footer'});
@@ -74,12 +92,34 @@ Template.ticket.footer_items = function(replyId) {
   return footer_items;
 };
 
+Template.ticket.replyentryformfields = function(replyId) {
+  var extraformfields = [];
+  var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
+  var hooks = Hooks.find({hook:'ticket_reply_form_field'});
+  hooks.forEach(function (hook) {
+    extraformfields.push({
+      template: Template[hook.template]({
+        ticketId: ticket._id,
+        replyId:replyId
+      })
+    });
+  });
+  return extraformfields;
+};
+
 Template.ticket.replyentryfooter_items = function(replyId) {
   var replyentryfooter_items = [];
   var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
   var hooks = Hooks.find({hook:'replyentry_footer'});
   hooks.forEach(function (hook) {
-    replyentryfooter_items.push({template: Template[hook.template]({ticketId: ticket._id, replyId:replyId, group:ticket.group, requester:Meteor.userId()})});
+    replyentryfooter_items.push({
+      template: Template[hook.template]({
+        ticketId: ticket._id, 
+        replyId:replyId, 
+        groups:ticket.groups, 
+        requester:Meteor.userId()
+      })
+    });
   });
   return replyentryfooter_items;
 };
@@ -166,8 +206,10 @@ Template.ticket.events({
           replyId: replyId,
           replyIndex: replyIndex,
           level: level,
-          body: body,
-          status: 'unposted'
+          replyfields: [
+            {name: 'body', value: body},
+            {name: 'status', value: 'unposted'}
+          ]
         }, function (error, group) {
           if (! error) {
 
@@ -188,37 +230,45 @@ Template.ticket.events({
     var body = template.find(".ticketreplybody").value;
 
     var replyIndex = _.indexOf(_.pluck(ticket.replies, '_id'), replyId);
-    Meteor.call('updateReply', {
+
+    var extras = $('#ticketreplyextrafields').serializeArray()
+    var extrafields = [];
+    $.each(extras, function() {
+      extrafields.push({name: this.name, value: this.value || ''});
+    });
+
+    var args = {
       ticketId: Session.get('viewticketId'),
       replyId: replyId,
       replyIndex: replyIndex,
       userId: Meteor.userId(),
       level: level,
-      type: 'reply',
-      body: body,
-      status: 'posted'
-      }, function (error, ticketId) {
-        if (! error) {
-          template.find(".ticketreplybody").value = "";
-          if (ticket.status == 'creating') {
-            // set status to new
-            Meteor.call('updateStatus', {
-              ticketId: Session.get('viewticketId'),
-              status: 'new'
-            }, function(error, ticketId) {
-
-            });
-          }
-
-          // Fire ticket updated event
-          EventHorizon.fire('ticketreply',{
+      replyfields: [
+        {name: 'type', value: 'reply'},
+        {name: 'body', value: body},
+        {name: 'status', value: 'posted'}
+      ]
+    };
+    args.replyfields = args.replyfields.concat(extrafields);
+    
+    Meteor.call('updateReply', args, function (error, ticketId) {
+      if (! error) {
+        template.find(".ticketreplybody").value = "";
+        if (ticket.status == 'creating') {
+          // set status to new
+          Meteor.call('updateStatus', {
             ticketId: Session.get('viewticketId'),
-            replyId: replyId,
-            postedBy: Meteor.userId()
-          });
+            status: 'new'
+          }, function(error, ticketId) {});
         }
+        // Fire ticket updated event
+        EventHorizon.fire('ticketreply',{
+          ticketId: Session.get('viewticketId'),
+          replyId: replyId,
+          postedBy: Meteor.userId()
+        });
       }
-    );
+    });
   },
 
   'click .edit-ticket': function () {

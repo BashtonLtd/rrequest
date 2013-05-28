@@ -34,3 +34,23 @@ label {
 .ticketsubject {
   line-height: 5px;
 }
+
+.sidebarheader {
+  font-size: 20px;
+  font-weight: bold;
+  border-bottom: 2px solid #777;
+  text-align: center;
+}
+
+.statusvalue {
+  padding-top: 15px;
+  font-size: 40px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.statusunits {
+  padding-top: 10px;
+  text-align: center;
+  font-size: 16px;
+}

@@ -26,9 +26,10 @@ Meteor.methods({
     var now = new Date();
     var modifier = {$set: {}};
     modifier.$set["modified"] = now;
-    modifier.$set["replies." + options.replyIndex + ".body"] = options.body;
-    modifier.$set["replies." + options.replyIndex + ".status"] = options.status;
-    modifier.$set["replies." + options.replyIndex + ".type"] = options.type;
+
+    for (var i = 0, l = _.size(options.replyfields); i < l; i++) {
+      modifier.$set["replies." + options.replyIndex + "." + options.replyfields[i].name] = options.replyfields[i].value;
+    };
 
     if (options.userId !== undefined) {
       modifier.$set["replies." + options.replyIndex + ".posted_by"] = options.userId;

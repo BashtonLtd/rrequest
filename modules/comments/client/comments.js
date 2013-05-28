@@ -23,23 +23,45 @@ Template.ticket.events({
   'click .post-ticket-comment': function (event, template) {
     var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
     var body = template.find(".ticketreplybody").value;
-    Comments.insert({
+
+    var extras = $('#ticketreplyextrafields').serializeArray()
+    var extrafields = {};
+    
+    $.each(extras, function() {
+      if (extrafields[this.name] !== undefined) {
+        if (!extrafields[this.name].push) {
+          extrafields[this.name] = [extrafields[this.name]];
+        }
+          extrafields[this.name].push(this.value || '');
+      } else {
+        extrafields[this.name] = this.value || '';
+      }
+    });
+    
+    var args = {
       status: 'posted',
       body: body,
       ticketId: ticket._id,
       type: 'comment',
       posted_by: Meteor.userId(),
       created: new Date()
-    });
+    }
+
+    args = _.extend(args, extrafields);
+
+    Comments.insert(args);
 
     var replyId = template.find(".ticketreplyId").value;
     var replyIndex = _.indexOf(_.pluck(ticket.replies, '_id'), replyId);
+
     Meteor.call('updateReply', {
       ticketId: ticket._id,
       replyId: replyId,
       replyIndex: replyIndex,
-      body: '',
-      status: 'unposted'
+      replyfields: [
+        {name: 'body', value: ''},
+        {name: 'status', value: 'unposted'}
+      ]
     });
     template.find(".ticketreplybody").value = "";
   }

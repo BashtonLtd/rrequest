@@ -1,0 +1,20 @@
+<template name="timeworked_reply_form_field">
+<label>Time Worked (in minutes):</label>
+<input id="timeworked" name="timeworked" type="number"/>
+</template>
+
+<template name="timeworked_reply_header">
+{{#with reply replyId}}
+  {{#if timeworked}}
+	<span class="label label-info">worked: {{timeworked}} minutes</span>
+  {{/if}}
+{{/with}}
+</template>
+
+<template name="timeworked_ticket_sidebar">
+  <div class="well well-small">
+  	<div class="sidebarheader">TIME WORKED</div>
+  	<div class="statusvalue">{{totaltimeworked}}</div>
+  	<div class="statusunits">minutes</div>
+  </div>
+</template>
