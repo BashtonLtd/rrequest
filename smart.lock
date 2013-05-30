@@ -9,8 +9,12 @@
       "router": {},
       "moment": {},
       "marked": {},
-      "event-horizon": {},
-      "collection-api": {}
+      "collection-api": {},
+      "collectionFS": {},
+      "meteor-mailparser": {},
+      "meteor-node-imap": {},
+      "meteor-pagedown": {},
+      "meteor-tomarkdown": {}
     },
     "packages": {
       "router": {
@@ -28,15 +32,35 @@
         "tag": "v0.2.8.2",
         "commit": "f5d9d6dbc013ad1bd568fa610eb4d8a479943f18"
       },
-      "event-horizon": {
-        "git": "https://github.com/belisarius222/meteor-event-horizon.git",
-        "tag": "v0.1.1",
-        "commit": "f7d19e16bf7527c34d853a9bc9002e9be53bdb9b"
-      },
       "collection-api": {
         "git": "https://github.com/crazytoad/meteor-collectionapi.git",
-        "tag": "v0.1.13",
-        "commit": "5477c900324f078b80b4f9efbb23d4bd506f59a8"
+        "tag": "v0.1.14",
+        "commit": "d42ba1681289cb093afa7c67500862241df15f9e"
+      },
+      "collectionFS": {
+        "git": "https://github.com/raix/Meteor-CollectionFS.git",
+        "tag": "v0.2.3",
+        "commit": "4a1b9298a7ce64269fd14be29d9c4797b9253103"
+      },
+      "meteor-mailparser": {
+        "git": "https://github.com/BashtonLtd/meteor-mailparser.git",
+        "tag": "v0.3.6",
+        "commit": "6d86779d4e7439c2bdbdedd50066da94b5be8137"
+      },
+      "meteor-node-imap": {
+        "git": "https://github.com/BashtonLtd/meteor-node-imap.git",
+        "tag": "v0.0.2",
+        "commit": "fe06b9918cfc7fbd46a1188362739173fc8e2f33"
+      },
+      "meteor-pagedown": {
+        "git": "https://github.com/BashtonLtd/meteor-pagedown.git",
+        "tag": "v1.1.0",
+        "commit": "e61278a6a77e1f947f3a00b8ff93025f072cf043"
+      },
+      "meteor-tomarkdown": {
+        "git": "https://github.com/BashtonLtd/meteor-tomarkdown.git",
+        "tag": "v0.0.1",
+        "commit": "e4356aa5a4f5245daca35ddc6ce38d03362beee6"
       },
       "page-js-ie-support": {
         "git": "https://github.com/tmeasday/meteor-page-js-ie-support.git",

@@ -3,7 +3,11 @@
     "router": {},
     "moment": {},
     "marked": {},
-    "event-horizon": {},
-    "collection-api": {}
+    "collection-api": {},
+    "collectionFS": {},
+    "meteor-mailparser": {},
+    "meteor-node-imap": {},
+    "meteor-pagedown": {},
+    "meteor-tomarkdown": {}
   }
 }

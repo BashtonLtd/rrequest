@@ -19,8 +19,6 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-Imap = Npm.require('imap');
-mailparser = Npm.require('mailparser');
 inspect = Npm.require('util').inspect;
 fs = Npm.require('fs');
 Fiber = Npm.require('fibers');

@@ -19,11 +19,7 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-toMarkdown = Npm.require('to-markdown').toMarkdown;
-pagedown = Npm.require('pagedown');
 fs = Npm.require('fs');
-Buffer = Npm.require('buffer').Buffer;
-
 process_mail = function(mail_object) {
   // check from address and try to match to a requester
   var requesters = [];

@@ -16,7 +16,10 @@ random
 preserve-inputs
 marked
 underscore
-event-horizon
 email
 collection-api
 collectionFS
+meteor-mailparser
+meteor-pagedown
+meteor-tomarkdown
+meteor-node-imap

@@ -19,8 +19,6 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-//var emailjs = __meteor_bootstrap__.require('emailjs');
-emailjs = Npm.require('emailjs');
 Meteor.startup(function (){
   // register the email gateway module
   Meteor.call('registerModule', {
@@ -96,10 +94,6 @@ Meteor.methods({
       var text = reply.body;
       var html = marked(reply.body);
 
-      var server  = emailjs.server.connect({
-        host:    "127.0.0.1"
-      });
-
       var requesteremails = '';
       for (var i = 0, l = ticket.requesters.length; i < l; i++) {
         requesteremails += useremail(ticket.requesters[i]);
@@ -108,18 +102,15 @@ Meteor.methods({
         }
       }
 
-      var message = {
+      Email.send({
         text: text,
         from: EMAIL_FROM,
         to: requesteremails,
         subject: subject,
-        'in-reply-to': get_requester_message_id(ticket._id),
-        attachment:
-        [
-          {data:html, alternative:true}
-        ]
-      };
-      server.send(message, function(err, message) {  });
+        headers: {
+          'in-reply-to': get_requester_message_id(ticket._id)
+        }
+      });
     }
   }
 });
