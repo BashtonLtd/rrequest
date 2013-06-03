@@ -8,6 +8,7 @@
     <div class="span10">
       <div class="well well-small">
         <h3 class="ticketsubject">{{subject}}</h3>
+        {{refreshEvery "15"}}
         <small><span>Created:   </span><span title="{{ticketcreated}}">{{ticketage}}</span><br/></small>
         <label>Requesters:</label>
         {{#each requesters}}
