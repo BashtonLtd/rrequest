@@ -49,7 +49,7 @@
       },
       "meteor-node-imap": {
         "git": "https://github.com/BashtonLtd/meteor-node-imap.git",
-        "tag": "v0.0.2",
+        "tag": "v0.0.3",
         "commit": "fe06b9918cfc7fbd46a1188362739173fc8e2f33"
       },
       "meteor-pagedown": {
