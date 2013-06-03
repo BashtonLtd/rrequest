@@ -21,9 +21,8 @@
 */
 URLROOT = 'http://127.0.0.1:3000/';
 
-//var EMAIL_FROM = 'rrequest@rrequest.com';
+//EMAIL_FROM = 'rrequest@rrequest.com';
 EMAIL_FROM = 'david@section19.co.uk';
-//process.env.MAIL_URL = 'smtp://USERNAME:PASSWORD@HOST:PORT/';
 process.env.MAIL_URL = 'smtp://127.0.0.1/';
 
 Meteor.startup(function (){
