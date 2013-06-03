@@ -127,6 +127,7 @@ var fetchmail = function () {
   if(getmail === true) {
     try {
       openInbox(collectmail);
+      imap.logout();
     } catch (error) {
       console.log(error);
     }
