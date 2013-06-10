@@ -26,7 +26,7 @@ Meteor.startup(function (){
     callback_enable: 'enable_gateway_module',
     callback_disable: 'disable_gateway_module',
     description: 'Creates tickets from emails and sends an email to the requester with the ticket reply.',
-    depends: [],
+    depends: ['attachments'],
     conflicts: ['email-notifier']
   }, function(error, module_id) {
     if(!error) {

@@ -3,43 +3,55 @@
     {{> createTicketDialog}}
   {{/if}}
 
-  <div class="span10">
-    <div class="row">
-      <div class="span5">
-        <h1>Tickets</h1>
-        <button class="btn new-ticket">Create Ticket</button>
+  <div class="row">
+    <div class="span12">
+      <div class="box">
+        <div class="box-header">
+          <div class="pagetitle">Tickets</div>
+          <div class="btn-group pull-right">
+            <button class="btn new-ticket">
+              <i class="icon-plus"></i> Create Ticket
+            </button>
+          </div>
+          <div class="clearfix"></div>
+        </div>
       </div>
     </div>
-    {{> ticketlist}}
+  </div>
+
+  <div class="row">
+    <div class="span10">
+      {{> ticketlist}}
+    </div>
   </div>
 
 </template>
 
 <template name="ticketlist">
-  <div class="tickets">
-    <table class="table table-striped">
-
-      <tbody>
-      {{#each tickets}}
-      <tr class="{{ticketstatus}}">
-        <td>
-          {{#if ticketready}}
-            <strong><a href="/ticket/{{_id}}">{{subject}}</a></strong>
-          {{else}}
-            <strong>{{subject}}</strong>
-          {{/if}}
-          <br/>
-          {{#each requesters}}
-            {{requester_email this}}, 
-          {{/each}}
-        </td>
-        <td>{{ticketstatus}}</td>
-        {{refreshEvery "15"}}
-        <td><span title="{{created}}">{{age created}}</span></td>
-      </tr>
-      {{/each}}
-      </tbody>
-    </table>
+  <div class="box">
+    <div class="box-header">
+      <h3>All tickets</h3>
+    </div>
+    <div class="box-body">
+      <table class="table table-striped">
+        <tbody>
+        {{#each tickets}}
+        <tr class="{{ticketstatus}}">
+          <td><strong><a href="/ticket/{{_id}}">{{subject}}</a></strong></td>
+          <td><small>
+            {{#each requesters}}
+              {{requester_email this}}, 
+            {{/each}}
+          </small></td>
+          <td>{{ticketstatus}}</td>
+          {{refreshEvery "15"}}
+          <td><small>{{age modified}}</small></td>
+          <td><span title="{{created}}"><small>{{age created}}</small></span></td>
+        </tr>
+        {{/each}}
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 

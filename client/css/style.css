@@ -1,5 +1,13 @@
 body {
   padding-top: 50px;
+  background-color: #e5e5e5;
+}
+
+.pagetitle {
+  line-height: 30px;
+  font-size: 24.5px;
+  font-weight: bold;
+  float: left;
 }
 
 tr.closed {
@@ -10,17 +18,72 @@ tr.new {
   border-left: 8px solid #cfc;
 }
 
-.event {
-  background-color: #fee;
-  color: #999fee;
-}
-
 label {
   font-weight: bold;
 }
 
 .newrequester {
   width: 200px;
+}
+
+.box {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  border: 1px solid #d8d8d8;
+  border-top-width: 0;
+  border-bottom-width: 2px;
+  min-height: 20px;
+  -webkit-box-sizing: border-box; 
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+
+.box-header {
+  background-color: #fff;
+  
+  vertical-align: top;
+  padding: 9px;
+}
+
+.box-body {
+  background-color: #fff;
+  border: 0 solid #d8d8d8;
+  border-bottom-width: 1px;
+  vertical-align: top;
+  padding: 9px;
+}
+
+.box-footer {
+  min-height: 0px;
+  background-color: #f8f8f8;
+  padding: 9px;
+}
+
+.box-topright {
+  float: right;
+  position: relative;
+  top: 0px;
+}
+
+.reply-header {
+  float:left;
+}
+
+.ticket-subject {
+  float:left;
+  line-height: 30px;
+  font-size: 24.5px;
+  font-weight: bold;
+}
+
+.event {
+  background-color: #b3b3dc;
+}
+
+.comment {
+  background-color: #eee;
+  color: #707070;
 }
 
 .ticketrequester {
@@ -53,4 +116,35 @@ label {
   padding-top: 10px;
   text-align: center;
   font-size: 16px;
+}
+
+::-webkit-scrollbar {
+  height: 16px;
+  overflow: visible;
+  width: 16px;
+}
+
+::-webkit-scrollbar-button { 
+  height: 0;
+  width: 0;
+}
+
+::-webkit-scrollbar-track {
+  background-clip: padding-box;
+  border: solid transparent;
+  border-width: 0 0 0 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,.2);
+  background-clip: padding-box;
+  border: solid transparent;
+  border-width: 1px 1px 1px 6px;
+  min-height: 28px;
+  padding: 100px 0 0;
+  box-shadow: inset 1px 1px 0 rgba(0,0,0,.1),inset 0 -1px 0 rgba(0,0,0,.07);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
 }

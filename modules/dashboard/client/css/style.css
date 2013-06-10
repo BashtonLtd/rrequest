@@ -1,15 +1,31 @@
 .gridster > ul > li {
-  background-color: #ccc;
+/*
+  background-color: #fff;
   list-style-type: none;
   padding: 0px 3px;
 
   -moz-border-radius: 12px;
   border-radius: 12px;
+
+  */
+  list-style-type: none;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  border: 1px solid #d8d8d8;
+  border-top-width: 0;
+  border-bottom-width: 2px;
+  min-height: 20px;
+  -webkit-box-sizing: border-box; 
+  box-sizing: border-box;
+
+
 }
 
 .gridster > ul > li > .widgetremove {
   display: none;
   float: right;
+  margin-right: 2px;
 }
 
 .gridster > ul > li:hover > .widgetremove {
@@ -37,11 +53,11 @@
 }
 
 .widget_ticket_list {
-  background-color:#eee !important;
+  background-color:#fff;
   overflow:auto;
 }
 
-.widget_ticket_list > h1 {
+.widget_ticket_list > .box-header > h1 {
   margin-left: 4px;
   margin-top: 0px;
   margin-bottom: 4px;

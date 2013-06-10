@@ -1,10 +1,14 @@
 <template name="attachments">
   {{#if hasAttachments replyId}}
-    <strong>Attachments:</strong><br/>
-    <div class="well well-small">
-      {{#each items replyId}}
-        <a id="{{_id}}" class="download-attachment" href="#">{{filename}}</a> ({{niceSize}})<br/>
-      {{/each}}
+    <div class="box">
+      <div class="box-header">
+        <strong>Attachments:</strong>
+      </div>
+      <div class="box-body">
+        {{#each items replyId}}
+          <a id="{{_id}}" class="download-attachment" href="#">{{filename}}</a> ({{niceSize}})<br/>
+        {{/each}}
+      </div>
     </div>
   {{/if}}
 </template>

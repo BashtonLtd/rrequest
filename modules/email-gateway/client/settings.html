@@ -1,32 +1,37 @@
 <template name="emailgatewaysettings">
-  <div class="well well-small">
-    <h4>Imap Settings</h4>
-
-    <label>Username</label>
-    <input id="imap_username" type="text" class="span4 emailgateway-settings-username" value="{{imap_username}}">
-
-    <label>Password</label>
-    <form class="form-inline">
-    <input id="imap_password" type="password" class="span4 emailgateway-settings-password" value="{{imap_password}}">
-    <button class="btn toggle-password">{{password_button_label}}</button>
-    </form>
-
-    <label>Host</label>
-    <input id="imap_host" type="text" class="span4 emailgateway-settings-host" value="{{imap_host}}">
-
-    <label>Port</label>
-    <input id="imap_port" type="text" class="span4 emailgateway-settings-port" value="{{imap_port}}">
-
-    <label>Secure</label>
-    <input id="imap_secure" type="checkbox" class="emailgateway-settings-secure" {{#if imap_secure }}checked{{/if}}>
-
-    <label>Polling Interval in seconds</label>
-    <input id="imap_interval" type="number" class="emailgateway-settings-interval" value="{{imap_interval}}">
-
-    <hr/>
-    <div class="btn-group pull-right">
-      <button class="btn btn-primary emailgateway-settings-save"><i class="icon-ok icon-white"></i> Save</button>
+  <div class="box">
+    <div class="box-header">
+      <h4>Imap Settings</h4>
     </div>
-    <div class="clearfix"></div>
+
+    <div class="box-body">
+      <label>Username</label>
+      <input id="imap_username" type="text" class="span4 emailgateway-settings-username" value="{{imap_username}}">
+
+      <label>Password</label>
+      <form class="form-inline">
+      <input id="imap_password" type="password" class="span4 emailgateway-settings-password" value="{{imap_password}}">
+      <button class="btn toggle-password">{{password_button_label}}</button>
+      </form>
+
+      <label>Host</label>
+      <input id="imap_host" type="text" class="span4 emailgateway-settings-host" value="{{imap_host}}">
+
+      <label>Port</label>
+      <input id="imap_port" type="text" class="span4 emailgateway-settings-port" value="{{imap_port}}">
+
+      <label>Secure</label>
+      <input id="imap_secure" type="checkbox" class="emailgateway-settings-secure" {{#if imap_secure }}checked{{/if}}>
+
+      <label>Polling Interval in seconds</label>
+      <input id="imap_interval" type="number" class="emailgateway-settings-interval" value="{{imap_interval}}">
+    </div>
+
+    <div class="box-footer">
+      <div class="btn-group pull-right">
+      <button class="btn btn-primary emailgateway-settings-save"><i class="icon-ok icon-white"></i> Save</button>
+      </div>
+      <div class="clearfix"></div>
+    </div>
   </div>
 </template>

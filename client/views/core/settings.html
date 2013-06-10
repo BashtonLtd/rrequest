@@ -1,34 +1,41 @@
 <template name="settings">
   <div class="row">
-    <div class="span10">
-      <h1>Settings</h1>
+    <div class="span12">
+      <div class="box">
+        <div class="box-header">
+          <div class="pagetitle">Settings</div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="row">
     <div class="span3">
-      <div class="well">
-        <ul class="nav nav-list">
-          <li class="nav-header">Modules</li>
-          {{#if is_active 'moduleactivation'}}
-          <li class="active"><a id="moduleactivation" class="settings-menu" href="#">Module Activation</a></li>
-          {{else}}
-          <li><a id="moduleactivation" class="settings-menu" href="#">Module Activation</a></li>
-          {{/if}}
-
-          <li class="nav-header">Module Settings</li>
-          {{#each module_settings_pages}}
-            {{#if is_active content_page}}
-            <li class="active"><a id="{{content_page}}" class="settings-menu" href="#">{{name}}</a></li>
+      <div class="box">
+        <div class="box-body">
+          <ul class="nav nav-list">
+            <li class="nav-header">Modules</li>
+            {{#if is_active 'moduleactivation'}}
+            <li class="active"><a id="moduleactivation" class="settings-menu" href="#">Module Activation</a></li>
             {{else}}
-            <li><a id="{{content_page}}" class="settings-menu" href="#">{{name}}</a></li>
+            <li><a id="moduleactivation" class="settings-menu" href="#">Module Activation</a></li>
             {{/if}}
-          {{/each}}
-        <ul>
+
+            <li class="nav-header">Module Settings</li>
+            {{#each module_settings_pages}}
+              {{#if is_active content_page}}
+              <li class="active"><a id="{{template}}" class="settings-menu" href="#">{{name}}</a></li>
+              {{else}}
+              <li><a id="{{template}}" class="settings-menu" href="#">{{name}}</a>  </li>
+              {{/if}}
+            {{/each}}
+          <ul>
+        </div>
       </div>
     </div>
 
-    <div class="span7">
+    <div class="span9">
       {{{pagecontent}}}
     </div>
   </div>
@@ -36,41 +43,43 @@
 
 
 <template name="moduleactivation">
-  <div class="well well-small">
-    <table class="table table-striped">
-      <thead>
-        <tr><th>Name</th><th></th></tr>
-      </thead>
-      <tbody>
-        {{#each availablemodules}}
-        <tr>
-          <td>{{name}}<br/><small>{{description}}</small></td>
-          <td>
-            {{#if has_depends _id}}
-              {{#if module_depends _id}}
-                <small>Required Dependencies:</small><br/>{{#each module_depends _id}}<span class="label label-info">{{name}}</span> {{/each}}<br/>
-              {{/if}}
+  <div class="box">
+    <div class="box-body">
+      <table class="table table-striped">
+        <thead>
+          <tr><th>Name</th><th></th></tr>
+        </thead>
+        <tbody>
+          {{#each availablemodules}}
+          <tr>
+            <td>{{name}}<br/><small>{{description}}</small></td>
+            <td>
+              {{#if has_depends _id}}
+                {{#if module_depends _id}}
+                  <small>Required Dependencies:</small><br/>{{#each module_depends _id}}<span class="label label-info">{{name}}</span> {{/each}}<br/>
+                {{/if}}
 
-              {{#if module_conflicts _id}}
-                <small>Conflicting Modules:</small><br/>{{#each module_conflicts _id}}<span class="label label-important">{{name}}</span> {{/each}}
-              {{/if}}
+                {{#if module_conflicts _id}}
+                  <small>Conflicting Modules:</small><br/>{{#each module_conflicts _id}}<span class="label label-important">{{name}}</span> {{/each}}
+                {{/if}}
 
-              {{#if module_reverse_depends _id}}
-                <small>Depending Modules:</small><br/>{{#each module_reverse_depends _id}}<span class="label label-info">{{name}}</span> {{/each}}
-              {{/if}}
-            {{else}}
-            <div class="btn-group">
-              {{#if enabled}}
-              <button id="{{_id}}" class="btn disable-module"><i class="icon-remove"></i> Disable Module</button>
+                {{#if module_reverse_depends _id}}
+                  <small>Depending Modules:</small><br/>{{#each module_reverse_depends _id}}<span class="label label-info">{{name}}</span> {{/each}}
+                {{/if}}
               {{else}}
-              <button id="{{_id}}" class="btn enable-module"><i class="icon-ok"></i> Enable Module</button>
+              <div class="btn-group">
+                {{#if enabled}}
+                <button id="{{_id}}" class="btn disable-module"><i class="icon-remove"></i> Disable Module</button>
+                {{else}}
+                <button id="{{_id}}" class="btn enable-module"><i class="icon-ok"></i> Enable Module</button>
+                {{/if}}
+              </div>
               {{/if}}
-            </div>
-            {{/if}}
-          </td>
-        </tr>
-        {{/each}}
-      </tbody>
-    </table>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>

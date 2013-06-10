@@ -119,6 +119,6 @@ emailgateway_settings_page = function(args) {
 
   return {
     name: 'Email Gateway',
-    content_page: 'emailgatewaysettings'
+    template: 'emailgatewaysettings'
   };
 };

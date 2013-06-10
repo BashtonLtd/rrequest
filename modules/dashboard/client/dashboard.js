@@ -22,7 +22,7 @@
 Template.dashboard.rendered = function () {
   $(".gridster ul").gridster({
     widget_margins: [8, 6],
-    widget_base_dimensions: [80, 80],
+    widget_base_dimensions: [82, 82],
     max_size_x: 12,
     max_size_y: 10,
     serialize_params: function(elem, grid) {

@@ -74,23 +74,23 @@ Template.ticket.sidebaritems = function() {
   return sidebar_items;
 };
 
-Template.ticket.reply_header_items = function(replyId) {
+Handlebars.registerHelper('reply_header_items', function(replyId) {
   var header_items = [];
   var hooks = Hooks.find({hook:'reply_header'});
   hooks.forEach(function (hook) {
     header_items.push({template: Template[hook.template]({replyId:replyId})});
   });
   return header_items;
-};
+});
 
-Template.ticket.footer_items = function(replyId) {
+Handlebars.registerHelper('footer_items', function(replyId) {
   var footer_items = [];
   var hooks = Hooks.find({hook:'reply_footer'});
   hooks.forEach(function (hook) {
     footer_items.push({template: Template[hook.template]({replyId:replyId})});
   });
   return footer_items;
-};
+});
 
 Template.ticket.replyentryformfields = function(replyId) {
   var extraformfields = [];
@@ -134,6 +134,7 @@ Template.ticket.posted_replies = function () {
       if(reply !== undefined) {
         if(reply.status == 'posted') {
           reply.body = marked(reply.body);
+          reply.template = Template["ticketreply-"+reply.type]({reply:reply});
           replies.push(reply);
         }
       }
@@ -145,6 +146,7 @@ Template.ticket.posted_replies = function () {
       var ticketreplies = window[hook.data]({ticketId: Session.get('viewticketId')});
       ticketreplies.forEach(function(ticketreply) {
         ticketreply.body = marked(ticketreply.body);
+        ticketreply.template = Template["ticketreply-"+ticketreply.type]({reply:ticketreply});
         replies.push(ticketreply);
       });
     });
@@ -164,21 +166,6 @@ Template.ticket.ticketcreated = function () {
   if (ticket !== undefined) {
     return ticket.created;
   }
-};
-
-Template.ticket.ticketage = function () {
-  var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
-  if (ticket !== undefined) {
-    return moment(ticket.created).fromNow();
-  }
-};
-
-Template.ticket.replycreated = function() {
-  return this.created;
-};
-
-Template.ticket.replyage = function () {
-  return moment(this.created).fromNow();
 };
 
 Template.ticket.created = function () {
@@ -291,15 +278,6 @@ Template.ticket.helpers({
     return ticket;
   },
 
-  getUserEmail: function(requesterId) {
-    var email = useremail(requesterId);
-    return email;
-  },
-
-  age: function(time){
-    return moment(time).fromNow();
-  },
-
   displayreply: function(replytype){
     var user = Meteor.users.findOne({_id: Meteor.userId()});
     if(user.profile.isStaff) {
@@ -320,7 +298,6 @@ Template.ticket.helpers({
   },
 
   isMuted: function(replytype){
-    var user = Meteor.users.findOne({_id: Meteor.userId()});
     if (replytype == 'event') {
       return 'muted';
     }

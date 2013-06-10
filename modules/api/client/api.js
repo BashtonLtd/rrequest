@@ -47,7 +47,7 @@ api_settings_page = function(args) {
 
   return {
     name: 'API',
-    content_page: 'apisettings'
+    template: 'apisettings'
   };
 };
 

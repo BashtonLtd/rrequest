@@ -1,23 +1,27 @@
 <template name="widget_ticket_list">
   {{#with widget widgetId}}
-    <h1>{{label}}</h1>
-    <table class="table table-striped">
-    <tbody>
-    {{#each tickets}}
-      <tr class="{{status}}">
-        <td><strong><a href="/ticket/{{_id}}">{{subject}}</a></strong></td>
-        <td><small>
-          {{#each requesters}}
-            {{requester_email this}}
-          {{/each}}
-        </small></td>
-        {{refreshEvery "15"}}
-        <td><small>{{age modified}}</small></td>
-        <td><span title="{{created}}"><small>{{age created}}</small></span></td>
-      </tr>
-    {{/each}}
-    </tbody>
-    </table>
+    <div class="box-header">
+      <h1>{{label}}</h1>
+    </div>
+    <div class="box-body">
+      <table class="table table-striped">
+      <tbody>
+      {{#each tickets}}
+        <tr class="{{status}}">
+          <td><strong><a href="/ticket/{{_id}}">{{subject}}</a></strong></td>
+          <td><small>
+            {{#each requesters}}
+              {{requester_email this}}
+            {{/each}}
+          </small></td>
+          {{refreshEvery "15"}}
+          <td><small>{{age modified}}</small></td>
+          <td><span title="{{created}}"><small>{{age created}}</small></span></td>
+        </tr>
+      {{/each}}
+      </tbody>
+      </table>
+    </div>
   {{/with}}
 </template>
 
