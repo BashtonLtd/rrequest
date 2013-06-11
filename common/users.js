@@ -24,8 +24,12 @@ get_or_create_user = function(email_address) {
   if (user !== undefined) {
     return user;
   } else {
-    userId = createAutoUser(email_address);
-    user = Meteor.users.findOne(userId);
+    try {
+      userId = createAutoUser(email_address);
+      user = Meteor.users.findOne(userId);
+    } catch (error) {
+      user = Meteor.users.findOne({'profile.email': email_address});
+    }
     return user;
   }
 };
