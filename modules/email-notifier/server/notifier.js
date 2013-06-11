@@ -53,7 +53,7 @@ Meteor.methods({
     var ticket = Tickets.findOne({_id: args.ticketId});
     if (ticket !== undefined) {
       var subject = '[' + ticket._id + '] ' + ticket.subject;
-      var ticketurl = URLROOT + 'ticket/' + ticket._id;
+      var ticketurl = Meteor.absoluteUrl('ticket/' + ticket._id, {});
       var text = 'To view your updated ticket please visit ' + ticketurl;
       var html = '<p>To view your updated ticket please visit <a href="' + ticketurl + '">' + ticketurl + '</a>.</p>';
 

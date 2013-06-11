@@ -19,10 +19,7 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-URLROOT = 'http://support.bashton.com/';
-
 EMAIL_FROM = 'rrequest@bashton.com';
-process.env.MAIL_URL = 'smtp://127.0.0.10/';
 
 Meteor.startup(function (){
   // Initialise status collection
