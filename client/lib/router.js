@@ -63,8 +63,8 @@ Meteor.Router.filters({
   }
 });
 
-//Meteor.Router.filter('requireAdmin', {only: ['users']});
-//Meteor.Router.filter('requireStaff', {only: ['groups']});
+Meteor.Router.filter('requireAdmin', {only: ['users']});
+Meteor.Router.filter('requireStaff', {only: ['groups']});
 
 
 Meteor.startup(function() {

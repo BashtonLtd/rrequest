@@ -88,7 +88,7 @@ get_or_create_ticket = function(requesters, subject) {
     ticket = Tickets.findOne({_id: ticketId});
   }
 
-  if (ticket !== null) {
+  if (ticket !== null && ticket !== undefined) {
     return ticket;
   } else {
     var new_ticketId = create_ticket({
