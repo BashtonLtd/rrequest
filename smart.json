@@ -8,6 +8,7 @@
     "meteor-mailparser": {},
     "meteor-node-imap": {},
     "meteor-pagedown": {},
-    "meteor-tomarkdown": {}
+    "meteor-tomarkdown": {},
+    "spin": {}
   }
 }

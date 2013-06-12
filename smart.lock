@@ -2,7 +2,7 @@
   "meteor": {
     "git": "https://github.com/meteor/meteor.git",
     "branch": "master",
-    "commit": "5d736d4bf0448c7db1f9b47124dfafc34a9631bb"
+    "commit": "9bb2b5447e845c4f483df5e9b42a2c1de5ab909b"
   },
   "dependencies": {
     "basePackages": {
@@ -14,7 +14,8 @@
       "meteor-mailparser": {},
       "meteor-node-imap": {},
       "meteor-pagedown": {},
-      "meteor-tomarkdown": {}
+      "meteor-tomarkdown": {},
+      "spin": {}
     },
     "packages": {
       "router": {
@@ -61,6 +62,11 @@
         "git": "https://github.com/BashtonLtd/meteor-tomarkdown.git",
         "tag": "v0.0.1",
         "commit": "e4356aa5a4f5245daca35ddc6ce38d03362beee6"
+      },
+      "spin": {
+        "git": "https://github.com/SachaG/meteor-spin.git",
+        "tag": "v0.2.0",
+        "commit": "fd3a2871a69442848b4b4e74f5e1ae28fa4a95a4"
       },
       "page-js-ie-support": {
         "git": "https://github.com/tmeasday/meteor-page-js-ie-support.git",

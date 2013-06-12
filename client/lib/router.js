@@ -46,15 +46,25 @@ Meteor.Router.add({
 
 Meteor.Router.filters({
   requireAdmin: function(page) {
-    return is_admin(Meteor.user()) ? page : "not_allowed";
+    if (Meteor.user())
+      return is_admin(Meteor.user()) ? page : 'not_allowed';
+    else if (Meteor.loggingIn())
+      return 'loading';
+    else
+      return 'not_allowed';
   },
   requireStaff: function(page) {
-    return is_staff(Meteor.user()) ? page : "not_allowed";
+    if (Meteor.user())
+      return is_staff(Meteor.user()) ? page : "not_allowed";
+    else if (Meteor.loggingIn())
+      return 'loading';
+    else
+      return 'not_allowed';
   }
 });
 
-Meteor.Router.filter('requireAdmin', {only: ['users']});
-Meteor.Router.filter('requireStaff', {only: ['groups']});
+//Meteor.Router.filter('requireAdmin', {only: ['users']});
+//Meteor.Router.filter('requireStaff', {only: ['groups']});
 
 
 Meteor.startup(function() {
