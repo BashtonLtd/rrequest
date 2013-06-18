@@ -9,6 +9,7 @@
     "meteor-node-imap": {},
     "meteor-pagedown": {},
     "meteor-tomarkdown": {},
-    "spin": {}
+    "spin": {},
+    "paginated-subscription": {}
   }
 }

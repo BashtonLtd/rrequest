@@ -24,3 +24,4 @@ meteor-pagedown
 meteor-tomarkdown
 meteor-node-imap
 spin
+paginated-subscription

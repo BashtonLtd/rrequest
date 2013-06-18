@@ -20,16 +20,31 @@
  * 
 */
 Template.ticketlist.tickets = function () {
-  return Tickets.find({}, {sort: {'modified': -1}});
+  return Tickets.find({}, {sort: {'modified': -1}, limit: ticketsHandle.limit()});
 };
 
 Template.tickets.showCreateTicketDialog = function () {
  return Session.get("showCreateTicketDialog");
 };
 
+Template.tickets.helpers({
+  ticketsReady: function() {
+    return ! ticketsHandle.loading();
+  },
+
+  allTicketsLoaded: function() {
+    return ! ticketsHandle.loading() && Tickets.find().count() < ticketsHandle.loaded();
+  }
+});
+
 Template.tickets.events({
   'click .new-ticket': function (evt) {
     openCreateTicketDialog();
+  },
+
+  'click .load-more': function(event) {
+    event.preventDefault();
+    ticketsHandle.loadNextPage();
   }
 });
 

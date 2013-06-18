@@ -15,7 +15,8 @@
       "meteor-node-imap": {},
       "meteor-pagedown": {},
       "meteor-tomarkdown": {},
-      "spin": {}
+      "spin": {},
+      "paginated-subscription": {}
     },
     "packages": {
       "router": {
@@ -67,6 +68,11 @@
         "git": "https://github.com/SachaG/meteor-spin.git",
         "tag": "v0.2.0",
         "commit": "fd3a2871a69442848b4b4e74f5e1ae28fa4a95a4"
+      },
+      "paginated-subscription": {
+        "git": "https://github.com/tmeasday/meteor-paginated-subscription.git",
+        "tag": "v0.1.2",
+        "commit": "35e0c6112df2b4cfeb60b559276a93cac5ee2dd6"
       },
       "page-js-ie-support": {
         "git": "https://github.com/tmeasday/meteor-page-js-ie-support.git",

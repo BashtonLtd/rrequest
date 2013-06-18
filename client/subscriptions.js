@@ -22,7 +22,7 @@
 Meteor.subscribe('currentUser');
 Meteor.subscribe('allUsers');
 Meteor.subscribe('groups');
-Meteor.subscribe('tickets');
+ticketsHandle = Meteor.subscribeWithPagination('tickets', 15);
 Meteor.subscribe('ticketstatus');
 Meteor.subscribe('modules', function() {
   EventHorizon.fire('modulescollectionready');
