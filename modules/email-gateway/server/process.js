@@ -39,12 +39,15 @@ process_mail = function(mail_object) {
 
   var ticketBody = mail_object.text;
   if (mail_object.html !== undefined) {
-    var converter = new pagedown.Converter();
-    var safeConverter = pagedown.getSanitizingConverter();
-    var safehtml = safeConverter.makeHtml(toMarkdown(mail_object.html));
-    safehtml = safehtml.replace(/\n/g, '\n\n');
 
-    ticketBody = toMarkdown(safehtml);
+    //var converter = new pagedown.Converter();
+    //var safeConverter = pagedown.getSanitizingConverter();
+    //var safehtml = safeConverter.makeHtml(toMarkdown(mail_object.html));
+    //safehtml = safehtml.replace(/\n/g, '\n\n');
+
+    //ticketBody = toMarkdown(safehtml);
+
+    ticketBody = html2markdown(mail_object.html);
   }
 
   replyId = create_reply({

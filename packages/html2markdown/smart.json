@@ -1,0 +1,7 @@
+{
+  "name": "html2markdown",
+  "description": "HTML email to markdown converter",
+  "author": "David Watson <david@bashton.com>",
+  "version": "0.1",
+  "packages": {}
+}

@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "htmlparser2": {
+      "version": "3.1.4",
+      "dependencies": {
+        "domhandler": {
+          "version": "2.0.3"
+        },
+        "domutils": {
+          "version": "1.1.2"
+        },
+        "domelementtype": {
+          "version": "1.1.1"
+        },
+        "readable-stream": {
+          "version": "1.0.2"
+        }
+      }
+    }
+  }
+}

@@ -3,6 +3,15 @@ body {
   background-color: #e5e5e5;
 }
 
+blockquote p {
+  margin-bottom: 0;
+  
+  font-size: 12px !important;
+  font-weight: 0 !important;
+  line-height: 1.15 !important;
+
+}
+
 .pagetitle {
   line-height: 30px;
   font-size: 24.5px;
