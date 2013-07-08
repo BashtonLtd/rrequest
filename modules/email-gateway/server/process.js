@@ -69,7 +69,7 @@ process_mail = function(mail_object) {
           metadata: {
             ticketId:ticket._id,
             replyId:replyId,
-            requester:user._id,
+            requester:requestfrom._id,
             group:ticket.group
           }
         });
