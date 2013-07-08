@@ -1,9 +1,11 @@
 <template name="widget_ticket_list">
   {{#with widget widgetId}}
+
     <div class="box-header">
       <h1>{{label}}</h1>
     </div>
-    <div class="box-body">
+    <div class="clearfix"></div>
+    <div class="box-body" style="height:{{body_height id}}px; overflow:auto;">
       <table class="table table-striped">
       <tbody>
       {{#each tickets}}
@@ -14,14 +16,21 @@
               {{requester_email this}}
             {{/each}}
           </small></td>
-          {{refreshEvery "15"}}
-          <td><small>{{age modified}}</small></td>
-          <td><span title="{{created}}"><small>{{age created}}</small></span></td>
+
+          <td><span title="{{modified}}"><small>{{#with modified}}{{>age}}{{/with}}</small></span></td>
+          <td><span title="{{created}}"><small>{{#with created}}{{>age}}{{/with}}</small></span></td>
         </tr>
       {{/each}}
       </tbody>
       </table>
     </div>
+    <div class="box-footer">
+      <div class="btn-group pull-right">
+        <button id="{{id}}" class="btn load-more">Load More</button>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+
   {{/with}}
 </template>
 

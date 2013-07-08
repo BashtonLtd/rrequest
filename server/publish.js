@@ -81,7 +81,8 @@ Meteor.startup(function(){
   });
 });
 
-Meteor.publish('tickets', function(limit) {
+
+Meteor.publish('allTickets', function() {
   var user = Meteor.users.findOne({_id: this.userId});
   var usergroups = Groups.find({members: {$in: [this.userId]}});
   var groupids = [];
@@ -89,9 +90,23 @@ Meteor.publish('tickets', function(limit) {
     groupids.push(group._id);
   });
   if (user && user.profile.isStaff) {
-    return Tickets.find({}, {sort: {'modified': -1}, limit: limit});
+    return Tickets.find();
   } else {
-    return Tickets.find({$or: [{group: {$in: groupids}}, {requesters: {$in: [this.userId]}}]}, {sort: {'modified': -1}, limit:limit});
+    return Tickets.find({$or: [{group: {$in: groupids}}, {requesters: {$in: [this.userId]}}]});
+  }
+});
+
+Meteor.publish('sortedTickets', function(sort, limit) {
+  var user = Meteor.users.findOne({_id: this.userId});
+  var usergroups = Groups.find({members: {$in: [this.userId]}});
+  var groupids = [];
+  usergroups.forEach(function(group){
+    groupids.push(group._id);
+  });
+  if (user && user.profile.isStaff) {
+    return Tickets.find({}, {sort: sort, limit: limit});
+  } else {
+    return Tickets.find({$or: [{group: {$in: groupids}}, {requesters: {$in: [this.userId]}}]}, {sort: sort, limit:limit});
   }
 });
 

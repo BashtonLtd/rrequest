@@ -61,33 +61,70 @@ dashboard_widgets.push({
   save: widget_ticket_list_save
 });
 
+Template.widget_ticket_list.created = function () {
+  //$('.box-body').height(10);
+};
+
+Template.widget_ticket_list.events({
+  'click .load-more': function(event) {
+    event.preventDefault();
+    var widget = UserDashboard.findOne({_id: event.toElement.id});
+
+    switch(widget.extradata.sortorder) {
+      case 'ageascend':
+        ticketsource = ticketsNewest;
+        break;
+      case 'agedescend':
+        ticketsource = ticketsOldest;
+        break;
+      case 'replyascend':
+        ticketsource = ticketsNewestChange;
+        break;
+      case 'replydescend':
+        ticketsource = ticketsOldestChange;
+        break;
+      default:
+        ticketsource = ticketsOldest;
+    }
+    ticketsource.loadNextPage();
+  }
+});
+
 Template.widget_ticket_list.helpers({
   widget: function(id) {
     var widget = UserDashboard.findOne({_id: id});
     var sorting = null;
+    var ticketsource = null;
 
     switch(widget.extradata.sortorder) {
       case 'ageascend':
         sorting = {sort: {'created': 1}};
+        ticketsource = ticketsNewest;
+        sorting.limit = ticketsNewest.limit();
         break;
       case 'agedescend':
         sorting = {sort: {'created': -1}};
+        ticketsource = ticketsOldest;
+        sorting.limit = ticketsOldest.limit();
         break;
       case 'replyascend':
         sorting = {sort: {'modified': 1}};
+        ticketsource = ticketsNewestChange;
+        sorting.limit = ticketsNewestChange.limit();
         break;
       case 'replydescend':
         sorting = {sort: {'modified': -1}};
+        ticketsource = ticketsOldestChange;
+        sorting.limit = ticketsOldestChange.limit();
         break;
       default:
         sorting = {sort: {'created': -1}};
+        ticketsource = ticketsOldest;
+        sorting.limit = ticketsOldest.limit();
     }
     var tickets = Tickets.find({status: {$in: widget.extradata.filter}}, sorting);
-    return {label: widget.label, tickets: tickets};
-  },
+    return {id: id, label: widget.label, tickets: tickets};
 
-  age: function(time){
-    return moment(time).fromNow();
   },
 
   requester_email: function (requesterId) {
@@ -95,6 +132,11 @@ Template.widget_ticket_list.helpers({
     if (user !== undefined) {
       return user.profile.email;
     }
+  }, 
+
+  body_height: function (id) {
+    var widget = UserDashboard.findOne({_id: id});
+    return widget.sizey * 82 - 95;
   }
 });
 

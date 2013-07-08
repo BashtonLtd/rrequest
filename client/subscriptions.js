@@ -22,7 +22,17 @@
 Meteor.subscribe('currentUser');
 Meteor.subscribe('allUsers');
 Meteor.subscribe('groups');
-ticketsHandle = Meteor.subscribeWithPagination('tickets', 15);
+
+
+Meteor.subscribe('allTickets');
+
+ticketsOldest = Meteor.subscribeWithPagination('sortedTickets', {created: -1}, 2);
+ticketsNewest = Meteor.subscribeWithPagination('sortedTickets', {created: 1}, 2);
+ticketsOldestChange = Meteor.subscribeWithPagination('sortedTickets', {modified: -1}, 2);
+ticketsNewestChange = Meteor.subscribeWithPagination('sortedTickets', {modified: 1}, 2);
+
+
+
 Meteor.subscribe('ticketstatus');
 Meteor.subscribe('modules', function() {
   EventHorizon.fire('modulescollectionready');
