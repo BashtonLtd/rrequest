@@ -67,9 +67,17 @@
             {{/each}}
           </small></td>
           <td>{{ticketstatus}}</td>
-          {{refreshEvery "15"}}
-          <td><small>{{age modified}}</small></td>
-          <td><span title="{{created}}"><small>{{age created}}</small></span></td>
+          <td><span title="{{this}}"><small>
+            {{#with modified}}
+              {{>age}}
+            {{/with}}
+            </small></span>
+          <td><span title="{{this}}"><small>
+            {{#with created}}
+              {{>age}}
+            {{/with}}
+            </small></span>
+          </td>
         </tr>
         {{/each}}
         </tbody>

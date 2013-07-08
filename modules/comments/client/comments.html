@@ -8,8 +8,7 @@
           {{{template}}}
         {{/each}}
       </div>
-      {{refreshEvery "15"}}
-      <div class="box-topright" title="{{created}}">{{age created}}</div>
+      <div class="box-topright" title="{{created}}">{{#with created}}{{>age}}{{/with}}</div>
       <div class="clearfix"></div>
     </div>
     <div class="box-body {{type}}">
