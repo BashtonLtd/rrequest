@@ -32,9 +32,7 @@
           <div class="pagetitle"></div>
           <div class="btn-group pull-right">
             {{#if ticketsReady}}
-              {{#unless allTicketsLoaded}}
-                <button class="btn load-more">Load More</button>
-              {{/unless}}
+              <button class="btn load-more">Load More</button>
             {{else}}
               <div>{{> spinner}}</div>
             {{/if}}

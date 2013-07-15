@@ -20,7 +20,7 @@
  * 
 */
 Template.ticketlist.tickets = function () {
-  return Tickets.find({}, {sort: {'modified': -1}, limit: ticketsNewest.limit()});
+  return Tickets.find({}, {sort: {'modified': -1}, limit: ticketsNewestChange.limit()});
 };
 
 Template.tickets.showCreateTicketDialog = function () {
@@ -29,11 +29,7 @@ Template.tickets.showCreateTicketDialog = function () {
 
 Template.tickets.helpers({
   ticketsReady: function() {
-    return ! ticketsNewest.loading();
-  },
-
-  allTicketsLoaded: function() {
-    return ! ticketsNewest.loading() && Tickets.find().count() < ticketsNewest.loaded();
+    return ! ticketsNewestChange.loading();
   }
 });
 
@@ -44,7 +40,7 @@ Template.tickets.events({
 
   'click .load-more': function(event) {
     event.preventDefault();
-    ticketsNewest.loadNextPage();
+    ticketsNewestChange.loadNextPage();
   }
 });
 
