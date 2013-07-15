@@ -23,17 +23,23 @@ Meteor.subscribe('currentUser');
 Meteor.subscribe('allUsers');
 Meteor.subscribe('groups');
 
-
-Meteor.subscribe('allTickets');
+Meteor.subscribe('singleTicket', Session.get('viewticketId'));
 
 ticketsOldest = Meteor.subscribeWithPagination('sortedTickets', {created: -1}, 10);
 ticketsNewest = Meteor.subscribeWithPagination('sortedTickets', {created: 1}, 10);
 ticketsOldestChange = Meteor.subscribeWithPagination('sortedTickets', {modified: -1}, 10);
 ticketsNewestChange = Meteor.subscribeWithPagination('sortedTickets', {modified: 1}, 10);
 
+Meteor.subscribe('ticketstatus', function() {
+	var tstatus = TicketStatus.find({});
+	tstatus.forEach(function(status) {
+		var name = status.name;
+		Meteor.subscribe("counts-by-ticketstate", name, function() {
+			Session.set(name + 'ticketcountready', name);
+		});
+	});
+});
 
-
-Meteor.subscribe('ticketstatus');
 Meteor.subscribe('modules', function() {
   EventHorizon.fire('modulescollectionready');
 });

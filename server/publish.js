@@ -81,8 +81,7 @@ Meteor.startup(function(){
   });
 });
 
-
-Meteor.publish('allTickets', function() {
+Meteor.publish('singleTicket', function(id) {
   var user = Meteor.users.findOne({_id: this.userId});
   var usergroups = Groups.find({members: {$in: [this.userId]}});
   var groupids = [];
@@ -90,9 +89,9 @@ Meteor.publish('allTickets', function() {
     groupids.push(group._id);
   });
   if (user && user.profile.isStaff) {
-    return Tickets.find();
+    return Tickets.find({_id: id});
   } else {
-    return Tickets.find({$or: [{group: {$in: groupids}}, {requesters: {$in: [this.userId]}}]});
+    return Tickets.find({_id: id, $or: [{group: {$in: groupids}}, {requesters: {$in: [this.userId]}}]});
   }
 });
 
@@ -109,6 +108,32 @@ Meteor.publish('sortedTickets', function(sort, limit) {
     return Tickets.find({$or: [{group: {$in: groupids}}, {requesters: {$in: [this.userId]}}]}, {sort: sort, limit:limit});
   }
 });
+
+Meteor.publish("counts-by-ticketstate", function (state) {
+  var self = this;
+  var count = 0;
+  var initializing = true;
+  var handle = Tickets.find({status: state}).observeChanges({
+    added: function (id) {
+      count++;
+      if (!initializing)
+        self.changed("ticketstatecounts", state, {count: count});
+    },
+    removed: function (id) {
+      count--;
+      self.changed("ticketstatecounts", state, {count: count});
+    }
+  });
+
+  initializing = false;
+  self.added("ticketstatecounts", state, {count: count});
+  self.ready();
+
+  self.onStop(function () {
+    handle.stop();
+  });
+});
+
 
 //TODO: set permissions for tickets
 Meteor.startup(function(){

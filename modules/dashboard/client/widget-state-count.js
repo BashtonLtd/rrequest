@@ -57,8 +57,16 @@ dashboard_widgets.push({
 Template.widget_state_count.helpers({
   widget: function(id) {
     var widget = UserDashboard.findOne({_id: id});
-    var count = Tickets.find({status: {$in: widget.extradata.filter}}).count();
-    return {label: widget.label, value: count};
+    var states = widget.extradata.filter;
+    var totalcount = 0;
+
+    states.forEach(function(state) {
+      var ticketcount = TicketStateCounts.findOne({_id: Session.get(state + 'ticketcountready')});
+      if (ticketcount !== undefined) {
+        totalcount = totalcount + ticketcount.count;
+      }
+    });
+    return {label: widget.label, value: totalcount};
   }
 });
 

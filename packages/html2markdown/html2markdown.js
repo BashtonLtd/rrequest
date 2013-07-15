@@ -21,13 +21,34 @@ tags = {
   img: {prefix: '', postfix: '', eachline: false, allowempty: true}
 }
 
+text2markdown = function(sourcetext) {
+  var lines = sourcetext.split('\n');
+  var outputtext = '';
+  var lastlinestart = '';
+  lines.forEach(function(line) {
+    if (line.charAt(0) == '>') {
+      if (!lastlinestart == '>') {
+        line = '\n' + line;
+      }
+      lastlinestart = '>';
+    } else {
+      if (lastlinestart = '>') {
+        line = '\n' + line;
+      }
+      lastlinestart = '';
+    }
+    outputtext = outputtext + '\n' + line;
+  });
+  return outputtext;
+};
+
 html2markdown = function (sourcehtml) {
   var handler = new htmlparser.DefaultHandler(
       function (error, dom) {
         if (error) {
 
         } else {
-          //sys.puts(sys.inspect(dom, false, null));
+          
         }
       }
     , { verbose: false, ignoreWhitespace: false }
