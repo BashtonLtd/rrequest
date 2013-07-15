@@ -1,0 +1,1 @@
+TicketStateCounts = new Meteor.Collection("ticketstatecounts");
