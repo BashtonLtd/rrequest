@@ -73,7 +73,6 @@ function cleanUp(string) {
   string = string.replace(/^[\t\r\n]+|[\t\r\n]+$/g, ''); // trim leading/trailing whitespace
   string = string.replace(/\n\s+\n/g, '\n\n');
   string = string.replace(/\n{3,}/g, '\n\n'); // limit consecutive linebreaks to 2
-  //string = string.replace(/\n\n/g, '\n');
   return string;
 };
 
@@ -111,7 +110,6 @@ function process (node, parentprefix, parentpostfix) {
     })
   }
   if (eachline == true) {
-    //text = text.replace(/\n\n/g, '\n');
     text = text.replace(/\n{3,}/g, '\n');
     text = text.replace(/\n/g, '\n' + prefix);
   }

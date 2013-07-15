@@ -50,7 +50,6 @@ Meteor.methods({
 
     return UserDashboard.remove({_id: args.id});
   }
-
 });
 
 create_userdashboard = function(args) {

@@ -30,6 +30,7 @@ Meteor.Router.add({
     response.setHeader('Content-type', attachment.contentType);
 
     var file = Attachments.retrieveBuffer(id);
+
     response.write(file);
   }
 });
