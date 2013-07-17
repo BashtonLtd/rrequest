@@ -61,10 +61,6 @@ dashboard_widgets.push({
   save: widget_ticket_list_save
 });
 
-Template.widget_ticket_list.created = function () {
-  //$('.box-body').height(10);
-};
-
 Template.widget_ticket_list.events({
   'click .load-more': function(event) {
     event.preventDefault();
@@ -98,27 +94,27 @@ Template.widget_ticket_list.helpers({
 
     switch(widget.extradata.sortorder) {
       case 'ageascend':
-        sorting = {sort: {'created': 1}};
+        sorting = {sort: {'created': -1}};
         ticketsource = ticketsNewest;
         sorting.limit = ticketsNewest.limit();
         break;
       case 'agedescend':
-        sorting = {sort: {'created': -1}};
+        sorting = {sort: {'created': 1}};
         ticketsource = ticketsOldest;
         sorting.limit = ticketsOldest.limit();
         break;
       case 'replyascend':
-        sorting = {sort: {'modified': 1}};
+        sorting = {sort: {'modified': -1}};
         ticketsource = ticketsNewestChange;
         sorting.limit = ticketsNewestChange.limit();
         break;
       case 'replydescend':
-        sorting = {sort: {'modified': -1}};
+        sorting = {sort: {'modified': 1}};
         ticketsource = ticketsOldestChange;
         sorting.limit = ticketsOldestChange.limit();
         break;
       default:
-        sorting = {sort: {'created': -1}};
+        sorting = {sort: {'created': 1}};
         ticketsource = ticketsOldest;
         sorting.limit = ticketsOldest.limit();
     }
