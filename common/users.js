@@ -82,11 +82,21 @@ get_user_group=function(user) {
   }
 };
 
-useremail=function(requesterId) {
-  var user = Meteor.users.findOne(requesterId);
-  if (user !== undefined) {
-    return user.profile.email;
+useremail=function(requester) {
+  var userId = null;
+  if (typeof(requester) == 'string') {
+    // Old style requester
+    userId = requester;
   } else {
-    return 'Unknown';
+    // New requester with ID and email
+    return requester.email;
   }
+
+  if (userId != null) {
+    var user = Meteor.users.findOne(userId);
+    if (user !== undefined) {
+      return user.profile.email;
+    }
+  }
+  return 'Unknown';
 };

@@ -30,18 +30,22 @@ Meteor.methods({
 
   addTicketRequester: function (options) {
     return add_ticket_requester(options);
-  }
+  },
+
+  
 });
 
 add_ticket_requester = function (options) {
   options = options || {};
-
-  return Tickets.update(
-    {_id:options.ticketId},
-    {
-      $push: {requesters: options.requesterId}
-    }
-  );
+  var user = Meteor.users.findOne({_id:options.requesterId});
+  if (user !== undefined) {
+    return Tickets.update(
+      {_id:options.ticketId},
+      {
+        $push: {requesters: {id:options.requesterId, email:user.profile.email}}
+      }
+    );
+  }
 }
 
 create_ticket = function (options) {

@@ -2,7 +2,11 @@
   {{#with widget widgetId}}
 
     <div class="box-header">
-      <h1>{{label}}</h1>
+      <div class="pagetitle">{{label}}</div>
+      <div class="btn-group pull-right">
+        <input id="search-{{id}}" class="searchfilter" type="text" value="{{searchfilter id}}" placeholder="Search..."/>
+      </div>
+      <div class="clearfix"></div>
     </div>
     <div class="clearfix"></div>
     <div class="box-body" style="height:{{body_height id}}px; overflow:auto;">
@@ -13,12 +17,12 @@
           <td><strong><a href="/ticket/{{_id}}">{{subject}}</a></strong></td>
           <td><small>
             {{#each requesters}}
-              {{requester_email this}}
+              {{getUserEmail this}}
             {{/each}}
           </small></td>
 
-          <td><span title="{{modified}}"><small>{{#with modified}}{{>age}}{{/with}}</small></span></td>
-          <td><span title="{{created}}"><small>{{#with created}}{{>age}}{{/with}}</small></span></td>
+          <td>{{#with modified}}<span title="{{this}}"><small>{{>age}}</small></span>{{/with}}</td>
+          <td>{{#with created}}<span title="{{this}}"><small>{{>age}}</small></span>{{/with}}</td>
         </tr>
       {{/each}}
       </tbody>

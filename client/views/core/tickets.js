@@ -20,7 +20,20 @@
  * 
 */
 Template.ticketlist.tickets = function () {
-  return Tickets.find({}, {sort: {'modified': -1}, limit: ticketsNewestChange.limit()});
+  var searchfilter = Session.get('ticketsSearchfilter');
+  return Tickets.find(
+    {
+      $or:
+      [
+        {_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
+        {subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+        {'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
+      ]
+    }, 
+    {sort: {'modified': -1}, limit: ticketListSub.limit()}
+    );
+};
+
 Template.tickets.created = function() {
   Session.set('ticketsSearchfilter', '');
   ticketListSub = Meteor.subscribeWithPagination(
@@ -30,10 +43,18 @@ Template.tickets.created = function() {
     10);
 };
 
+var getFilter = function() {
+  return {$or:
+    [
+      {_id: {$regex: ".*"+ Session.get('ticketsSearchfilter') +".*", $options: 'i'}},
+      {subject: {$regex: ".*"+ Session.get('ticketsSearchfilter') +".*", $options: 'i'}},
+      {'requesters.email': {$regex: ".*"+ Session.get('ticketsSearchfilter') +".*", $options: 'i'}}
+    ]
+  };
 };
 
 Template.tickets.showCreateTicketDialog = function () {
- return Session.get("showCreateTicketDialog");
+  return Session.get("showCreateTicketDialog");
 };
 
 Template.tickets.helpers({
@@ -51,6 +72,10 @@ Template.tickets.events({
     event.preventDefault();
     ticketListSub.loadNextPage();
   },
+
+  'input .searchfilter': function (event, template) {
+    var searchterm = template.find(".searchfilter").value;
+    Session.set('ticketsSearchfilter', searchterm);
   }
 });
 
@@ -143,7 +168,7 @@ Template.createTicketDialog.events({
       var user = Meteor.users.findOne({_id:requester});
       if (user !== undefined) {
         // User already exists in the system
-        existing_users.push(user._id);
+        existing_users.push({id:user._id, email:user.profile.email});
       } else {
         // User not found, check for valid email address
         var emailMatcher = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -198,13 +223,6 @@ Template.createTicketDialog.ticketRequesterGroups = function () {
 };
 
 Template.ticketlist.helpers({
-  requester_email: function (requesterId) {
-    var user = Meteor.users.findOne({_id:requesterId});
-    if (user !== undefined) {
-      return user.profile.email;
-    }
-  },
-
   age: function(time){
     return moment(time).fromNow();
   },

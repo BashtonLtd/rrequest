@@ -19,6 +19,20 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
+var widgetData = [];
+
+var getFilter = function(id, filter) {
+  return {
+    status: {$in: filter},
+    $or:
+    [
+      {_id: {$regex: ".*"+ Session.get('ticketsSearchfilter-'+id) +".*", $options: 'i'}},
+      {subject: {$regex: ".*"+ Session.get('ticketsSearchfilter-'+id) +".*", $options: 'i'}},
+      {'requesters.email': {$regex: ".*"+ Session.get('ticketsSearchfilter') +".*", $options: 'i'}}
+    ]
+  };
+};
+
 widget_ticket_list_save = function(event, template) {
   var widgetlabel = template.find(".widgetlabel").value;
   var width = template.find(".widgetwidth").value;
@@ -77,7 +91,14 @@ Template.widget_ticket_list.events({
     } else {
       var widgetEntry = {id: widgetId}
     }
-    ticketsource.loadNextPage();
+  },
+
+  'input .searchfilter': function (event, template) {
+    var id = event.srcElement.id;
+    var searchterm = template.find("#"+id).value;
+
+    var idarray = id.split('-');
+    Session.set('ticketsSearchfilter-'+idarray[1], searchterm);
   }
 });
 
@@ -155,12 +176,9 @@ Template.widget_ticket_list.helpers({
 
   },
 
-  requester_email: function (requesterId) {
-    var user = Meteor.users.findOne({_id:requesterId});
-    if (user !== undefined) {
-      return user.profile.email;
-    }
-  }, 
+  searchfilter: function (id) {
+    return Session.get('ticketsSearchfilter-'+id);
+  },
 
   body_height: function (id) {
     var widget = UserDashboard.findOne({_id: id});

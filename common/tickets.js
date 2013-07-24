@@ -86,7 +86,7 @@ create_reply = function(options) {
   reply['_id'] = Random.id();
   reply['type'] = 'reply';
   reply['level'] = user_level;
-  reply['posted_by'] = options.user._id;
+  reply['posted_by'] = {id:options.user._id, email:options.user.profile.email};
   reply['created'] = now;
 
   Tickets.update(

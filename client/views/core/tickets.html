@@ -49,7 +49,11 @@
 <template name="ticketlist">
   <div class="box">
     <div class="box-header">
-      <h3>All tickets</h3>
+      <div class="pagetitle">All Tickets</div>
+      <div class="btn-group pull-right">
+        <input id="ticketsearchfilter" class="searchfilter" type="text" placeholder="Search..."/>
+      </div>
+      <div class="clearfix"></div>
     </div>
     <div class="box-body">
       <table class="table table-striped">
@@ -59,20 +63,19 @@
           <td><strong><a href="/ticket/{{_id}}">{{subject}}</a></strong></td>
           <td><small>
             {{#each requesters}}
-              {{requester_email this}}, 
+              {{getUserEmail this}}, 
             {{/each}}
           </small></td>
           <td>{{ticketstatus}}</td>
-          <td><span title="{{this}}"><small>
+          <td>
             {{#with modified}}
-              {{>age}}
+              <span title="{{this}}"><small>{{>age}}</small></span>
             {{/with}}
-            </small></span>
-          <td><span title="{{this}}"><small>
+          </td>
+          <td>
             {{#with created}}
-              {{>age}}
+              <span title="{{this}}"><small>{{>age}}</small></span>
             {{/with}}
-            </small></span>
           </td>
         </tr>
         {{/each}}

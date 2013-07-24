@@ -317,30 +317,30 @@ Template.editTicketDialog.rendered = function () {
 
     createSearchChoice:function(term, data) {
       if ($(data).filter(function() {
-        return this.text.localeCompare(term) === 0;
+        return this.email.localeCompare(term) === 0;
       }).length === 0) {
-        return {id:term, text: term, isNew: true};
+        return {id:term, email: term, isNew: true};
       }
     },
 
     formatResult: function(term) {
       if (term.isNew) {
-        return '<span class="label label-important">New</span> ' + term.text;
+        return '<span class="label label-important">New</span> ' + term.email;
       } else {
-        return term.text;
+        return term.email;
       }
     }  
   });
 
   var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
-  $(".ticketrequester").val(ticket.requesters).trigger('change');
+  $(".ticketrequester").val(_.pluck(ticket.requesters, 'id')).trigger('change');
 };
 
 get_requesters = function (query_opts) {
   var users = Meteor.users.find({"profile.isStaff": false});
   var requesters = [];
   users.forEach(function (user) {
-    requesters.push({id:user._id, text:user.profile.email});
+    requesters.push({id:user._id, email:user.profile.email});
   });
   return {results: requesters};
 };
@@ -378,7 +378,7 @@ Template.editTicketDialog.events({
       var user = Meteor.users.findOne({_id:requester});
       if (user !== undefined) {
         // User already exists in the system
-        existing_users.push(user._id);
+        existing_users.push({id:user._id, email:user.profile.email});
       } else {
         // User not found, check for valid email address
         var emailMatcher = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
