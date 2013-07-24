@@ -22,6 +22,9 @@
 Meteor.subscribe('currentUser');
 Meteor.subscribe('allUsers');
 Meteor.subscribe('groups');
+Meteor.autorun(function() {
+	Meteor.subscribe('singleTicket', Session.get('viewticketId'));
+});
 
 Meteor.subscribe('singleTicket', Session.get('viewticketId'));
 
