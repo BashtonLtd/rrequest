@@ -32,13 +32,13 @@ Meteor.autorun(function() {
 //ticketsNewestChange = Meteor.subscribeWithPagination('sortedTickets', {modified: -1}, 10);
 
 Meteor.subscribe('ticketstatus', function() {
-	var tstatus = TicketStatus.find({});
-	tstatus.forEach(function(status) {
-		var name = status.name;
-		Meteor.subscribe("counts-by-ticketstate", name, function() {
-			Session.set(name + 'ticketcountready', name);
-		});
+  var tstatus = TicketStatus.find({});
+  tstatus.forEach(function(status) {
+    var name = status.name;
+	Meteor.subscribe("counts-by-ticketstate", name, function() {
+	  Session.set(name + 'ticketcountready', name);
 	});
+  });
 });
 
 Meteor.subscribe('modules', function() {
