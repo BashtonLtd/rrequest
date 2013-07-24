@@ -26,12 +26,10 @@ Meteor.autorun(function() {
 	Meteor.subscribe('singleTicket', Session.get('viewticketId'));
 });
 
-Meteor.subscribe('singleTicket', Session.get('viewticketId'));
-
-ticketsOldest = Meteor.subscribeWithPagination('sortedTickets', {created: 1}, 10);
-ticketsNewest = Meteor.subscribeWithPagination('sortedTickets', {created: -1}, 10);
-ticketsOldestChange = Meteor.subscribeWithPagination('sortedTickets', {modified: 1}, 10);
-ticketsNewestChange = Meteor.subscribeWithPagination('sortedTickets', {modified: -1}, 10);
+//ticketsOldest = Meteor.subscribeWithPagination('sortedTickets', {created: 1}, 10);
+//ticketsNewest = Meteor.subscribeWithPagination('sortedTickets', {created: -1}, 10);
+//ticketsOldestChange = Meteor.subscribeWithPagination('sortedTickets', {modified: 1}, 10);
+//ticketsNewestChange = Meteor.subscribeWithPagination('sortedTickets', {modified: -1}, 10);
 
 Meteor.subscribe('ticketstatus', function() {
 	var tstatus = TicketStatus.find({});

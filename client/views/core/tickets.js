@@ -21,6 +21,15 @@
 */
 Template.ticketlist.tickets = function () {
   return Tickets.find({}, {sort: {'modified': -1}, limit: ticketsNewestChange.limit()});
+Template.tickets.created = function() {
+  Session.set('ticketsSearchfilter', '');
+  ticketListSub = Meteor.subscribeWithPagination(
+    'sortedTickets',
+    {modified: -1}, 
+    getFilter, 
+    10);
+};
+
 };
 
 Template.tickets.showCreateTicketDialog = function () {
@@ -29,7 +38,7 @@ Template.tickets.showCreateTicketDialog = function () {
 
 Template.tickets.helpers({
   ticketsReady: function() {
-    return ! ticketsNewestChange.loading();
+    return ! ticketListSub.loading();
   }
 });
 
@@ -37,10 +46,11 @@ Template.tickets.events({
   'click .new-ticket': function (event) {
     openCreateTicketDialog();
   },
-
+  
   'click .load-more': function(event) {
     event.preventDefault();
-    ticketsNewestChange.loadNextPage();
+    ticketListSub.loadNextPage();
+  },
   }
 });
 
@@ -82,13 +92,11 @@ Template.createTicketDialog.rendered = function () {
     $(".ticketrequester").val([user._id]).trigger("change");
   }
 
-
   $(".ticketgroup").select2({
     placeholder: 'Select groups',
     data: get_groups,
     multiple: true
   });
-
 };
 
 get_requesters = function (query_opts) {
@@ -144,7 +152,6 @@ Template.createTicketDialog.events({
         }
       }
     });
-
 
     Meteor.call('createTicket', {
       subject: subject,

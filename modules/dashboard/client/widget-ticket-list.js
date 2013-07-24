@@ -64,23 +64,18 @@ dashboard_widgets.push({
 Template.widget_ticket_list.events({
   'click .load-more': function(event) {
     event.preventDefault();
-    var widget = UserDashboard.findOne({_id: event.toElement.id});
-
-    switch(widget.extradata.sortorder) {
-      case 'ageascend':
-        ticketsource = ticketsNewest;
-        break;
-      case 'agedescend':
-        ticketsource = ticketsOldest;
-        break;
-      case 'replyascend':
-        ticketsource = ticketsNewestChange;
-        break;
-      case 'replydescend':
-        ticketsource = ticketsOldestChange;
-        break;
-      default:
-        ticketsource = ticketsOldest;
+    var id = event.toElement.id;
+    if (_.contains(_.pluck(widgetData, 'id'), id)) {
+      var widgetEntry = _.find(widgetData, function(widget) {
+        if (widget.id == id) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+      widgetEntry.sub.loadNextPage();
+    } else {
+      var widgetEntry = {id: widgetId}
     }
     ticketsource.loadNextPage();
   }
@@ -89,36 +84,73 @@ Template.widget_ticket_list.events({
 Template.widget_ticket_list.helpers({
   widget: function(id) {
     var widget = UserDashboard.findOne({_id: id});
+    widgetId = id;
     var sorting = null;
     var ticketsource = null;
 
     switch(widget.extradata.sortorder) {
       case 'ageascend':
-        sorting = {sort: {'created': -1}};
-        ticketsource = ticketsNewest;
-        sorting.limit = ticketsNewest.limit();
+        subsorting = {'created': -1};
         break;
       case 'agedescend':
-        sorting = {sort: {'created': 1}};
-        ticketsource = ticketsOldest;
-        sorting.limit = ticketsOldest.limit();
+        subsorting = {'created': 1};
         break;
       case 'replyascend':
-        sorting = {sort: {'modified': -1}};
-        ticketsource = ticketsNewestChange;
-        sorting.limit = ticketsNewestChange.limit();
+        subsorting = {'modified': -1};
         break;
       case 'replydescend':
-        sorting = {sort: {'modified': 1}};
-        ticketsource = ticketsOldestChange;
-        sorting.limit = ticketsOldestChange.limit();
+        subsorting = {'modified': 1};
         break;
       default:
-        sorting = {sort: {'created': 1}};
-        ticketsource = ticketsOldest;
-        sorting.limit = ticketsOldest.limit();
+        subsorting = {'created': 1};
     }
-    var tickets = Tickets.find({status: {$in: widget.extradata.filter}}, sorting);
+    sorting = {sort: subsorting};
+
+    if (_.contains(_.pluck(widgetData, 'id'), widgetId)) {
+      var widgetEntry = _.find(widgetData, function(widget) {
+        if (widget.id == widgetId) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+
+    } else {
+      var widgetEntry = {id: widgetId}
+      widgetData.push(widgetEntry);
+    }
+
+    var limit = 10;
+    if (widgetEntry.sub != undefined) {
+      limit = widgetEntry.sub.limit();
+    }
+    widgetEntry.sub = Meteor.subscribeWithPagination(
+      'sortedTickets',
+      subsorting, 
+      getFilter(id, widget.extradata.filter), 
+      limit
+    );
+
+    sorting.limit = widgetEntry.sub.limit();
+    var searchfilter = Session.get('ticketsSearchfilter-'+id);
+    if (searchfilter == undefined) {
+      searchfilter = '';
+      Session.set('ticketsSearchfilter-'+id, '');
+    }
+
+    var tickets = Tickets.find(
+      {
+        status: {$in: widget.extradata.filter},
+        $or:
+        [
+          {_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
+          {subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+          {'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
+    
+        ]
+      },
+      sorting
+    );
     return {id: id, label: widget.label, tickets: tickets};
 
   },
