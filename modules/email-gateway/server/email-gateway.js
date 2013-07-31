@@ -91,8 +91,16 @@ Meteor.methods({
     var reply = ticket.replies[replyIndex];
     if (ticket !== undefined) {
       var subject = '[' + ticket._id + '] ' + ticket.subject;
-      var text = reply.body;
-      var html = marked(reply.body);
+
+      var ticketurl = Meteor.absoluteUrl('ticket/' + ticket._id, {});
+      var body = 'An update to your request has been posted and is shown below.\n\n';
+      body += 'To view the thread in context, visit ' + ticketurl + '.  ';
+      body += 'You can reply online or by replying to this email.\n\n';
+
+      body += reply.body;
+
+      var text = body;
+      var html = marked(body);
 
       var requesteremails = '';
       for (var i = 0, l = ticket.requesters.length; i < l; i++) {
