@@ -235,7 +235,7 @@ Template.ticketrow.helpers({
   getGroupOrRequester: function() {
     var ticket = Tickets.findOne({_id:this._id});
     if (ticket !== undefined) {
-      if (ticket.group == null) {
+      if (ticket.group == null || ticket.group == undefined || ticket.group.length == 0) {
         // return first requester
 
         return useremail(ticket.requesters[0]);
