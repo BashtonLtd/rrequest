@@ -19,12 +19,15 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-Template.dashboard.rendered = function () {
+Template.gridster.rendered = function () {
   $(".gridster ul").gridster({
     widget_margins: [6, 6],
-    widget_base_dimensions: [82, 82],
+    widget_base_dimensions: [80, 82],
     max_size_x: 12,
     max_size_y: 10,
+    min_cols: 12,
+    max_cols: 12,
+    min_rows: 6,
     serialize_params: function(elem, grid) {
       return {id: elem.attr('id'), position: grid};
     },
@@ -46,8 +49,13 @@ var openSelectWidgetDialog = function() {
   Session.set('showSelectWidgetDialog', true);
 };
 
-
 Template.dashboard.events({
+  'click .add_widget': function(event, template) {
+    openSelectWidgetDialog();
+  }
+});
+
+Template.gridster.events({
   'click .widgetremove': function (event, template) {
     event.preventDefault();
     Meteor.call('removeUserDashboard', {
@@ -55,16 +63,12 @@ Template.dashboard.events({
     }, function(error, widgetId) {
 
     });
-  },
-
-  'click .add_widget': function(event, template) {
-    openSelectWidgetDialog();
   }
 });
 
-Template.dashboard.helpers({
+Template.gridster.helpers({
   widgets: function() {
-    var widgets = UserDashboard.find();
+    var widgets = UserDashboard.find({}, {sort: {row: 1}});
     var display_widgets = [];
     widgets.forEach(function(widget) {
       display_widgets.push({
@@ -81,9 +85,18 @@ Template.dashboard.helpers({
 });
 
 store_positions = function(data) {
+  console.log('store positions');
   data.forEach(function(widget) {
+    //Meteor.call('updateUserDashboard', {
+    //  id: widget.id,
+    //  col: widget.position.col,
+    //  row: widget.position.row
+    //}, function(error, widgetId) {
+    //
+    //});
     UserDashboard.update({_id: widget.id}, {$set: {col: widget.position.col, row: widget.position.row}});
   });
+  //$(".gridster ul").gridster().data('gridster');
 };
 
 Template.selectWidgetDialog.events({

@@ -1,6 +1,6 @@
 body {
   padding-top: 50px;
-  background-color: #e5e5e5;
+  background-color: #e5e5e5 !important;
 }
 
 blockquote p {
@@ -40,7 +40,6 @@ label {
   -moz-border-radius: 3px;
   border-radius: 3px;
   border: 1px solid #d8d8d8;
-  border-top-width: 0;
   border-bottom-width: 2px;
   min-height: 20px;
   -webkit-box-sizing: border-box; 
@@ -87,7 +86,7 @@ label {
 }
 
 .event {
-  background-color: #b3b3dc;
+  background-color: #C4C4EE;
 }
 
 .comment {
@@ -156,4 +155,108 @@ label {
 
 ::-webkit-scrollbar-corner {
   background: transparent;
+}
+
+a {
+  color: #4183c4;
+  text-decoration: none;
+}
+
+.ticket-list {
+  margin: 0;
+}
+
+.status-icon {
+  float: left;
+  margin-top: 1px;
+  margin-left: -24px;
+}
+
+.ticket-item {
+  position: relative;
+  display: block;
+  margin-bottom: -1px;
+  padding: 8px 10px 10px 40px;
+  border: 1px solid #e5e5e5;
+}
+
+.ticket-item-check {
+  position: absolute;
+  left: 12px;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.ticket-item-icon {
+  float: left;
+  margin-top: 1px;
+  margin-left: -6px;
+  margin-right: 8px;
+}
+
+.ticket-item-id {
+  position: relative;
+  top: 2px;
+  float: right;
+  margin-left: 12px;
+  font-size: 13px;
+  color: #999;
+}
+
+.ticket-item-name {
+  margin: 0 160px 0 0;
+  font-size: 15px;
+  line-height: 1.3;
+  word-wrap: break-word;
+}
+
+.ticket-item-name-wide {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.3;
+  word-wrap: break-word;
+}
+
+.ticket-item-name a {
+  color: #333333;
+}
+
+.ticket-item-meta {
+  font-size: 11px;
+  line-height: 17px;
+  list-style-type: none;
+  overflow: hidden;
+  color: #999999;
+  margin: 0;
+}
+
+.ticket-item-meta a {
+  color: #000;
+}
+
+.dropdown-menu>div>a {
+  display: block;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: normal;
+  line-height: 20px;
+  color: #333333;
+  white-space: nowrap;
+}
+
+.dropdown-menu>div>a:hover, .dropdown-menu>div>a:focus, .dropdown-submenu:hover>a, .dropdown-submenu:focus>a {
+  text-decoration: none;
+  color: #ffffff;
+  background-color: #0081c2;
+  background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
+  background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
+  background-image: -o-linear-gradient(top, #0088cc, #0077b3);
+  background-image: linear-gradient(to bottom, #0088cc, #0077b3);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0);
+}
+
+.dropdown-menu {
+  top: -40px !important;
 }

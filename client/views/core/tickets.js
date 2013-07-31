@@ -19,6 +19,15 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  * 
 */
+Handlebars.registerHelper('ticketlistfooter_items', function() {
+  var footer_items = [];
+  var hooks = Hooks.find({hook:'ticketlistfooter_items'});
+  hooks.forEach(function (hook) {
+    footer_items.push({template: Template[hook.template]()});
+  });
+  return footer_items;
+});
+
 Template.ticketlist.tickets = function () {
   var searchfilter = Session.get('ticketsSearchfilter');
   return Tickets.find(
@@ -222,18 +231,27 @@ Template.createTicketDialog.ticketRequesterGroups = function () {
   return Groups.find({members: {$in: Session.get("selectedRequesters")}});
 };
 
-Template.ticketlist.helpers({
-  age: function(time){
-    return moment(time).fromNow();
-  },
-
-  ticketstatus: function(){
+Template.ticketrow.helpers({
+  getGroupOrRequester: function() {
     var ticket = Tickets.findOne({_id:this._id});
     if (ticket !== undefined) {
-      return ticket.status;
-    }
-  },
+      if (ticket.group == null) {
+        // return first requester
 
+        return useremail(ticket.requesters[0]);
+      } else {
+        // return group
+        var groups = []
+        ticket.group.forEach(function (group) {
+          groups.push(groupname(group));
+        });
+        return groups.join(', ');
+      }
+    }
+  }
+});
+
+Template.ticketlist.helpers({
   ticketready: function(){
     var ticket = Tickets.findOne({_id:this._id});
     if (ticket !== undefined) {
@@ -243,5 +261,12 @@ Template.ticketlist.helpers({
         return true;
       }
     }
+  }
+});
+
+Handlebars.registerHelper('ticketstatus', function() {
+  var ticket = Tickets.findOne({_id:this._id});
+  if (ticket !== undefined) {
+    return TicketStatus.findOne({name: ticket.status});
   }
 });

@@ -56,7 +56,7 @@ create_ticket = function (options) {
     created: new Date(),
     status: options.status,
     requesters: options.requesters,
-    group: options.group,
+    group: options.groups,
     replies: []
   });
 };

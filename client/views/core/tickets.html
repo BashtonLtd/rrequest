@@ -31,6 +31,11 @@
         <div class="box-header">
           <div class="pagetitle"></div>
           <div class="btn-group pull-right">
+          {{#if currentUser.profile.isStaff}}
+            {{#each ticketlistfooter_items}}
+              {{{template}}}
+            {{/each}}
+          {{/if}}
             {{#if ticketsReady}}
               <button class="btn load-more">Load More</button>
             {{else}}
@@ -42,8 +47,6 @@
       </div>
     </div>
   </div>
-  
-
 </template>
 
 <template name="ticketlist">
@@ -56,31 +59,48 @@
       <div class="clearfix"></div>
     </div>
     <div class="box-body">
-      <table class="table table-striped">
-        <tbody>
+      <div class="ticket-list">
         {{#each tickets}}
-        <tr class="{{ticketstatus}}">
-          <td><strong><a href="/ticket/{{_id}}">{{subject}}</a></strong></td>
-          <td><small>
-            {{#each requesters}}
-              {{getUserEmail this}}, 
-            {{/each}}
-          </small></td>
-          <td>{{ticketstatus}}</td>
-          <td>
-            {{#with modified}}
-              <span title="{{this}}"><small>{{>age}}</small></span>
-            {{/with}}
-          </td>
-          <td>
-            {{#with created}}
-              <span title="{{this}}"><small>{{>age}}</small></span>
-            {{/with}}
-          </td>
-        </tr>
+          {{> ticketrow}}
         {{/each}}
-        </tbody>
-      </table>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="ticketrow">
+  <div class="ticket-item">
+    <input type="checkbox" class="ticket-item-check" name="tickets[]" value="{{this._id}}">
+    <span class="ticket-item-id">{{this._id}}</span>
+    <h4 class="ticket-item-name">
+      {{#with ticketstatus}}
+      <span class="status-{{name}} ticket-item-icon"><i class="{{icon}}" style="color:#{{colour}}"></i></span>
+      {{/with}}
+      <a href="/ticket/{{_id}}" class="js-navigation-open">{{subject}}</a>
+    </h4>
+    <div class="ticket-item-meta">
+      <div>
+        Opened {{#with created}}<span title="{{this}}">{{>age}}</span>{{/with}} 
+        by <a href="#">{{getGroupOrRequester}}</a>, 
+        modified {{#with modified}}<span title="{{this}}">{{>age}}</span>{{/with}}.
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="ticketrowselecter">
+  <div class="ticket-item">
+    <input type="radio" class="ticket-item-check" name="tickets" value="{{this._id}}">
+    <h4 class="ticket-item-name-wide">
+      {{#with ticketstatus}}
+      <span class="status-{{name}} ticket-item-icon"><i class="{{icon}}" style="color:#{{colour}}"></i></span>
+      {{/with}}
+      {{subject}}
+    </h4>
+    <div class="ticket-item-meta">
+      <div>
+        Opened {{#with created}}<span title="{{this}}">{{>age}}</span>{{/with}} 
+      </div>
     </div>
   </div>
 </template>

@@ -18,9 +18,11 @@
       </div>
     </div>
   </div>
+  {{> gridster}}
 
+</template>
 
-
+<template name="gridster">
   <div class="gridster">
     <ul>
       {{#each widgets}}
@@ -28,11 +30,14 @@
       {{/each}}
     </ul>
   </div>
-
 </template>
 
+
 <template name="widget">
-  <li id="{{_id}}" class="{{template_name}}" data-row="{{row}}" data-col="{{col}}" data-sizex="{{sizex}}" data-sizey="{{sizey}}">
+  <li id="{{_id}}" class="widget {{template_name}}"
+  data-row="{{row}}"
+  data-col="{{col}}"
+  data-sizex="{{sizex}}" data-sizey="{{sizey}}">
     <button type="button" class="close widgetremove">&times;</button><br/>
     {{{template}}}
   </li>

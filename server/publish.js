@@ -89,9 +89,9 @@ Meteor.publish('singleTicket', function(id) {
     groupids.push(group._id);
   });
   if (user && user.profile.isStaff) {
-    return Tickets.find({_id: id});
+    return Tickets.find({_id: id, isVisible: {$ne: false}});
   } else {
-    return Tickets.find({_id: id, $or: [{group: {$in: groupids}}, {'requesters.id': {$in: [this.userId]}}]});
+    return Tickets.find({_id: id, isVisible: {$ne: false}, $or: [{group: {$in: groupids}}, {'requesters.id': {$in: [this.userId]}}]});
   }
 });
 
@@ -103,9 +103,10 @@ Meteor.publish('sortedTickets', function(sort, filter, limit) {
     groupids.push(group._id);
   });
   if (user && user.profile.isStaff) {
+    filter.isVisible = {$ne: false};
     return Tickets.find(filter, {sort: sort, limit: limit});
   } else {
-    return Tickets.find({$or: [{group: {$in: groupids}}, {'requesters.id': {$in: [this.userId]}}]}, {sort: sort, limit:limit});
+    return Tickets.find({isVisible: {$ne: false}, $or: [{group: {$in: groupids}}, {'requesters.id': {$in: [this.userId]}}]}, {sort: sort, limit:limit});
   }
 });
 

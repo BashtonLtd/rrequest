@@ -52,28 +52,33 @@ Meteor.methods({
   },
 
   insertEvent: function (options) {
-    options = options || {};
-
-    var now = new Date();
-
-    var reply = {
-      _id: Random.id(),
-      status: 'posted',
-      type: 'event',
-      body: options.body,
-      level: 'system',
-      created: now
-    };
-
-    return Tickets.update(
-      {_id: options.ticketId},
-      {
-        $push: { replies: reply},
-        $set: {modified: now}
-      }
-    );
+    return insert_event(options);
   }
 });
+
+insert_event = function(options) {
+  options = options || {};
+
+  var now = new Date();
+
+  var reply = {
+    _id: Random.id(),
+    status: 'posted',
+    type: 'event',
+    body: options.body,
+    level: 'system',
+    created: now
+  };
+
+  return Tickets.update(
+    {_id: options.ticketId},
+    {
+      $push: { replies: reply},
+      $set: {modified: now}
+    }
+  );
+};
+
 
 create_reply = function(options) {
   var user_level = 'requester';

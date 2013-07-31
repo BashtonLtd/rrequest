@@ -19,25 +19,7 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-EMAIL_FROM = 'rrequest@bashton.com';
-
-Meteor.startup(function (){
-  // Initialise status collection
-  var status_new = TicketStatus.findOne({name: 'new'});
-  if (status_new === undefined) {
-    TicketStatus.insert({
-      name: 'new',
-      icon: 'icon-ok-sign',
-      colour: '51B948'
-    });
-  }
-
-  var status_closed = TicketStatus.findOne({name: 'closed'});
-  if (status_closed === undefined) {
-    TicketStatus.insert({
-      name: 'closed',
-      icon: 'icon-remove-sign',
-      colour: 'B94A48'
-    });
-  }
-});
+groupname=function(groupId) {
+  var group = Groups.findOne({_id: groupId});
+  return group.name;
+};

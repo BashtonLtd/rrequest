@@ -19,6 +19,15 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
+Handlebars.registerHelper('ticketfooter_items', function() {
+  var footer_items = [];
+  var hooks = Hooks.find({hook:'ticketfooter_items'});
+  hooks.forEach(function (hook) {
+    footer_items.push({template: Template[hook.template]()});
+  });
+  return footer_items;
+});
+
 Template.ticket.unposted_reply = function () {
   var user = Meteor.users.findOne({_id: Meteor.userId()});
   var ticket = Tickets.findOne({_id: Session.get('viewticketId')});

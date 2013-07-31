@@ -22,6 +22,9 @@
         {{#if currentUser.profile.isStaff}}
         <div class="box-footer">
           <div class="btn-group pull-right">
+            {{#each ticketfooter_items}}
+              {{{template}}}
+            {{/each}}
             <button class="btn edit-ticket"><i class="icon-wrench"></i> Edit</button>
             </div>
           <div class="clearfix"></div>

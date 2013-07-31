@@ -10,26 +10,19 @@
     </div>
     <div class="clearfix"></div>
     <div class="box-body" style="height:{{body_height id}}px; overflow:auto;">
-      <table class="table table-striped">
-      <tbody>
+      <div class="ticket-list">
       {{#each tickets}}
-        <tr class="{{status}}">
-          <td><strong><a href="/ticket/{{_id}}">{{subject}}</a></strong></td>
-          <td><small>
-            {{#each requesters}}
-              {{getUserEmail this}}
-            {{/each}}
-          </small></td>
-
-          <td>{{#with modified}}<span title="{{this}}"><small>{{>age}}</small></span>{{/with}}</td>
-          <td>{{#with created}}<span title="{{this}}"><small>{{>age}}</small></span>{{/with}}</td>
-        </tr>
+        {{> ticketrow}}
       {{/each}}
-      </tbody>
-      </table>
+      </div>
     </div>
     <div class="box-footer">
       <div class="btn-group pull-right">
+        {{#if currentUser.profile.isStaff}}
+        {{#each ticketlistfooter_items}}
+          {{{template}}}
+        {{/each}}
+        {{/if}}
         <button id="{{id}}" class="btn load-more">Load More</button>
       </div>
       <div class="clearfix"></div>

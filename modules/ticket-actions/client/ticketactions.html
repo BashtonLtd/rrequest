@@ -1,0 +1,25 @@
+<template name="ticketlistactionlist">
+  <div class="btn-group">
+    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+      Actions <span class="caret"></span>
+    </a>
+    <div class="dropdown-menu">
+      {{#each ticketlistactions}}
+      	<div><a id="{{id}}" class="ticketaction" href="#">{{name}}</a><div>
+      {{/each}}
+	</div>
+  </div>
+</template>
+
+<template name="ticketactionlist">
+  <div class="btn-group">
+    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+      Actions <span class="caret"></span>
+    </a>
+    <div class="dropdown-menu">
+      {{#each ticketactions}}
+        <div><a id="{{id}}" class="ticketaction" href="#">{{name}}</a><div>
+      {{/each}}
+  </div>
+  </div>
+</template>

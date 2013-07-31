@@ -49,7 +49,14 @@ Meteor.methods({
     args = args || {};
 
     return UserDashboard.remove({_id: args.id});
+  },
+
+  updateUserDashboard: function (args) {
+    args = args || {};
+
+    return UserDashboard.update({_id: args.id}, {$set: {col: args.col, row: args.row}});
   }
+
 });
 
 create_userdashboard = function(args) {
