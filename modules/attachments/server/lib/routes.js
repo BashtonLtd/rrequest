@@ -26,11 +26,17 @@ Meteor.Router.add({
     var response = this.response;
     var attachment = Attachments.files.findOne({_id: id});
 
-    response.setHeader('Content-disposition', 'attachment; filename=' + attachment.filename);
-    response.setHeader('Content-type', attachment.contentType);
-
-    var file = Attachments.retrieveBuffer(id);
-
-    response.write(file);
+    if (attachment.metadata.ondisk === undefined) {
+  		response.setHeader('Content-disposition', 'attachment; filename=' + attachment.filename);
+   		response.setHeader('Content-type', attachment.contentType);
+    	var file = Attachments.retrieveBuffer(id);
+    	response.write(file);
+    } else {
+    	return [200,
+    	{
+       		'Content-type': attachment.contentType,
+       		'Content-Disposition': "attachment; filename=" + attachment.filename
+    	}, fs.readFileSync(attachment.metadata.ondisk)];
+    }
   }
 });

@@ -57,6 +57,15 @@ process_mail = function(mail_object) {
   if (mail_object.attachments !== undefined) {
     mail_object.attachments.forEach(function(elem, index){
       Fiber(function() {
+        var filelocation = "/mediafiles/" + Random.id();
+        fs.writeFile(filelocation, elem.content, function(error) {
+          if (error) {
+            console.log(error);
+          } else {
+            
+          }
+        });
+
         Attachments.storeBuffer(elem.generatedFileName, elem.content, {
           contentType: elem.contentType,
           encoding: 'utf-8',
@@ -64,7 +73,8 @@ process_mail = function(mail_object) {
             ticketId:ticket._id,
             replyId:replyId,
             requester:requestfrom._id,
-            group:ticket.group
+            group:ticket.group,
+            ondisk:filelocation
           }
         });
       }).run();
