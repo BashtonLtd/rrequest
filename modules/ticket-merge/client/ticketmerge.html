@@ -1,0 +1,33 @@
+<template name="ticketmerge">
+  <div class="ticketmergecontainer">
+  {{#if showMergeDialog}}
+  	{{> ticketmergedialog}}
+  {{/if}}
+  </div>
+</template>
+
+<template name="ticketmergedialog">
+<div class="mergetickets">
+  <div class="mask"> </div>
+    <div class="modal">
+      <div class="modal-header">
+        <button type="button" class="close cancel">&times;</button>
+        <h3>Merge Tickets</h3>
+      </div>
+
+      <div class="modal-body">
+      	<h4>Select ticket to merge into:</h4>
+      	<div class="ticket-list">
+      	{{#each tickets}}
+      	  {{> ticketrowselecter}}
+        {{/each}}
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <a href="#" class="btn cancel">Cancel</a>
+        <a href="#" class="btn btn-primary merge">Merge</a>
+      </div>
+    </div>
+  </div>
+</template>
