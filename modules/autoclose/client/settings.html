@@ -1,0 +1,25 @@
+<template name="autoclosesettings">
+  <div class="box">
+    <div class="box-header">
+      <h4>Settings</h4>
+    </div>
+
+    <div class="box-body">
+      <label>Inactivity Period</label>
+      <input id="inactivity_warning" type="text" class="span4 inactivity_warning" value="{{inactivity_warning}}">
+      <div class="help-block">Number of days a ticket can be inactive before a warning is sent.</div>
+
+      <label>Closing Period</label>
+      <input id="close_period" type="text" class="span4 close_period" value="{{close_period}}">
+      <div class="help-block">Number of days after an inactivity warning that the ticket will be closed.</div>
+
+    </div>
+
+    <div class="box-footer">
+      <div class="btn-group pull-right">
+      <button class="btn btn-primary autoclose-settings-save"><i class="icon-ok icon-white"></i> Save</button>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</template>
