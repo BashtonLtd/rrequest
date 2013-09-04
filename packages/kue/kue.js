@@ -1,0 +1,1 @@
+kue = Npm.require('kue');
