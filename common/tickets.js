@@ -44,11 +44,7 @@ Meteor.methods({
 
   updateStatus: function (options) {
     options = options || {};
-
-    return Tickets.update(
-      {_id: options.ticketId},
-      {$set: {status: options.status}}
-    );
+    update_status(options);
   },
 
   insertEvent: function (options) {
@@ -76,6 +72,15 @@ insert_event = function(options) {
       $push: { replies: reply},
       $set: {modified: now}
     }
+  );
+};
+
+update_status = function(options) {
+  options = options || {};
+
+  return Tickets.update(
+    {_id: options.ticketId},
+    {$set: {status: options.status}}
   );
 };
 

@@ -47,7 +47,7 @@ Meteor.methods({
       		hook: 'ticketfooter_items',
       		module_id: args.module_id,
       		template: 'ticketactionlist'
-	    });
+	     });
 	},
 
 	disable_ticketactions_module: function(args) {

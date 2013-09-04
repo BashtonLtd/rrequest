@@ -123,7 +123,7 @@ Meteor.methods({
   }
 });
 
-var get_requester_message_id = function(ticketId) {
+get_requester_message_id = function(ticketId) {
   var ticket = Tickets.findOne({_id: ticketId});
   var message_id = '';
 
