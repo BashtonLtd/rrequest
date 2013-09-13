@@ -51,14 +51,28 @@ add_ticket_requester = function (options) {
 create_ticket = function (options) {
   options = options || {};
 
-  return Tickets.insert({
-    subject: options.subject,
-    created: new Date(),
-    status: options.status,
-    requesters: options.requesters,
-    group: options.groups,
-    replies: []
-  });
+  if (options._id !== undefined) {
+    return Tickets.insert({
+      _id: options._id,
+      subject: options.subject,
+      created: new Date(),
+      status: options.status,
+      requesters: options.requesters,
+      group: options.groups,
+      replies: []
+    });
+  } else {
+
+
+    return Tickets.insert({
+      subject: options.subject,
+      created: new Date(),
+      status: options.status,
+      requesters: options.requesters,
+      group: options.groups,
+      replies: []
+    });
+  }
 };
 
 update_ticket  = function (options) {

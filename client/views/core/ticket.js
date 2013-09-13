@@ -326,17 +326,17 @@ Template.editTicketDialog.rendered = function () {
 
     createSearchChoice:function(term, data) {
       if ($(data).filter(function() {
-        return this.email.localeCompare(term) === 0;
+        return this.text.localeCompare(term) === 0;
       }).length === 0) {
-        return {id:term, email: term, isNew: true};
+        return {id:term, text: term, isNew: true};
       }
     },
 
     formatResult: function(term) {
       if (term.isNew) {
-        return '<span class="label label-important">New</span> ' + term.email;
+        return '<span class="label label-important">New</span> ' + term.text;
       } else {
-        return term.email;
+        return term.text;
       }
     }  
   });
@@ -349,7 +349,7 @@ get_requesters = function (query_opts) {
   var users = Meteor.users.find({"profile.isStaff": false});
   var requesters = [];
   users.forEach(function (user) {
-    requesters.push({id:user._id, email:user.profile.email});
+    requesters.push({id:user._id, text:user.profile.email});
   });
   return {results: requesters};
 };

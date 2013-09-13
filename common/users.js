@@ -83,6 +83,10 @@ get_user_group=function(user) {
 };
 
 useremail=function(requester) {
+  if (requester === undefined) {
+    return 'Unknown';
+  }
+
   var userId = null;
   if (typeof(requester) == 'string') {
     // Old style requester

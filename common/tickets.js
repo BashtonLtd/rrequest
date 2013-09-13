@@ -54,8 +54,10 @@ Meteor.methods({
 
 insert_event = function(options) {
   options = options || {};
-
   var now = new Date();
+  if (options.created !== undefined) {
+    now = options.created;
+  }
 
   var reply = {
     _id: Random.id(),
@@ -92,6 +94,10 @@ create_reply = function(options) {
   }
 
   var now = new Date();
+  if (options.created !== undefined) {
+    now = options.created;
+  }
+
   reply = options.reply;
   reply['_id'] = Random.id();
   reply['type'] = 'reply';
