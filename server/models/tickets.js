@@ -91,10 +91,14 @@ get_or_create_ticket = function(requesters, subject) {
   var group = null;
 
   for (var i = 0, l = requesters.length; i < l; i++) {
-    var usergroup = get_user_group(requesters[i]);
-    if (usergroup) {
-      group = usergroup;
-      break;
+    if (in_multiple_groups({_id: requesters[i].id})) {
+      group = null;
+    } else {
+      var usergroup = get_user_group({_id: requesters[i].id});
+      if (usergroup !== undefined) {
+        group = [usergroup];
+        break;
+      }
     }
   }
 
@@ -113,7 +117,7 @@ get_or_create_ticket = function(requesters, subject) {
       subject: subject,
       status: 'new',
       requesters: requesters,
-      group: group
+      groups: group
     });
     ticket = Tickets.findOne({_id: new_ticketId});
     return ticket;
