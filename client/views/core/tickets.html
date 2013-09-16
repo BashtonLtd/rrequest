@@ -71,7 +71,11 @@
 <template name="ticketrow">
   <div class="ticket-item">
     <input type="checkbox" class="ticket-item-check" name="tickets[]" value="{{this._id}}">
-    <span class="ticket-item-id">{{this._id}}</span>
+    <span class="ticket-item-id">{{this._id}}<br/>
+      {{#if isNotGrouped this._id}}
+        <span class="ticket-label label label-warning">Not grouped</span>
+      {{/if}}
+    </span>
     <h4 class="ticket-item-name">
       {{#with ticketstatus}}
       <span class="status-{{name}} ticket-item-icon"><i class="{{icon}}" style="color:#{{colour}}"></i></span>

@@ -194,6 +194,10 @@ a {
   margin-right: 8px;
 }
 
+.ticket-label {
+  float: right;
+}
+
 .ticket-item-id {
   position: relative;
   top: 2px;
