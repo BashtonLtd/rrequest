@@ -1,0 +1,31 @@
+<template name="action_editgroups">
+  <div class="editgroupscontainer">
+  {{#if showEditgroupDialog}}
+    {{> editgroupdialog}}
+  {{/if}}
+  </div>
+</template>
+
+<template name="editgroupdialog">
+<div class="editgroupsaction">
+  <div class="mask"> </div>
+    <div class="modal">
+      <div class="modal-header">
+        <button type="button" class="close cancel">&times;</button>
+        <h3>Edit Groups</h3>
+      </div>
+
+      <div class="modal-body">
+        <label>Group</label>
+        <input class="ticketgroup" style="width:100%"/>
+        <div class="help-block">All selected groups will be able to see this ticket.</div>
+      </div>
+
+      <div class="modal-footer">
+        <a href="#" class="btn cancel">Cancel</a>
+        <a href="#" class="btn btn-primary editgroups">Save</a>
+      </div>
+    </div>
+  </div>
+</div>
+</template>

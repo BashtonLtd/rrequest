@@ -32,8 +32,20 @@ Meteor.methods({
     return add_ticket_requester(options);
   },
 
-  
+  setTicketGroups: function (options) {
+    return set_ticket_groups(options);
+  }
 });
+
+set_ticket_groups = function (options) {
+  options = options || {};
+  return Tickets.update(
+    {_id:options.ticketId},
+    {
+      $set: {group: options.groups}
+    }
+  );
+}
 
 add_ticket_requester = function (options) {
   options = options || {};
@@ -79,7 +91,7 @@ update_ticket  = function (options) {
   options = options || {};
 
   return Tickets.update({_id: options._id},
-      {$set: {subject: options.subject, requesters: options.requesters, status:options.status}}
+      {$set: {subject: options.subject, requesters: options.requesters, group: options.groups, status:options.status}}
     );
 };
 

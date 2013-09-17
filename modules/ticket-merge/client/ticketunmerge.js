@@ -20,7 +20,6 @@
  * 
 */
 ticketunmerge = function(ticketList) {
-  console.log('ticketList: ' + ticketList);
   if ($('.ticketunmergecontainer').length == 0) {
   	var dialog = Meteor.render(Template['ticketunmerge']);
   	$(".container").append(dialog);
@@ -47,9 +46,6 @@ Template.ticketunmergedialog.events({
 
   'click .unmerge': function (event, template) {
   	event.preventDefault();
-
-  	console.log('list: ' + Session.get('unmergeticketslist'));
-
   	Meteor.call('unmergeTickets', Meteor.userId(), Session.get('unmergeticketslist'), function (error) {
   		if (!error) {
 

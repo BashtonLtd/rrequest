@@ -21,5 +21,9 @@
 */
 groupname=function(groupId) {
   var group = Groups.findOne({_id: groupId});
-  return group.name;
+  if (group !== undefined) {
+    return group.name;
+  } else {
+    return "";
+  }
 };

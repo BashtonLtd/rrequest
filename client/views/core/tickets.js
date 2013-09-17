@@ -131,6 +131,11 @@ Template.createTicketDialog.rendered = function () {
     data: get_groups,
     multiple: true
   });
+
+  if (get_groups().results.length == 1) {
+    $(".ticketgroup").val(get_groups().results[0].id).trigger("change");
+  }
+
 };
 
 get_requesters = function (query_opts) {
@@ -153,7 +158,7 @@ get_requesters = function (query_opts) {
   return {results: requesters};
 };
 
-get_groups = function (query_opts) {
+var get_groups = function (query_opts) {
   var user = Meteor.users.findOne({_id:Meteor.userId()});
   var requesters = $(".ticketrequester").select2('val');
   var grouplist = Groups.find({members: {$in: requesters}});
@@ -230,6 +235,22 @@ Template.createTicketDialog.ticketRequesterGroups = function () {
   }
   return Groups.find({members: {$in: Session.get("selectedRequesters")}});
 };
+
+Template.createTicketDialog.helpers({
+  displayGroups: function () {
+    var user = Meteor.users.findOne({_id: Meteor.userId()});
+    if (user !== undefined) {
+      if (is_staff(user)) {
+        return true;
+      }
+      if (in_multiple_groups(user)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+});
 
 Template.ticketrow.helpers({
   getGroupOrRequester: function() {

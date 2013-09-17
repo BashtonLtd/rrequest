@@ -72,9 +72,11 @@
   <div class="ticket-item">
     <input type="checkbox" class="ticket-item-check" name="tickets[]" value="{{this._id}}">
     <span class="ticket-item-id">{{this._id}}<br/>
+    {{#if currentUser.profile.isStaff}}
       {{#if isNotGrouped this._id}}
         <span class="ticket-label label label-warning">Not grouped</span>
       {{/if}}
+    {{/if}}
     </span>
     <h4 class="ticket-item-name">
       {{#with ticketstatus}}
@@ -128,10 +130,16 @@
       <label>Requesters</label>          
       <input id="requesterlist" style="width:100%" type="hidden" class="ticketrequester"/>
       <div class="help-block">To add a brand new requester, type their email address followed by a space.</div>
-      <label>Group</label>
-      <input class="ticketgroup" style="width:100%"/>
 
-      <div class="help-block">All selected groups will be able to see this ticket.</div>
+      {{#if displayGroups}}
+        <div>
+      {{else}}
+        <div style="display:none;">
+      {{/if}}
+        <label>Group</label>
+        <input class="ticketgroup" style="width:100%"/>
+        <div class="help-block">All selected groups will be able to see this ticket.</div>
+      </div>
     </div>
 
     <div class="modal-footer">

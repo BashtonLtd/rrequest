@@ -287,6 +287,24 @@ Template.ticket.helpers({
     return ticket;
   },
 
+  getGroups: function() {
+    var ticket = Tickets.findOne(Session.get('viewticketId'));
+    var groups = [];
+    ticket.group.forEach(function (group) {
+      groups.push(groupname(group));
+    });
+    return groups.join(', ');
+  },
+
+  getRequesters: function () {
+    var ticket = Tickets.findOne(Session.get('viewticketId'));
+    var requesters = [];
+    ticket.requesters.forEach(function (requester) {
+      requesters.push(useremail(requester));
+    });
+    return requesters.join(', ');
+  },
+
   displayreply: function(replytype){
     var user = Meteor.users.findOne({_id: Meteor.userId()});
     if(user.profile.isStaff) {
@@ -338,11 +356,18 @@ Template.editTicketDialog.rendered = function () {
       } else {
         return term.text;
       }
-    }  
+    } 
   });
-
+  
+  $(".ticketgroup").select2({
+    placeholder: 'Select groups',
+    data: get_groups,
+    multiple: true
+  });
+  
   var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
   $(".ticketrequester").val(_.pluck(ticket.requesters, 'id')).trigger('change');
+  $(".ticketgroup").val(ticket.group, 'id').trigger('change');
 };
 
 get_requesters = function (query_opts) {
@@ -352,6 +377,17 @@ get_requesters = function (query_opts) {
     requesters.push({id:user._id, text:user.profile.email});
   });
   return {results: requesters};
+};
+
+var get_groups = function (query_opts) {
+  var user = Meteor.users.findOne({_id:Meteor.userId()});
+  var requesters = $(".ticketrequester").select2('val');
+  var grouplist = Groups.find({members: {$in: requesters}});
+  var groups = [];
+  grouplist.forEach(function (group) {
+    groups.push({id:group._id, text:group.name});
+  });
+  return {results: groups};
 };
 
 Template.editTicketDialog.helpers({
@@ -377,6 +413,7 @@ Template.editTicketDialog.events({
   'click .save': function (event, template) {
     var subject = template.find(".subject").value;
     var requesters = $(".ticketrequester").select2('val');
+    var groups = $(".ticketgroup").select2('val');
     var status = template.find(".ticketstatus").value;
     var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
     var original_status = ticket.status;
@@ -401,6 +438,7 @@ Template.editTicketDialog.events({
       _id: ticket._id,
       subject: subject,
       requesters: existing_users,
+      groups: groups,
       status: status
     } , function (error, ticketId) {
       if (! error) {

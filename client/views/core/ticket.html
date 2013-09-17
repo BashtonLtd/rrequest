@@ -14,9 +14,13 @@
         </div>
         <div class="box-body">
           <label>Requesters:</label>
-          {{#each requesters}}
-            <span>{{getUserEmail this}}</span><br/>
-          {{/each}}
+          {{getRequesters}}<br/>
+          
+          {{#if currentUser.profile.isStaff}}
+          <label>Groups:</label>
+          {{getGroups}}<br/>
+          {{/if}}
+
           <label>Status:</label>{{status}}</br>
         </div>
         {{#if currentUser.profile.isStaff}}
@@ -141,6 +145,10 @@
       <label>Requesters</label>          
       <input id="requesterlist" style="width:100%" type="hidden" class="ticketrequester"/>
       <div class="help-block">To add a brand new requester, type their email address followed by a space.</div>
+
+      <label>Group</label>
+      <input class="ticketgroup" style="width:100%"/>
+      <div class="help-block">All selected groups will be able to see this ticket.</div>
 
       <select class="ticketstatus">
         {{#each ticketstatus}}
