@@ -19,12 +19,18 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  * 
 */
+sortByName = function(obj1, obj2) {
+  console.log(obj1);
+  return obj2.name < obj1.name ? 1 : -1;
+};
+
 Handlebars.registerHelper('ticketlistactions', function() {
   var ticketactions = [];
   var hooks = Hooks.find({hook:'ticketactions', type: 'ticketlist'});
   hooks.forEach(function (hook) {
     ticketactions.push({name: hook.name, callback: hook.callback, id: hook._id});
   });
+  ticketactions.sort(sortByName);
   return ticketactions;
 });
 
@@ -58,6 +64,7 @@ Handlebars.registerHelper('ticketactions', function() {
   hooks.forEach(function (hook) {
     ticketactions.push({name: hook.name, callback: hook.callback, id: hook._id});
   });
+  ticketactions.sort(sortByName);
   return ticketactions;
 });
 
