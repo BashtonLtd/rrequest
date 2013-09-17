@@ -66,3 +66,17 @@ Template.nav.helpers({
     }
   }
 });
+
+is_staff=function(user){
+  if(!user || typeof user == 'undefined') {
+    return false;
+  }
+  return user.profile.isStaff;
+};
+
+is_admin=function(user){
+  if(!user || typeof user === 'undefined') {
+    return false;
+  }
+  return !!user.isAdmin;
+};

@@ -20,6 +20,8 @@
  *
 */
 EMAIL_FROM = 'rrequest@bashton.com';
+Accounts.emailTemplates.siteName = "Bashton Support";
+Accounts.emailTemplates.from = "Bashton Support <support@bashton.com>";
 
 Meteor.startup(function (){
   // Initialise status collection
