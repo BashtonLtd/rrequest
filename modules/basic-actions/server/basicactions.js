@@ -46,6 +46,24 @@ Meteor.methods({
             template: 'action_editgroups'
         });
 
+        Hooks.insert({
+            hook: 'ticketactions',
+            module_id: args.module_id,
+            name: 'Resolve Tickets',
+            type: 'ticketlist',
+            callback: 'action_resolvetickets',
+            template: 'action_resolvetickets'
+        });
+
+        Hooks.insert({
+            hook: 'ticketactions',
+            module_id: args.module_id,
+            name: 'Resolve Ticket',
+            type: 'ticket',
+            callback: 'action_resolvetickets',
+            template: 'action_resolvetickets'
+        });
+
     },
 
     disable_basicactions_module: function(args) {
@@ -58,6 +76,10 @@ Meteor.methods({
 
     editgroups_action: function(userId, target, groups) {
         return editgroups_action(userId, target, groups);
+    },
+
+    resolvetickets_action: function(userId, targets) {
+        return resolvetickets_action(userId, targets);
     }
 });
 
@@ -68,5 +90,21 @@ editgroups_action = function (userId, target, groups) {
     if (target_ticket !== undefined) {
         set_ticket_groups({ticketId: target_ticket._id, groups: groups});
     }
+
+};
+
+resolvetickets_action = function (userId, targets) {
+    var user = Meteor.users.findOne({_id: userId});
+    targets.forEach(function (ticket) {
+        update_status({
+            ticketId: ticket,
+            status: 'closed'
+        });
+
+        insert_event({
+            ticketId: ticket,
+            body: 'Ticket status changed to "closed" by ' + useremail(user._id) + '.'
+        });
+    });
 
 };

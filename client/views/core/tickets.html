@@ -94,6 +94,31 @@
   </div>
 </template>
 
+<template name="ticketrowsimple">
+  <div class="ticket-item">
+    <span class="ticket-item-id">{{this._id}}<br/>
+    {{#if currentUser.profile.isStaff}}
+      {{#if isNotGrouped this._id}}
+        <span class="ticket-label label label-warning">Not grouped</span>
+      {{/if}}
+    {{/if}}
+    </span>
+    <h4 class="ticket-item-name">
+      {{#with ticketstatus}}
+      <span class="status-{{name}} ticket-item-icon"><i class="{{icon}}" style="color:#{{colour}}"></i></span>
+      {{/with}}
+      <a href="/ticket/{{_id}}" class="js-navigation-open">{{subject}}</a>
+    </h4>
+    <div class="ticket-item-meta">
+      <div>
+        Opened {{#with created}}<span title="{{this}}">{{>age}}</span>{{/with}} 
+        by <a href="#">{{getGroupOrRequester}}</a>, 
+        modified {{#with modified}}<span title="{{this}}">{{>age}}</span>{{/with}}.
+      </div>
+    </div>
+  </div>
+</template>
+
 <template name="ticketrowselecter">
   <div class="ticket-item">
     <input type="radio" class="ticket-item-check" name="tickets" value="{{this._id}}">

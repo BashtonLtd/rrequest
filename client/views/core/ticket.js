@@ -290,10 +290,13 @@ Template.ticket.helpers({
   getGroups: function() {
     var ticket = Tickets.findOne(Session.get('viewticketId'));
     var groups = [];
-    ticket.group.forEach(function (group) {
-      groups.push(groupname(group));
-    });
-    return groups.join(', ');
+    if (ticket.group !== null) {
+      ticket.group.forEach(function (group) {
+        groups.push(groupname(group));
+      });
+      return groups.join(', ');
+    }
+    return '';
   },
 
   getRequesters: function () {
