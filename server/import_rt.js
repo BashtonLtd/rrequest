@@ -285,7 +285,7 @@ var handle_ticket = function (path) {
                 console.log(err);
             } else {
                 console.log(path + ' archived');
-                setTimeout(import_tickets, 3000);
+                setTimeout(import_tickets, 1500);
             }
         });
 
