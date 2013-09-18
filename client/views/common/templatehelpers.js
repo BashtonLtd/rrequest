@@ -17,6 +17,15 @@ Handlebars.registerHelper('getUserEmail', function(userId) {
   return email;
 });
 
+Handlebars.registerHelper('getRequesters', function(ticketId) {
+  var ticket = Tickets.findOne(ticketId);
+  var requesters = [];
+  ticket.requesters.forEach(function (requester) {
+    requesters.push(useremail(requester));
+  });
+  return requesters.join(', ');
+});
+
 Handlebars.registerHelper('isNotGrouped', function(ticketId) {
   var ticket = Tickets.findOne({_id: ticketId});
   if (ticket !== undefined) {

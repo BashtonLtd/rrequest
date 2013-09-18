@@ -299,15 +299,6 @@ Template.ticket.helpers({
     return '';
   },
 
-  getRequesters: function () {
-    var ticket = Tickets.findOne(Session.get('viewticketId'));
-    var requesters = [];
-    ticket.requesters.forEach(function (requester) {
-      requesters.push(useremail(requester));
-    });
-    return requesters.join(', ');
-  },
-
   displayreply: function(replytype){
     var user = Meteor.users.findOne({_id: Meteor.userId()});
     if(user.profile.isStaff) {

@@ -20,7 +20,6 @@
  * 
 */
 sortByName = function(obj1, obj2) {
-  console.log(obj1);
   return obj2.name < obj1.name ? 1 : -1;
 };
 
