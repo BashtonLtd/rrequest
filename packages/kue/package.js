@@ -7,5 +7,7 @@ Npm.depends({
 });
 
 Package.on_use(function (api, where) {
+  api.export(['kue'], 'server');
+
   api.add_files('kue.js', 'server');
 });

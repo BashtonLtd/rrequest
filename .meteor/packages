@@ -25,3 +25,10 @@ meteor-tomarkdown
 meteor-node-imap
 spin
 paginated-subscription
+standard-app-packages
+kue
+html2markdown
+page-js-ie-support
+meteor
+HTML5-History-API
+event-horizon

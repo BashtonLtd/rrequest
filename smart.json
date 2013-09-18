@@ -4,12 +4,16 @@
     "moment": {},
     "marked": {},
     "collection-api": {},
-    "collectionFS": {},
+    "collectionFS": {
+      "git": "https://github.com/mxab/Meteor-CollectionFS.git",
+      "branch": "master"
+    },
     "meteor-mailparser": {},
     "meteor-node-imap": {},
     "meteor-pagedown": {},
     "meteor-tomarkdown": {},
     "spin": {},
-    "paginated-subscription": {}
+    "paginated-subscription": {},
+    "event-horizon": {}
   }
 }

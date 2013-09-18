@@ -10,7 +10,7 @@ Meteor.methods({
 
 var import_tickets = function () {
 	console.log('Starting');
-	var dir = '/home/david/rt4tickets';
+	var dir = '/opt/rrequest/rrequest/rt4tickets';
     
 
 	// open each file id dir
@@ -279,7 +279,7 @@ var handle_ticket = function (path) {
             });
         }
 
-        var outputdir = '/home/david/rt4tickets-done';
+        var outputdir = '/opt/rrequest/rrequest/rt4tickets-done';
         fs.rename(path, outputdir + '/' + id + '.json', function(err) {
             if (err) {
                 console.log(err);

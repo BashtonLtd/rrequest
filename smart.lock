@@ -1,28 +1,28 @@
 {
-  "meteor": {
-    "git": "https://github.com/meteor/meteor.git",
-    "branch": "master",
-    "commit": "9bb2b5447e845c4f483df5e9b42a2c1de5ab909b"
-  },
+  "meteor": {},
   "dependencies": {
     "basePackages": {
       "router": {},
       "moment": {},
       "marked": {},
       "collection-api": {},
-      "collectionFS": {},
+      "collectionFS": {
+        "git": "https://github.com/mxab/Meteor-CollectionFS.git",
+        "branch": "master"
+      },
       "meteor-mailparser": {},
       "meteor-node-imap": {},
       "meteor-pagedown": {},
       "meteor-tomarkdown": {},
       "spin": {},
-      "paginated-subscription": {}
+      "paginated-subscription": {},
+      "event-horizon": {}
     },
     "packages": {
       "router": {
         "git": "https://github.com/tmeasday/meteor-router.git",
-        "tag": "v0.5.1",
-        "commit": "32e377c7703bb119acccc859fc7296882903cbe7"
+        "tag": "v0.5.4.1",
+        "commit": "d00e380dda2184b70e909fc4a0fb5358d602c586"
       },
       "moment": {
         "git": "https://github.com/possibilities/meteor-moment.git",
@@ -31,18 +31,18 @@
       },
       "marked": {
         "git": "https://github.com/chuangbo/meteor-marked.git",
-        "tag": "v0.2.8.2",
-        "commit": "f5d9d6dbc013ad1bd568fa610eb4d8a479943f18"
+        "tag": "v0.2.9",
+        "commit": "6485d6f03841501f81176e34ab375840473aa714"
       },
       "collection-api": {
         "git": "https://github.com/crazytoad/meteor-collectionapi.git",
-        "tag": "v0.1.14",
-        "commit": "d42ba1681289cb093afa7c67500862241df15f9e"
+        "tag": "v0.1.15",
+        "commit": "b62c51f387287726cf3b64077f7bc69604ec2f5e"
       },
       "collectionFS": {
-        "git": "https://github.com/raix/Meteor-CollectionFS.git",
-        "tag": "v0.2.3",
-        "commit": "4a1b9298a7ce64269fd14be29d9c4797b9253103"
+        "git": "https://github.com/mxab/Meteor-CollectionFS.git",
+        "branch": "master",
+        "commit": "d888011537fe5c7503b325f60ea12603b690e4c3"
       },
       "meteor-mailparser": {
         "git": "https://github.com/BashtonLtd/meteor-mailparser.git",
@@ -74,10 +74,20 @@
         "tag": "v0.1.2",
         "commit": "35e0c6112df2b4cfeb60b559276a93cac5ee2dd6"
       },
+      "event-horizon": {
+        "git": "https://github.com/belisarius222/meteor-event-horizon.git",
+        "tag": "v0.1.1",
+        "commit": "f7d19e16bf7527c34d853a9bc9002e9be53bdb9b"
+      },
       "page-js-ie-support": {
         "git": "https://github.com/tmeasday/meteor-page-js-ie-support.git",
         "tag": "v1.3.5",
         "commit": "b99ed8380aefd10b2afc8f18d9eed4dd0d8ea9cb"
+      },
+      "HTML5-History-API": {
+        "git": "https://github.com/tmeasday/meteor-HTML5-History-API.git",
+        "tag": "v4.0.0",
+        "commit": "dc4965f1424cfca625ec3fbea17eace03f8e32c5"
       }
     }
   }

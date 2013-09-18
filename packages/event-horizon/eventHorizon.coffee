@@ -1,26 +1,26 @@
-if not Deps.isolate?
-  _.extend Deps,
-    isolate: `function (f) {
-      if (! Deps.active)
-        return f();
+#if not Deps.isolate?
+#  _.extend Deps,
+#    isolate: `function (f) {
+#      if (! Deps.active)
+#        return f();
+#
+#      var resultDep = new Deps.Dependency;
+#      var origResult;
+#      Deps.autorun(function (c) {
+#        var result = f();
+#        if (c.firstRun)
+#          origResult = result;
+#        else if (!EJSON.equals(result, origResult))
+#          resultDep.changed();
+#      });
+#      Deps.depend(resultDep);
+#
+#      return origResult;
+#    }`
 
-      var resultDep = new Deps.Dependency;
-      var origResult;
-      Deps.autorun(function (c) {
-        var result = f();
-        if (c.firstRun)
-          origResult = result;
-        else if (!EJSON.equals(result, origResult))
-          resultDep.changed();
-      });
-      Deps.depend(resultDep);
+EventHorizon = {}
 
-      return origResult;
-    }`
-
-@EventHorizon = {}
-
-_.extend @EventHorizon,
+_.extend EventHorizon,
   listeners: {}
   handlers: {}
   on: (eventName, func) ->
