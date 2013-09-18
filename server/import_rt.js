@@ -180,19 +180,13 @@ var handle_ticket = function (path) {
 
                                 create_reply({
                                     ticketId: ticketId,
-                                    created: replycreated,
+                                    created: moment(replycreated)._d,
                                     user: user,
                                     reply: {
                                         body: replycontent,
                                         status: 'posted'
                                     }
                                 });
-
-                                Tickets.update({_id: ticketId},
-                                    {$set: {
-                                        modified: moment(replycreated)._d
-                                    }}
-                                );
                             }
 
                         } else if (descriptionparts[0] == 'Outgoing') {
@@ -204,22 +198,12 @@ var handle_ticket = function (path) {
                                 created: moment(replycreated)._d,
                                 body: replydescription
                             });
-                            Tickets.update({_id: ticketId},
-                                {$set: {
-                                    modified: moment(replycreated)._d
-                                }}
-                            );
                         } else if (descriptionparts[0] == 'Taken') {
                             insert_event({
                                 ticketId: ticketId,
                                 created: moment(replycreated)._d,
                                 body: replydescription
                             });
-                            Tickets.update({_id: ticketId},
-                                {$set: {
-                                    modified: moment(replycreated)._d
-                                }}
-                            );
                         }
                     });
                 }
@@ -281,19 +265,13 @@ var handle_ticket = function (path) {
                         if (createreply) {
                             create_reply({
                                 ticketId: id,
-                                created: replycreated,
+                                created: moment(replycreated)._d,
                                 user: user,
                                 reply: {
                                     body: replycontent,
                                     status: 'posted'
                                 }
                             });
-
-                            Tickets.update({_id: ticketId},
-                                {$set: {
-                                    modified: moment(replycreated)._d
-                                }}
-                            );
                         }
                     }
 
