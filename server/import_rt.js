@@ -256,7 +256,7 @@ var handle_ticket = function (path) {
                         ticket.replies.forEach(function(reply){
 
                             if (reply.posted_by !== undefined) {
-                                if (reply.created == replycreated && user._id == reply.posted_by.id) {
+                                if (reply.created == moment(replycreated)._d && user._id == reply.posted_by.id) {
                                     // already exists - ignore
                                     createreply = false;
                                 }
