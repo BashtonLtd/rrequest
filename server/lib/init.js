@@ -19,7 +19,7 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-EMAIL_FROM = 'rrequest@bashton.com';
+EMAIL_FROM = 'support@bashton.com';
 Accounts.emailTemplates.siteName = "Bashton Support";
 Accounts.emailTemplates.from = "Bashton Support <support@bashton.com>";
 
