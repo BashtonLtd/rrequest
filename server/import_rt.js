@@ -4,8 +4,36 @@ var Fiber = Npm.require('fibers');
 Meteor.methods({
 	import_tickets: function() {
 		import_tickets();
-	}
+	},
+
+    convert_emails: function() {
+        convert_emails();
+    }
 });
+
+var convert_emails = function () {
+    var users = Meteor.users.find({});
+    withupper = [];
+    users.forEach(function (user) {
+        if (user.profile.email !== user.profile.email.toLowerCase()) {
+            withupper.push(user);
+        }
+    });
+
+    withupper.forEach(function(user){
+        checkuser = Meteor.users.findOne({'profile.email':user.profile.email.toLowerCase()});
+        if (checkuser === undefined) {
+            // no other account
+            newemail = user.profile.email.toLowerCase();
+            console.log('Changing ' + user.profile.email + ' --> ' + newemail);
+            Meteor.users.update({_id: user._id}, {$set: {'profile.email': newemail}});
+        } else {
+            //already has other user account
+        }
+    });
+};
+
+
 
 
 var import_tickets = function () {
@@ -64,8 +92,6 @@ var handle_ticket = function (path) {
 	// open file
 	var ticket_data;
 	var data = fs.readFileSync(path, 'utf8');
-	console.log(path);
-
 	ticket_data = JSON.parse(data);
 	//console.log(ticket_data);
 
@@ -256,7 +282,7 @@ var handle_ticket = function (path) {
                         ticket.replies.forEach(function(reply){
 
                             if (reply.posted_by !== undefined) {
-                                if (reply.created == moment(replycreated)._d && user._id == reply.posted_by.id) {
+                                if (moment(reply.created).unix() == moment(replycreated).unix() && user._id == reply.posted_by.id) {
                                     // already exists - ignore
                                     createreply = false;
                                 }

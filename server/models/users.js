@@ -31,15 +31,15 @@ Accounts.onCreateUser(function(options, user){
   user.profile = options.profile || {};
 
   if (options.email) {
-    user.profile.email = options.email;
+    user.profile.email = options.email.toLowerCase();
   }
 
   if (user.services.google) {
-    user.profile.email = user.services.google.email;
+    user.profile.email = user.services.google.email.toLowerCase();
   }
 
   if (!user.profile.name)
-    user.profile.name = user.profile.email;
+    user.profile.name = user.profile.email.toLowerCase();
 
   // make the first logged in user an admin
   if ( !Meteor.users.find().count() ) {
@@ -52,7 +52,7 @@ Accounts.onCreateUser(function(options, user){
 
   if (options.profile && options.profile.email) {
     // Check for existing user
-    var existing_user = Meteor.users.findOne({'profile.email':options.profile.email});
+    var existing_user = Meteor.users.findOne({'profile.email':options.profile.email.toLowerCase()});
     if (existing_user !== undefined) {
       // User with email address already exist
       user.profile.isStaff = existing_user.profile.isStaff;
@@ -90,10 +90,11 @@ Meteor.methods({
 });
 
 createAutoUser = function (email_address) {
+  email_lower = email_address.toLowerCase();
   user = Accounts.createUser({
-    username: email_address,
-    email: email_address,
-    profile: {email: email_address, name: email_address, isStaff: false}
+    username: email_lower,
+    email: email_lower,
+    profile: {email: email_lower, name: email_lower, isStaff: false}
   });
   Accounts.sendEnrollmentEmail(user);
   return user;
