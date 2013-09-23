@@ -104,9 +104,9 @@ Meteor.publish('sortedTickets', function(sort, filter, limit) {
   });
   if (user && user.profile.isStaff) {
     filter.isVisible = {$ne: false};
-    return Tickets.find(filter, {sort: sort, limit: limit});
+    return Tickets.find(filter, {sort: sort, limit: limit, fields: {replies: 0}});
   } else {
-    return Tickets.find({isVisible: {$ne: false}, $or: [{group: {$in: groupids}}, {'requesters.id': {$in: [this.userId]}}]}, {sort: sort, limit:limit});
+    return Tickets.find({isVisible: {$ne: false}, $or: [{group: {$in: groupids}}, {'requesters.id': {$in: [this.userId]}}]}, {sort: sort, limit:limit, fields: {replies: 0}});
   }
 });
 
@@ -114,7 +114,7 @@ Meteor.publish("counts-by-ticketstate", function (state) {
   var self = this;
   var count = 0;
   var initializing = true;
-  var handle = Tickets.find({status: state}).observeChanges({
+  var handle = Tickets.find({status: state}, {fields: {_id: 1, status: 1}}).observeChanges({
     added: function (id) {
       count++;
       if (!initializing)

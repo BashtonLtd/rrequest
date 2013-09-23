@@ -62,7 +62,6 @@ add_ticket_requester = function (options) {
 
 create_ticket = function (options) {
   options = options || {};
-
   if (options._id !== undefined) {
     return Tickets.insert({
       _id: options._id,
@@ -74,8 +73,6 @@ create_ticket = function (options) {
       replies: []
     });
   } else {
-
-
     return Tickets.insert({
       subject: options.subject,
       created: new Date(),

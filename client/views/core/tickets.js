@@ -215,6 +215,8 @@ Template.createTicketDialog.events({
         });
 
         Meteor.Router.to('/ticket/'+ticketId);
+      } else {
+        console.log('CreateTicket Error: ' + error);
       }
     });
     Session.set("showCreateTicketDialog", false);

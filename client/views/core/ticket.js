@@ -265,6 +265,8 @@ Template.ticket.events({
         });
       }
     });
+
+    template.find(".ticketreplybody").value = '';
   },
 
   'click .edit-ticket': function () {
