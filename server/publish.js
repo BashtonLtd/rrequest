@@ -104,9 +104,9 @@ Meteor.publish('sortedTickets', function(sort, filter, limit) {
   });
   if (user && user.profile.isStaff) {
     filter.isVisible = {$ne: false};
-    return Tickets.find(filter, {sort: sort, limit: limit, fields: {replies: 0}});
+    return Tickets.find(filter, {sort: sort, limit: limit});
   } else {
-    return Tickets.find({isVisible: {$ne: false}, $or: [{group: {$in: groupids}}, {'requesters.id': {$in: [this.userId]}}]}, {sort: sort, limit:limit, fields: {replies: 0}});
+    return Tickets.find({isVisible: {$ne: false}, $or: [{group: {$in: groupids}}, {'requesters.id': {$in: [this.userId]}}]}, {sort: sort, limit:limit});
   }
 });
 
