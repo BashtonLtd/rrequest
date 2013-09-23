@@ -20,7 +20,7 @@
  *
 */
 Accounts.validateNewUser(function (user) {
-  var existing_user = Meteor.users.findOne({'profile.email':user.profile.email});
+  var existing_user = Meteor.users.findOne({'profile.email':user.profile.email.toLowerCase()});
   if (existing_user !== undefined) {
     throw new Meteor.Error(403, "Email address already in use");
   }
@@ -96,6 +96,8 @@ createAutoUser = function (email_address) {
     email: email_lower,
     profile: {email: email_lower, name: email_lower, isStaff: false}
   });
-  Accounts.sendEnrollmentEmail(user);
+  if (user !== undefined) {
+    Accounts.sendEnrollmentEmail(user);
+  }
   return user;
 };
