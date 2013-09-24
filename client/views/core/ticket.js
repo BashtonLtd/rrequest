@@ -414,10 +414,12 @@ Template.editTicketDialog.events({
     var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
     var original_status = ticket.status;
 
+    console.log(requesters);
+
     var existing_users = [];
     var new_users = [];
     requesters.forEach(function (requester){
-      var user = Meteor.users.findOne({_id:requester.toLowerCase()});
+      var user = Meteor.users.findOne({_id:requester});
       if (user !== undefined) {
         // User already exists in the system
         existing_users.push({id:user._id, email:user.profile.email});
