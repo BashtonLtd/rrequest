@@ -1,0 +1,32 @@
+<template name="dashingsubmitsettings">
+  <div class="box">
+    <div class="box-header">
+      <h4>Settings</h4>
+    </div>
+
+    <div class="box-body">
+      <label>Host</label>
+      <input id="host" type="text" class="span4 host" value="{{host}}">
+      <div class="help-block"></div>
+
+      <label>Port</label>
+      <input id="port" type="text" class="span4 port" value="{{port}}">
+      <div class="help-block"></div>
+
+      <label>Path</label>
+      <input id="path" type="text" class="span4 path" value="{{path}}">
+      <div class="help-block"></div>
+
+      <label>Authtoken</label>
+      <input id="auth_token" type="text" class="span4 auth_token" value="{{auth_token}}">
+      <div class="help-block"></div>
+    </div>
+
+    <div class="box-footer">
+      <div class="btn-group pull-right">
+      <button class="btn btn-primary dashingsubmit-settings-save"><i class="icon-ok icon-white"></i> Save</button>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</template>
