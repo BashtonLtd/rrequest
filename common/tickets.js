@@ -38,7 +38,9 @@ Meteor.methods({
 
     if (options.userId !== undefined) {
       modifier.$set["replies." + options.replyIndex + ".posted_by"] = options.userId;
-      modifier.$set["replies." + options.replyIndex + ".created"] = now;
+      if (options.replyfields[idx].value == 'posted') {
+        modifier.$set["replies." + options.replyIndex + ".created"] = now;
+      }
     }
 
     return Tickets.update(
