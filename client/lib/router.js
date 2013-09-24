@@ -60,12 +60,21 @@ Meteor.Router.filters({
       return 'loading';
     else
       return 'not_allowed';
+  },
+  redirectToTickets: function(page) {
+    if (Meteor.user())
+      return is_staff(Meteor.user()) ? page : "tickets";
+    else if (Meteor.loggingIn())
+      return 'loading';
+    else
+      return 'tickets';
   }
+
 });
 
 Meteor.Router.filter('requireAdmin', {only: ['users']});
 Meteor.Router.filter('requireStaff', {only: ['groups']});
-
+Meteor.Router.filter('redirectToTickets', {only: ['home']});
 
 Meteor.startup(function() {
   Meteor.autorun(function() {
