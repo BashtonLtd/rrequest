@@ -25,11 +25,11 @@ Meteor.methods({
 
     var now = new Date();
     var modifier = {$set: {}};
-    modifier.$set["modified"] = now;
 
     var idx = _.indexOf(_.pluck(options.replyfields, 'name'), 'status');
     if (options.replyfields[idx].value == 'posted') {
       modifier.$set["status"] = 'new';
+      modifier.$set["modified"] = now;
     }
 
     for (var i = 0, l = _.size(options.replyfields); i < l; i++) {
