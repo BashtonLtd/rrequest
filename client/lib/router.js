@@ -67,7 +67,7 @@ Meteor.Router.filters({
     else if (Meteor.loggingIn())
       return 'loading';
     else
-      return 'tickets';
+      return 'home';
   }
 
 });
