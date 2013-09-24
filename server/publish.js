@@ -102,11 +102,13 @@ Meteor.publish('sortedTickets', function(sort, filter, limit) {
   usergroups.forEach(function(group){
     groupids.push(group._id);
   });
-  if (user && user.profile.isStaff) {
-    filter.isVisible = {$ne: false};
-    return Tickets.find(filter, {sort: sort, limit: limit});
-  } else {
-    return Tickets.find({isVisible: {$ne: false}, $or: [{group: {$in: groupids}}, {'requesters.id': {$in: [this.userId]}}]}, {sort: sort, limit:limit});
+  if (user !== undefined) {
+    if (user.profile.isStaff) {
+      filter.isVisible = {$ne: false};
+      return Tickets.find(filter, {sort: sort, limit: limit});
+    } else {
+      return Tickets.find({isVisible: {$ne: false}, $or: [{group: {$in: groupids}}, {'requesters.id': {$in: [this.userId]}}]}, {sort: sort, limit:limit});
+    }
   }
 });
 
