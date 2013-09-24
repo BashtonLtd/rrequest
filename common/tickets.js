@@ -27,6 +27,11 @@ Meteor.methods({
     var modifier = {$set: {}};
     modifier.$set["modified"] = now;
 
+    var idx = _.indexOf(_.pluck(options.replyfields, 'name'), 'status');
+    if (options.replyfields[idx].value == 'posted') {
+      modifier.$set["status"] = 'new';
+    }
+
     for (var i = 0, l = _.size(options.replyfields); i < l; i++) {
       modifier.$set["replies." + options.replyIndex + "." + options.replyfields[i].name] = options.replyfields[i].value;
     };
@@ -109,7 +114,7 @@ create_reply = function(options) {
     {_id: options.ticketId},
     {
       $push: { replies: reply},
-      $set: {modified: now}
+      $set: {modified: now, status: 'new'}
     }
   );
   return reply._id;

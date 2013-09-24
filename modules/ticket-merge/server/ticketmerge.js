@@ -133,7 +133,7 @@ merge_tickets = function (userId, target, source) {
 			Tickets.update(
 				{_id: source_id},
 				{
-					$set: { replies: replies_to_keep, isVisible: false}
+					$set: { replies: replies_to_keep, isVisible: false, mergedInto: target}
 				}
 			)
 
@@ -176,7 +176,8 @@ unmerge_tickets = function (userId, target) {
 	    			{_id: reply.original_ticket},
         			{
 	           			$push: { replies: new_reply},
-	           			$set: {isVisible: true}
+	           			$set: {isVisible: true},
+	           			$unset: {mergedInto: ''}
         			}
 	       		);
 	       		replies = _(replies).reject(function(el) { return el._id === reply._id; });
