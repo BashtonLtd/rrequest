@@ -37,7 +37,7 @@ Meteor.startup(function (){
     APISettings.insert({authtoken: ''});
   }
 
-  collectionApi = new CollectionAPI({});
+  collectionApi = new CollectionAPI({authtoken: settings.authtoken});
   collectionApi.addCollection(Tickets, 'tickets');
 
   var module = Modules.findOne({name: 'api'});
