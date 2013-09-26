@@ -41,7 +41,7 @@ Template.settings.module_settings_pages = function() {
     var settingspage = window[hook.data]();
     pages.push(settingspage);
   });
-  return pages;
+  return pages.sort(sortByName);
 };
 
 Template.settings.helpers({
