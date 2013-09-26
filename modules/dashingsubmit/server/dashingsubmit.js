@@ -60,7 +60,7 @@ var submit_count = function(state, count) {
   var options = {
     host: 'monitoring.bashton.net',
     port: 3090,
-    path: '/widgets/tickets' + state,
+    path: '/widgets/tickets' + state.replace(' ', '_'),
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -82,7 +82,7 @@ var start_submitting = function() {
   status.forEach(function(state) {
     var count = 0;
     var initializing = true;
-    var handle = Tickets.find({status: state.name}, {fields: {_id: 1, status: 1}}).observeChanges({
+    var handle = Tickets.find({status: state.name, isVisible: {$ne: false}}, {fields: {_id: 1, status: 1}}).observeChanges({
       added: function (id) {
         count++;
         if (!initializing) {

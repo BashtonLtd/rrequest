@@ -80,7 +80,7 @@
     </span>
     <h4 class="ticket-item-name">
       {{#with ticketstatus}}
-      <span title="{{name}}" class="status-{{name}} ticket-item-icon"><i class="{{icon}}" style="color:#{{colour}}"></i></span>
+      <span title="{{name}}" class="ticket-item-icon"><i class="{{icon}}" style="color:#{{colour}}"></i></span>
       {{/with}}
       <a href="/ticket/{{_id}}" class="js-navigation-open">{{subject}}</a>
     </h4>
@@ -111,7 +111,7 @@
     </span>
     <h4 class="ticket-item-name">
       {{#with ticketstatus}}
-      <span title="{{name}}" class="status-{{name}} ticket-item-icon"><i class="{{icon}}" style="color:#{{colour}}"></i></span>
+      <span title="{{name}}" class="ticket-item-icon"><i class="{{icon}}" style="color:#{{colour}}"></i></span>
       {{/with}}
       <a href="/ticket/{{_id}}" class="js-navigation-open">{{subject}}</a>
     </h4>
@@ -136,7 +136,7 @@
     <input type="radio" class="ticket-item-check" name="tickets" value="{{this._id}}">
     <h4 class="ticket-item-name-wide">
       {{#with ticketstatus}}
-      <span title="{{name}}" class="status-{{name}} ticket-item-icon"><i class="{{icon}}" style="color:#{{colour}}"></i></span>
+      <span title="{{name}}" class="ticket-item-icon"><i class="{{icon}}" style="color:#{{colour}}"></i></span>
       {{/with}}
       {{subject}}
     </h4>

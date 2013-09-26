@@ -72,6 +72,6 @@ Template.widget_state_count.helpers({
 
 Template.widget_state_count_config.helpers({
   ticketstates: function() {
-    return TicketStatus.find({});
+    return TicketStatus.find({}, {sort: {'name': 1}});
   }
 });
