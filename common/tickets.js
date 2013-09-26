@@ -28,7 +28,9 @@ Meteor.methods({
 
     var idx = _.indexOf(_.pluck(options.replyfields, 'name'), 'status');
     if (options.replyfields[idx].value == 'posted') {
-      modifier.$set["status"] = 'new';
+      if (!is_staff_by_id(options.userId)) {
+        modifier.$set["status"] = 'new';
+      }
       modifier.$set["modified"] = now;
     }
 
@@ -124,4 +126,8 @@ create_reply = function(options) {
 
 sortByDate = function(obj1, obj2) {
   return new Date(obj2.created) < new Date(obj1.created) ? 1 : -1;
+};
+
+sortByName = function(obj1, obj2) {
+  return obj2.name < obj1.name ? 1 : -1;
 };

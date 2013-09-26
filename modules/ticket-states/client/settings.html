@@ -1,0 +1,146 @@
+<template name="ticketstatesettings">
+  {{#if showCreateStateDialog}}
+    {{> createStateDialog}}
+  {{/if}}
+
+  {{#if showDeleteStateDialog}}
+    {{> deleteStateDialog}}
+  {{/if}}
+
+  <div class="box">
+    <div class="box-header">
+      <div class="pagetitle">Ticket States</div>
+      <div class="btn-group pull-right">
+        <button class="btn new-state">
+          <i class="icon-plus"></i> Add State
+        </button>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+
+
+  <div class="box">
+    <div class="box-body">
+      <table class="table table-striped">
+        <thead>
+          <tr><th>Name</th><th>Icon</th><th></th></tr>
+        </thead>
+        <tbody>
+        {{#each states}}
+        <tr>
+          <td>{{name}}</td>
+          <td><span class="status-{{name}} ticket-item-icon"><i class="{{icon}}" style="color:#{{colour}}"></i></span></td>
+          <td>
+            <div class="btn-toolbar">
+              <div class="btn-group">
+                <button class="btn edit-state"><i class="icon-edit"></i></button>
+                {{#if usercreated}}
+                  <button class="btn delete-state"><i class="icon-trash"></i></button>
+                {{/if}}
+              </div>
+            </div>
+          </td>
+        </tr>
+        {{/each}}
+        </tbody>
+      </table>
+
+    </div>
+
+    <div class="box-footer">
+
+  </div>
+</template>
+
+<template name="createStateDialog">
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close cancel">&times;</button>
+      {{#if editStateName}}
+        <h3>Edit state</h3>
+      {{else}}
+        <h3>Add state</h3>
+      {{/if}}
+    </div>
+
+    <div class="modal-body">
+      {{#if error}}
+        {{#each error}}
+          <div class="alert alert-error"><a class="close" data-dismiss="alert" href="#">&times;</a>{{this}}</div>
+        {{/each}}
+      {{/if}}
+
+      <label>Name</label>
+      {{#if usercreated}}
+        {{#if editStateName}}
+          <input id="statename" type="text" class="name span5" value="{{editStateName}}">
+        {{else}}
+          <input id="statename" type="text" class="name span5">
+        {{/if}}
+      {{else}}
+        {{#if editStateName}}
+          <input id="statename" type="text" class="name span5" disabled value="{{editStateName}}">
+        {{else}}
+          <input id="statename" type="text" class="name span5">
+        {{/if}}
+      {{/if}}
+
+      <label>Icon</label>
+      {{#if editStateIcon}}
+        <input id="iconselect" style="width:200px" type="text" class="iconselect" value="{{editStateIcon}}"/>
+      {{else}}
+        <input id="iconselect" style="width:200px" type="text" class="iconselect"/>
+      {{/if}}
+
+      <label>Colour</label>
+      <div class="input-append">
+        {{#if editStateColour}}
+          <input id="iconcolour" type="text" value="{{editStateColour}}">
+        {{else}}
+          <input id="iconcolour" type="text">
+        {{/if}}
+        <div class="btn-group">
+          <a class="btn btn dropdown-toggle" data-toggle="dropdown"><i class="icon-tint"></i></a>
+          <ul class="dropdown-menu" style="z-index: 1040; width:200px; bottom: 0; top: -120px !important;">
+            <li><div id="colourpalette"></div></li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+    <div class="clearfix"></div>
+    <div class="modal-footer">
+      <a href="#" class="btn cancel">Cancel</a>
+      {{#if editStateName}}
+        <a href="#" class="btn btn-primary save">Edit</a>
+      {{else}}
+        <a href="#" class="btn btn-primary save">Add</a>
+      {{/if}}
+    </div>
+  </div>
+</template>
+
+<template name="deleteStateDialog">
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close cancel">&times;</button>
+      <h3>Delete state</h3>
+    </div>
+
+    <div class="modal-body">
+      {{#if error}}
+        <div class="alert alert-error">{{error}}</div>
+      {{/if}}
+      <p>Are you sure you want to delete the <strong>"{{statename}}"</strong> state.</p>
+
+    </div>
+
+    <div class="modal-footer">
+      <a href="#" class="btn cancel">Cancel</a>
+      <a href="#" class="btn btn-primary delete">Delete</a>
+    </div>
+  </div>
+</template>

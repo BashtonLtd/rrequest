@@ -328,7 +328,7 @@ Template.ticket.helpers({
 });
 
 Template.editTicketDialog.ticketstatus = function() {
-  return TicketStatus.find({});
+  return TicketStatus.find({}, {sort: {'name': 1}});
 };
 
 Template.editTicketDialog.rendered = function () {

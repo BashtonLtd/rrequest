@@ -19,10 +19,6 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  * 
 */
-sortByName = function(obj1, obj2) {
-  return obj2.name < obj1.name ? 1 : -1;
-};
-
 Handlebars.registerHelper('ticketlistactions', function() {
   var ticketactions = [];
   var hooks = Hooks.find({hook:'ticketactions', type: 'ticketlist'});
