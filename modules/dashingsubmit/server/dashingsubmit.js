@@ -60,7 +60,7 @@ var submit_count = function(state, count) {
   var options = {
     host: 'monitoring.bashton.net',
     port: 3090,
-    path: '/widgets/tickets' + state.replace(' ', '_'),
+    path: '/widgets/tickets' + state.replace(new RegExp(' ', 'g'), '_'),
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
