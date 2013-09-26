@@ -116,7 +116,7 @@ Meteor.publish("counts-by-ticketstate", function (state) {
   var self = this;
   var count = 0;
   var initializing = true;
-  var handle = Tickets.find({status: state}, {fields: {_id: 1, status: 1}}).observeChanges({
+  var handle = Tickets.find({status: state, isVisible: {$ne: false}}, {fields: {_id: 1, status: 1}}).observeChanges({
     added: function (id) {
       count++;
       if (!initializing)
