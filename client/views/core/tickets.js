@@ -262,6 +262,8 @@ Template.ticketrow.helpers({
         // return first requester
 
         return useremail(ticket.requesters[0]);
+      } else if (ticket.group[0] == null) {
+        return useremail(ticket.requesters[0]);
       } else {
         // return group
         var groups = []

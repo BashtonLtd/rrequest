@@ -25,12 +25,18 @@ process_mail = function(mail_object) {
   var requesters = [];
   var requestfrom = get_or_create_user(mail_object.from[0].address.toLowerCase());
   requesters.push({id:requestfrom._id, email:mail_object.from[0].address.toLowerCase()});
+  
+  if (mail_object.to[0].address != EMAIL_FROM) {
+    requesters.push({id:requestfrom._id, email:mail_object.to[0].address.toLowerCase()});
+  }
 
   if (mail_object.cc !== undefined) {
     for (var i = 0, l = mail_object.cc.length; i < l; i++) {
-      if (mail_object.cc[i] !== undefined) {
+      if (mail_object.cc[i] !== undefined && mail_object.cc[i].address != EMAIL_FROM) {
         var requester = get_or_create_user(mail_object.cc[i].address.toLowerCase());
-        requesters.push({id:requester._id, email:mail_object.cc[i].address.toLowerCase()});
+        if (!is_staff(requester)) {
+          requesters.push({id:requester._id, email:mail_object.cc[i].address.toLowerCase()});
+        }
       }
     }
   }
