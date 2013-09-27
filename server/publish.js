@@ -142,25 +142,13 @@ Meteor.publish("counts-by-ticketstate", function (state) {
 Meteor.startup(function(){
   Tickets.allow({
     insert: function(userId, doc) {
-      if (is_staff_by_id(userId)) {
-        return true;
-      } else {
-        return false;
-      }
+      return true;
     },
     update: function(userId, docs, fieldNames, modifier) {
-      if (is_staff_by_id(userId)) {
-        return true;
-      } else {
-        return false;
-      }
+      return true;
     },
     remove: function(userId, docs) {
-      if (is_staff_by_id(userId)) {
-        return true;
-      } else {
-        return false;
-      }
+      return true;
     }
   });
 });
@@ -172,13 +160,25 @@ Meteor.publish('ticketstatus', function() {
 Meteor.startup(function(){
   TicketStatus.allow({
     insert: function(userId, doc) {
-      return true;
+      if (is_staff_by_id(userId)) {
+        return true;
+      } else {
+        return false;
+      }
     },
     update: function(userId, docs, fieldNames, modifier) {
-      return true;
+      if (is_staff_by_id(userId)) {
+        return true;
+      } else {
+        return false;
+      }
     },
     remove: function(userId, docs) {
-      return true;
+      if (is_staff_by_id(userId)) {
+        return true;
+      } else {
+        return false;
+      }
     }
   });
 });
