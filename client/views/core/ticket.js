@@ -266,7 +266,7 @@ Template.ticket.events({
         });
       }
     });
-
+    $("#ticketreplyextrafields input").not(':button, :submit, :reset, :hidden').val('');
     template.find(".ticketreplybody").value = '';
   },
 

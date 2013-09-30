@@ -57,6 +57,7 @@ Template.replyentry_attachments.events({
     for (var i = 0, f; f=files[i]; i++) {
       Attachments.storeFile(f, {ticketId:ticketId, replyId:replyId, requester:requester, group:group});
     }
+    template.find(".fileUploader").value = "";
   },
 
   'click .close': function (event, template) {
