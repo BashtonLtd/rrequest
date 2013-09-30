@@ -120,12 +120,22 @@ get_or_create_ticket = function(requesters, subject) {
     // ticket found check if it has been merged
     if (ticket.mergedInto !== undefined) {
       // Ticket has been merged, get the target ticket
-      console.log('has been merged');
       ticket = Tickets.findOne({_id: ticket.mergedInto});
     } 
   }
 
   if (ticket !== null && ticket !== undefined) {
+    // compare requesters and add any new requesters to the ticket
+    requesters.forEach(function(requester) {
+      var idx = _.indexOf(_.pluck(ticket.requesters, 'id'), requester.id);
+      if (idx === -1) {
+        // add requester
+        add_ticket_requester({
+          ticketId: ticket._id,
+          requesterId: requester.id
+        });
+      }
+    });
     return ticket;
   } else {
     var new_ticketId = create_ticket({
