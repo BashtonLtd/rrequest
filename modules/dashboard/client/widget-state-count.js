@@ -58,6 +58,7 @@ Template.widget_state_count.helpers({
   widget: function(id) {
     var widget = UserDashboard.findOne({_id: id});
     var states = widget.extradata.filter;
+    console.log(states);
     var totalcount = 0;
 
     states.forEach(function(state) {

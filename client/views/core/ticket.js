@@ -220,7 +220,7 @@ Template.ticket.events({
 
   'click .post-reply': function (event, template) {
     var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
-
+    var original_status = ticket.status;
     var replyId = template.find(".ticketreplyId").value;
     var level = template.find(".ticketreplylevel").value;
     var body = template.find(".ticketreplybody").value;
@@ -249,13 +249,11 @@ Template.ticket.events({
     
     Meteor.call('updateReply', args, function (error, ticketId) {
       if (! error) {
-        template.find(".ticketreplybody").value = "";
-        if (ticket.status == 'creating') {
-          // set status to new
-          Meteor.call('updateStatus', {
-            ticketId: Session.get('viewticketId'),
-            status: 'new'
-          }, function(error, ticketId) {});
+        if (original_status !== 'new') {
+          insert_event({
+            ticketId: ticketId,
+            body: 'Status automatically set to "new" by requester reply.'
+          });
         }
         // Fire ticket updated event
         EventHorizon.fire('ticketreply',{
@@ -413,8 +411,6 @@ Template.editTicketDialog.events({
     var status = template.find(".ticketstatus").value;
     var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
     var original_status = ticket.status;
-
-    console.log(requesters);
 
     var existing_users = [];
     var new_users = [];

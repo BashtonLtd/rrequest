@@ -97,6 +97,8 @@ update_status = function(options) {
 
 
 create_reply = function(options) {
+  var ticket = Tickets.findOne({_id: options.ticketId});
+  var original_status = ticket.status;
   var user_level = 'requester';
   if(options.user.profile.isStaff) {
     user_level = 'staff';
@@ -121,6 +123,13 @@ create_reply = function(options) {
       $set: {modified: now, status: 'new'}
     }
   );
+  if (original_status !== 'new') {
+    insert_event({
+      ticketId: options.ticketId,
+      body: 'Status automatically set to "new" by requester reply.'
+    });
+  }
+
   return reply._id;
 };
 
