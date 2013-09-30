@@ -41,7 +41,10 @@ Template.ticket.unposted_reply = function () {
       ticket.replies.forEach(function(reply){
         if(reply !== {}) {
           if(reply.status == 'unposted' && reply.level == user_level){
-            unposted_reply = reply;
+            var replycount = _.filter(ticket.replies, function(r){return r._id == reply._id}).length;
+            if (replycount == 1) {
+              unposted_reply = reply;
+            }
           }
         }
       });
@@ -227,7 +230,7 @@ Template.ticket.events({
 
     var replyIndex = _.indexOf(_.pluck(ticket.replies, '_id'), replyId);
 
-    var extras = $('#ticketreplyextrafields').serializeArray()
+    var extras = $('#ticketreplyextrafields').serializeArray();
     var extrafields = [];
     $.each(extras, function() {
       extrafields.push({name: this.name, value: this.value || ''});
