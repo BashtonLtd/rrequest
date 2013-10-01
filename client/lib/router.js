@@ -84,7 +84,16 @@ Meteor.startup(function() {
       console.log('------ '+Meteor.Router.page()+' ------');
     }
 
-    document.title = 'rrequest: ' + Meteor.Router.page();
+    if (Meteor.Router.page() == 'ticket') {
+      var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
+      if (ticket !== undefined) {
+        document.title = ticket._id + ' - ' + ticket.subject;
+      } else {
+        document.title = 'rrequest: ' + Meteor.Router.page();
+      }
+    } else {
+      document.title = 'rrequest: ' + Meteor.Router.page();
+    }
 
     Session.set('currentScroll', null);
   });
