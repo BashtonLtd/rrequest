@@ -85,6 +85,14 @@ label {
   font-weight: bold;
 }
 
+.box-header.staff {
+  background-color: #BBC4FF;
+}
+
+.box-header.requester {
+  background-color: #FFE6C7;
+}
+
 .event {
   background-color: #E0E0FF;
 }

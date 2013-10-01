@@ -90,7 +90,7 @@
 <template name="ticketreply-reply">
   {{#with reply}}
   <div class="box">
-    <div class="box-header {{type}}">
+    <div class="box-header {{type}} {{level}}">
       <div class="reply-header">
         <strong>{{getUserEmail posted_by}}</strong>
         {{#each reply_header_items _id}}
