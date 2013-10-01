@@ -169,10 +169,6 @@ Template.ticket.posted_replies = function () {
   }
 };
 
-Template.ticket.ticketstatus = function() {
-  return TicketStatus.find({});
-};
-
 Template.ticket.ticketcreated = function () {
   var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
   if (ticket !== undefined) {
