@@ -459,7 +459,7 @@ Template.editTicketDialog.events({
     if (status !== original_status) {
       Meteor.call('insertEvent', {
         ticketId: Session.get('viewticketId'),
-        user: Meteor.user().id,
+        user: Meteor.user()._id,
         body: 'Ticket status changed to "' + status + '" by ' + useremail(Meteor.userId()) + '.'
       }, function(error, ticketId) {
 
