@@ -224,46 +224,48 @@ Template.ticket.events({
     var level = template.find(".ticketreplylevel").value;
     var body = template.find(".ticketreplybody").value;
 
-    var replyIndex = _.indexOf(_.pluck(ticket.replies, '_id'), replyId);
+    if (body.trim() != '') {
+      var replyIndex = _.indexOf(_.pluck(ticket.replies, '_id'), replyId);
 
-    var extras = $('#ticketreplyextrafields').serializeArray();
-    var extrafields = [];
-    $.each(extras, function() {
-      extrafields.push({name: this.name, value: this.value || ''});
-    });
+      var extras = $('#ticketreplyextrafields').serializeArray();
+      var extrafields = [];
+      $.each(extras, function() {
+        extrafields.push({name: this.name, value: this.value || ''});
+      });
 
-    var args = {
-      ticketId: Session.get('viewticketId'),
-      replyId: replyId,
-      replyIndex: replyIndex,
-      userId: Meteor.userId(),
-      level: level,
-      replyfields: [
-        {name: 'type', value: 'reply'},
-        {name: 'body', value: body},
-        {name: 'status', value: 'posted'}
-      ]
-    };
-    args.replyfields = args.replyfields.concat(extrafields);
-    
-    Meteor.call('updateReply', args, function (error, ticketId) {
-      if (! error) {
-        if (original_status !== 'new') {
-          insert_event({
-            ticketId: ticketId,
-            body: 'Status automatically set to "new" by requester reply.'
+      var args = {
+        ticketId: Session.get('viewticketId'),
+        replyId: replyId,
+        replyIndex: replyIndex,
+        userId: Meteor.userId(),
+        level: level,
+        replyfields: [
+          {name: 'type', value: 'reply'},
+          {name: 'body', value: body},
+          {name: 'status', value: 'posted'}
+        ]
+      };
+      args.replyfields = args.replyfields.concat(extrafields);
+      
+      Meteor.call('updateReply', args, function (error, ticketId) {
+        if (! error) {
+          if (original_status !== 'new') {
+            insert_event({
+              ticketId: ticketId,
+              body: 'Status automatically set to "new" by requester reply.'
+            });
+          }
+          // Fire ticket updated event
+          EventHorizon.fire('ticketreply',{
+            ticketId: Session.get('viewticketId'),
+            replyId: replyId,
+            postedBy: Meteor.userId()
           });
         }
-        // Fire ticket updated event
-        EventHorizon.fire('ticketreply',{
-          ticketId: Session.get('viewticketId'),
-          replyId: replyId,
-          postedBy: Meteor.userId()
-        });
-      }
-    });
-    $("#ticketreplyextrafields input").not(':button, :submit, :reset, :hidden').val('');
-    template.find(".ticketreplybody").value = '';
+      });
+      $("#ticketreplyextrafields input").not(':button, :submit, :reset, :hidden').val('');
+      template.find(".ticketreplybody").value = '';
+    }
   },
 
   'click .edit-ticket': function () {
