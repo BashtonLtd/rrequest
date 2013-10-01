@@ -87,14 +87,8 @@
     <div class="ticket-item-meta">
       <div>
         Opened {{#with created}}<span title="{{this}}">{{>age}}</span>{{/with}} 
-        by <a href="#">
-        {{#if currentUser.profile.isStaff}}
-          {{getGroupOrRequester}}
-        {{else}}
-          {{getRequesters this._id}}
-        {{/if}}
-        </a>, 
-        modified {{#with modified}}<span title="{{this}}">{{>age}}</span>{{/with}}.
+        by <a href="#">{{#if currentUser.profile.isStaff}}{{getGroupOrRequester}}{{else}}{{getRequesters this._id}}{{/if}}</a>, 
+        modified {{#with modified}}<span title="{{this}}">{{>age}}</span>{{/with}}{{#with lastModifiedBy}} by <a href="#">{{this}}</a>{{/with}}.
       </div>
     </div>
   </div>

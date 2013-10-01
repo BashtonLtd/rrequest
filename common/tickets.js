@@ -67,9 +67,14 @@ insert_event = function(options) {
   if (options.created !== undefined) {
     now = options.created;
   }
+  var user = {id:'', email:'System'};
+  if (options.user !== undefined) {
+    user = options.user;
+  }
 
   var reply = {
     _id: Random.id(),
+    posted_by: user,
     status: 'posted',
     type: 'event',
     body: options.body,
@@ -126,6 +131,7 @@ create_reply = function(options) {
   if (original_status !== 'new') {
     insert_event({
       ticketId: options.ticketId,
+      user: options.user._id,
       body: 'Status automatically set to "new" by requester reply.'
     });
   }

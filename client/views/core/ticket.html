@@ -13,15 +13,24 @@
           <div class="clearfix"></div>
         </div>
         <div class="box-body">
-          <label>Requesters:</label>
-          {{getRequesters _id}}<br/>
-          
+          <div class="row">
+            <div class="span1"><label>Requesters:</label></div>
+            <div class="span8">{{getRequesters _id}}</div>
+          </div>
+
           {{#if currentUser.profile.isStaff}}
-          <label>Groups:</label>
-          {{getGroups}}<br/>
+          <div class="row">
+            <div class="span1"><label>Groups:</label></div>
+            <div class="span8">{{getGroups}}</div>
+          </div>
           {{/if}}
 
-          <label>Status:</label>{{status}}</br>
+          <div class="row">
+            <div class="span1"><label>Status:</label></div>
+            {{#with ticketstatus}}
+            <div class="span8"><span title="{{name}}" class="ticket-item-icon"><i class="{{icon}}" style="color:#{{colour}}"></i> {{name}}</span></div>
+            {{/with}}
+          </div>
         </div>
         {{#if currentUser.profile.isStaff}}
         <div class="box-footer">

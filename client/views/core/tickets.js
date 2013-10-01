@@ -254,28 +254,6 @@ Template.createTicketDialog.helpers({
   }
 });
 
-Template.ticketrow.helpers({
-  getGroupOrRequester: function() {
-    var ticket = Tickets.findOne({_id:this._id});
-    if (ticket !== undefined) {
-      if (ticket.group == null || ticket.group == undefined || ticket.group.length == 0) {
-        // return first requester
-
-        return useremail(ticket.requesters[0]);
-      } else if (ticket.group[0] == null) {
-        return useremail(ticket.requesters[0]);
-      } else {
-        // return group
-        var groups = []
-        ticket.group.forEach(function (group) {
-          groups.push(groupname(group));
-        });
-        return groups.join(', ');
-      }
-    }
-  }
-});
-
 Template.ticketlist.helpers({
   ticketready: function(){
     var ticket = Tickets.findOne({_id:this._id});
@@ -286,12 +264,5 @@ Template.ticketlist.helpers({
         return true;
       }
     }
-  }
-});
-
-Handlebars.registerHelper('ticketstatus', function() {
-  var ticket = Tickets.findOne({_id:this._id});
-  if (ticket !== undefined) {
-    return TicketStatus.findOne({name: ticket.status});
   }
 });
