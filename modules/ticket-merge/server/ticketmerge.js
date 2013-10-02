@@ -150,7 +150,11 @@ merge_tickets = function (userId, target, source) {
 			});
 
 			var user = Meteor.users.findOne({_id: userId});
-			insert_event({ticketId: target, body: 'Ticket ' + source_id + ' merged by ' + user.profile.email});
+			insert_event({
+				ticketId: target,
+				user: user._id,
+				body: 'Ticket ' + source_id + ' merged by ' + user.profile.email
+			});
 		}
 	});
 };
@@ -208,7 +212,15 @@ unmerge_tickets = function (userId, target) {
 
 	unmerged_tickets = _.uniq(unmerged_tickets);
 	unmerged_tickets.forEach(function(ticket) {
-		insert_event({ticketId: ticket, body: 'Ticket unmerged from ' + target + ' by ' + user.profile.email});
-		insert_event({ticketId: target, body: 'Ticket ' + ticket + ' unmerged by ' + user.profile.email});
+		insert_event({
+			ticketId: ticket,
+			user: user._id,
+			body: 'Ticket unmerged from ' + target + ' by ' + user.profile.email
+		});
+		insert_event({
+			ticketId: target,
+			user: user._id,
+			body: 'Ticket ' + ticket + ' unmerged by ' + user.profile.email
+		});
 	})
 };
