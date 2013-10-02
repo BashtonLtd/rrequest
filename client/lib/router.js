@@ -85,7 +85,7 @@ Meteor.startup(function() {
     }
 
     if (Meteor.Router.page() == 'ticket') {
-      var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
+      var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {reactive: false});
       if (ticket !== undefined) {
         document.title = ticket._id + ' - ' + ticket.subject;
       } else {
