@@ -24,12 +24,12 @@ Handlebars.registerHelper('lastModifiedBy', function() {
   var latest = undefined;
   if (ticket !== undefined) {
     latest = ticket.replies[0];
+    ticket.replies.forEach(function(reply){
+      if (moment(reply.created).unix() > moment(latest.created).unix() && reply.status == 'posted') {
+        latest = reply;
+      }
+    });
   }
-  ticket.replies.forEach(function(reply){
-    if (moment(reply.created).unix() > moment(latest.created).unix() && reply.status == 'posted') {
-      latest = reply;
-    }
-  });
   if (latest !== undefined && latest.posted_by !== undefined) {
     return useremail(latest.posted_by);
   } else {
