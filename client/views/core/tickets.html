@@ -23,6 +23,9 @@
     <div class="span10">
       {{> ticketlist}}
     </div>
+    <div class="span2">
+      {{> statefilter}}
+    </div>
   </div>
 
   <div class="row">
@@ -176,6 +179,28 @@
     <div class="modal-footer">
       <a href="#" class="btn cancel">Cancel</a>
       <a href="#" class="btn btn-primary save">Next</a>
+    </div>
+  </div>
+</template>
+
+<template name="statefilter">
+  <div class="box">
+    <div class="box-header">
+      <div class="pagetitle">Filter</div>
+      <div class="clearfix"></div>
+    </div>
+    <div class="box-body">
+      <table>
+      {{#each states}}
+      <tr id="{{_id}}" class="{{selected}} filterrow">
+        <td id="{{_id}}">
+          <span id="{{_id}}" class="ticket-item-icon"><i id="{{_id}}" class="{{icon}}" style="color:#{{colour}}"></i></span>
+        </td>
+        <td id="{{_id}}" class="{{selected}}">{{name}}</td>
+      </tr>
+      {{/each}}
+      </table>
+      <div class="clearfix"></div>
     </div>
   </div>
 </template>

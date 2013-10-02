@@ -272,3 +272,13 @@ a {
 .dropdown-menu {
   top: -40px !important;
 }
+
+.filterselected {
+  color: #000000;
+  cursor: pointer;
+}
+
+.filterunselected {
+  color: #ADADAD;
+  cursor: pointer;
+}

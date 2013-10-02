@@ -30,8 +30,10 @@ Handlebars.registerHelper('ticketlistfooter_items', function() {
 
 Template.ticketlist.tickets = function () {
   var searchfilter = Session.get('ticketsSearchfilter');
+
   return Tickets.find(
     {
+      status: {$nin: Session.get('selected_filter_states')},
       $or:
       [
         {_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
@@ -45,15 +47,20 @@ Template.ticketlist.tickets = function () {
 
 Template.tickets.created = function() {
   Session.set('ticketsSearchfilter', '');
+  if (Session.get('selected_filter_states') == undefined) {
+    Session.set('selected_filter_states', []);
+  }
   ticketListSub = Meteor.subscribeWithPagination(
     'sortedTickets',
-    {modified: -1}, 
-    getFilter, 
+    {modified: -1},
+    getFilter,
     10);
 };
 
 var getFilter = function() {
-  return {$or:
+  return {
+    status: {$nin: Session.get('selected_filter_states')},
+    $or:
     [
       {_id: {$regex: ".*"+ Session.get('ticketsSearchfilter') +".*", $options: 'i'}},
       {subject: {$regex: ".*"+ Session.get('ticketsSearchfilter') +".*", $options: 'i'}},
@@ -61,6 +68,39 @@ var getFilter = function() {
     ]
   };
 };
+
+Template.statefilter.states = function() {
+  var statelist = [];
+  states = TicketStatus.find({}, {sort: {'name': 1}});
+  states.forEach(function(state) {
+  var idx = _.indexOf(Session.get('selected_filter_states'), state.name);
+    if (idx != -1) {
+      statelist.push(_.extend(state, {selected: 'filterunselected'}));
+    } else {
+      statelist.push(_.extend(state, {selected: 'filterselected'}));
+    }
+  });
+  return statelist;
+};
+
+Template.statefilter.events({
+  'click .filterrow': function (event, template) {
+    var state = TicketStatus.findOne({_id: event.toElement.id});
+    if (state !== undefined) {
+      var current_selection = Session.get('selected_filter_states');
+      if (_.indexOf(current_selection, state.name) == -1) {
+        // Item is not selected, add it
+        current_selection = _.extend([], current_selection);
+        current_selection.unshift(state.name);
+      } else {
+        current_selection = _.extend([], current_selection);
+        current_selection = _(current_selection).reject(function(el) {return el == state.name;});
+      }
+      Session.set('selected_filter_states', current_selection);
+    }
+  }
+});
+
 
 Template.tickets.showCreateTicketDialog = function () {
   return Session.get("showCreateTicketDialog");
