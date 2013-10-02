@@ -22,7 +22,7 @@ Handlebars.registerHelper('ticketstatus', function() {
 Handlebars.registerHelper('lastModifiedBy', function() {
   var ticket = Tickets.findOne({_id:this._id});
   var latest = undefined;
-  if (ticket.replies !== undefined) {
+  if (ticket !== undefined) {
     latest = ticket.replies[0];
   }
   ticket.replies.forEach(function(reply){
