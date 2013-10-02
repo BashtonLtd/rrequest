@@ -21,7 +21,10 @@ Handlebars.registerHelper('ticketstatus', function() {
 
 Handlebars.registerHelper('lastModifiedBy', function() {
   var ticket = Tickets.findOne({_id:this._id});
-  var latest = ticket.replies[0];
+  var latest = undefined;
+  if (ticket.replies !== undefined) {
+    latest = ticket.replies[0];
+  }
   ticket.replies.forEach(function(reply){
     if (moment(reply.created).unix() > moment(latest.created).unix() && reply.status == 'posted') {
       latest = reply;
