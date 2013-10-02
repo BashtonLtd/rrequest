@@ -30,7 +30,7 @@ Handlebars.registerHelper('lastModifiedBy', function() {
       latest = reply;
     }
   });
-  if (latest.posted_by !== undefined) {
+  if (latest !== undefined && latest.posted_by !== undefined) {
     return useremail(latest.posted_by);
   } else {
     return null;
