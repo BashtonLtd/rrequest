@@ -23,32 +23,34 @@ Meteor.methods({
   updateReply: function (options) {
     options = options || {};
 
-    var now = new Date();
-    var modifier = {$set: {}};
+    if (!this.isSimulation) {
+      var now = new Date();
+      var modifier = {$set: {}};
 
-    var idx = _.indexOf(_.pluck(options.replyfields, 'name'), 'status');
-    if (options.replyfields[idx].value == 'posted') {
-      if (!is_staff_by_id(options.userId)) {
-        modifier.$set["status"] = 'new';
-      }
-      modifier.$set["modified"] = now;
-    }
-
-    for (var i = 0, l = _.size(options.replyfields); i < l; i++) {
-      modifier.$set["replies." + options.replyIndex + "." + options.replyfields[i].name] = options.replyfields[i].value;
-    };
-
-    if (options.userId !== undefined) {
-      modifier.$set["replies." + options.replyIndex + ".posted_by"] = options.userId;
+      var idx = _.indexOf(_.pluck(options.replyfields, 'name'), 'status');
       if (options.replyfields[idx].value == 'posted') {
-        modifier.$set["replies." + options.replyIndex + ".created"] = now;
+        if (!is_staff_by_id(options.userId)) {
+          modifier.$set["status"] = 'new';
+        }
+        modifier.$set["modified"] = now;
       }
-    }
 
-    return Tickets.update(
-      {_id: options.ticketId, "replies._id": options.replyId},
-      modifier
-    );
+      for (var i = 0, l = _.size(options.replyfields); i < l; i++) {
+        modifier.$set["replies." + options.replyIndex + "." + options.replyfields[i].name] = options.replyfields[i].value;
+      };
+
+      if (options.userId !== undefined) {
+        modifier.$set["replies." + options.replyIndex + ".posted_by"] = options.userId;
+        if (options.replyfields[idx].value == 'posted') {
+          modifier.$set["replies." + options.replyIndex + ".created"] = now;
+        }
+      }
+
+      return Tickets.update(
+        {_id: options.ticketId, "replies._id": options.replyId},
+        modifier
+      );
+    }
   },
 
   updateStatus: function (options) {
