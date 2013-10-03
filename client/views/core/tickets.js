@@ -85,7 +85,7 @@ Template.statefilter.states = function() {
 
 Template.statefilter.events({
   'click .filterrow': function (event, template) {
-    var state = TicketStatus.findOne({_id: event.toElement.id});
+    var state = TicketStatus.findOne({_id: $(event.target).context.id});
     if (state !== undefined) {
       var current_selection = Session.get('selected_filter_states');
       if (_.indexOf(current_selection, state.name) == -1) {
