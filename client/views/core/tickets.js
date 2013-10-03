@@ -30,8 +30,13 @@ Handlebars.registerHelper('ticketlistfooter_items', function() {
 
 Template.ticketlist.tickets = function () {
   var searchfilter = Session.get('ticketsSearchfilter');
-
-  return Tickets.find(
+  var sortorder = Session.get('selected_sort_order');
+  if (Session.get('selected_sort_order') == 1) {
+    sortorder = 'asc';
+  } else {
+    sortorder = 'desc';
+  }
+  var tickets = Tickets.find(
     {
       status: {$nin: Session.get('selected_filter_states')},
       $or:
@@ -41,8 +46,9 @@ Template.ticketlist.tickets = function () {
         {'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
       ]
     }, 
-    {sort: {'modified': -1}, limit: ticketListSub.limit()}
-    );
+    {sort: [['modified', sortorder]], limit: ticketListSub.limit()}
+  );
+  return tickets;
 };
 
 Template.tickets.created = function() {
@@ -50,11 +56,18 @@ Template.tickets.created = function() {
   if (Session.get('selected_filter_states') == undefined) {
     Session.set('selected_filter_states', []);
   }
+  if (Session.get('selected_sort_order') == undefined) {
+    Session.set('selected_sort_order', -1);
+  }
   ticketListSub = Meteor.subscribeWithPagination(
     'sortedTickets',
-    {modified: -1},
+    getModified,
     getFilter,
     10);
+};
+
+var getModified = function() {
+  return {'modified': Session.get('selected_sort_order')};
 };
 
 var getFilter = function() {
@@ -101,6 +114,25 @@ Template.statefilter.events({
   }
 });
 
+Template.ticketsortorder.events({
+  'click .sortrow': function (event, template) {
+    if ($(event.target).context.id == 'sortnewest') {
+      Session.set('selected_sort_order', -1);
+    } else {
+      Session.set('selected_sort_order', 1);
+    }
+  }
+});
+
+Template.ticketsortorder.helpers({
+  selected: function(order) {
+    if (order == Session.get('selected_sort_order')) {
+      return 'sortselected';
+    } else {
+      return 'sortunselected';
+    }
+  }
+});
 
 Template.tickets.showCreateTicketDialog = function () {
   return Session.get("showCreateTicketDialog");

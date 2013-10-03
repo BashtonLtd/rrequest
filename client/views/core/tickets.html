@@ -25,6 +25,7 @@
     </div>
     <div class="span2">
       {{> statefilter}}
+      {{> ticketsortorder}}
     </div>
   </div>
 
@@ -199,6 +200,28 @@
         <td id="{{_id}}" class="{{selected}}">{{name}}</td>
       </tr>
       {{/each}}
+      </table>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</template>
+
+<template name="ticketsortorder">
+  <div class="box">
+    <div class="box-header">
+      <div class="pagetitle">Sort</div>
+      <div class="clearfix"></div>
+    </div>
+    <div class="box-body">
+      <table>
+        <tr id="sortoldest" class="{{selected 1}} sortrow">
+          <td id="sortoldest"><span class="ticket-item-icon"><i class="icon-arrow-up" id="sortoldest"></td>
+          <td id="sortoldest">Oldest First</td>
+        </tr>
+        <tr id="sortnewest" class="{{selected -1}} sortrow">
+          <td id="sortnewest"><span class="ticket-item-icon"><i class="icon-arrow-down" id="sortnewest"></td>
+          <td id="sortnewest">Newest First</td>
+        </tr>
       </table>
       <div class="clearfix"></div>
     </div>

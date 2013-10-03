@@ -282,3 +282,13 @@ a {
   color: #ADADAD;
   cursor: pointer;
 }
+
+.sortselected {
+  color: #000000;
+  cursor: pointer;
+}
+
+.sortunselected {
+  color: #ADADAD;
+  cursor: pointer;
+}

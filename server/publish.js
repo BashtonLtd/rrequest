@@ -107,7 +107,18 @@ Meteor.publish('sortedTickets', function(sort, filter, limit) {
       filter.isVisible = {$ne: false};
       return Tickets.find(filter, {sort: sort, limit: limit});
     } else {
-      return Tickets.find({isVisible: {$ne: false}, $or: [{group: {$in: groupids}}, {'requesters.id': {$in: [this.userId]}}]}, {sort: sort, limit:limit});
+      var newfilter = {
+        isVisible: {$ne: false},
+        status: filter.status,
+        $and: [
+          {$or: [
+            {group: {$in: groupids}},
+            {'requesters.id': {$in: [this.userId]}}
+          ]},
+          {$or: filter['$or']}
+        ]
+      }
+      return Tickets.find(newfilter, {sort: sort, limit:limit});
     }
   }
 });
