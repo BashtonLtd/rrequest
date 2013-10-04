@@ -285,6 +285,14 @@ Template.ticket.showEditTicketDialog = function () {
 Template.ticket.helpers({
   ticket: function(){
     var ticket = Tickets.findOne(Session.get('viewticketId'));
+    if (ticket === undefined && Session.get('viewticketId') != null) {
+      Meteor.call('getTicket', Session.get('viewticketId'), function(error, ticket) {
+        if (ticket !== undefined) {
+          Session.set('viewticketId', ticket._id);
+          Meteor.Router.to('/ticket/'+ticket._id);
+        }
+      });
+    }
     return ticket;
   },
 
