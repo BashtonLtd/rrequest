@@ -24,12 +24,11 @@ EventHorizon.on('ticketreply', function(){
   if (module_enabled) {
     var postedBy = Meteor.users.findOne({_id: this.postedBy});
     if (postedBy !== undefined) {
-      if (postedBy.profile.isStaff) {
-        Meteor.call('emailgateway_send_ticket_updated_email', {
-          ticketId: this.ticketId,
-          replyId: this.replyId
-        });
-      }
+      Meteor.call('emailgateway_send_ticket_updated_email', {
+        ticketId: this.ticketId,
+        user: postedBy,
+        replyId: this.replyId
+      });
     }
 
   }

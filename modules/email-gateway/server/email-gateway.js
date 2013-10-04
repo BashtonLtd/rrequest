@@ -90,35 +90,48 @@ Meteor.methods({
     var replyIndex = _.indexOf(_.pluck(ticket.replies, '_id'), args.replyId);
     var reply = ticket.replies[replyIndex];
     if (ticket !== undefined) {
-      var subject = '[' + ticket._id + '] ' + ticket.subject;
-
-      var ticketurl = Meteor.absoluteUrl('ticket/' + ticket._id, {});
-      var body = 'An update to your request has been posted and is shown below.\n\n';
-      body += 'To view the thread in context, visit ' + ticketurl + '.  ';
-      body += 'You can reply online or by replying to this email.\n\n';
-
-      body += reply.body;
-
-      var text = body;
-      var html = marked(body);
-
       var requesteremails = '';
-      for (var i = 0, l = ticket.requesters.length; i < l; i++) {
-        requesteremails += useremail(ticket.requesters[i]);
-        if (i < ticket.requesters.length -1) {
-          requesteremails += ', ';
+      if (args.user.profile.isStaff) {
+        for (var i = 0, l = ticket.requesters.length; i < l; i++) {
+          requesteremails += useremail(ticket.requesters[i]);
+          if (i < ticket.requesters.length -1) {
+            requesteremails += ', ';
+          }
+        }
+      } else {
+        for (var i = 0, l = ticket.requesters.length; i < l; i++) {
+          if (useremail(ticket.requesters[i]) != args.user.profile.email) {
+            requesteremails += useremail(ticket.requesters[i]);
+            if (i < ticket.requesters.length -1) {
+              requesteremails += ', ';
+            }
+          }
         }
       }
 
-      Email.send({
-        text: text,
-        from: EMAIL_FROM,
-        to: requesteremails,
-        subject: subject,
-        headers: {
-          'in-reply-to': get_requester_message_id(ticket._id)
-        }
-      });
+      if (requesteremails != '') {
+        var subject = '[' + ticket._id + '] ' + ticket.subject;
+
+        var ticketurl = Meteor.absoluteUrl('ticket/' + ticket._id, {});
+        var body = 'An update to your request has been posted and is shown below.\n\n';
+        body += 'To view the thread in context, visit ' + ticketurl + '.  ';
+        body += 'You can reply online or by replying to this email.\n\n';
+
+        body += reply.body;
+
+        var text = body;
+        var html = marked(body);
+
+        Email.send({
+          text: text,
+          from: EMAIL_FROM,
+          to: requesteremails,
+          subject: subject,
+          headers: {
+            'in-reply-to': get_requester_message_id(ticket._id)
+          }
+        });
+      }
     }
   }
 });
