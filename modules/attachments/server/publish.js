@@ -37,10 +37,7 @@ Meteor.publish('attachments', function() {
 Meteor.startup(function(){
   Attachments.allow({
     insert: function(userId, doc) {
-      if (is_staff_by_id(userId)) {
-        return true;
-      }
-      return false;
+      return true;
     },
     update: function(userId, docs, fieldNames, modifier) {
       if (is_staff_by_id(userId)) {
