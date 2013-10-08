@@ -241,8 +241,6 @@ var get_groups = function (query_opts) {
   grouplist.forEach(function (group) {
     groups.push({id:group._id, text:group.name});
   });
-
-
   return {results: groups};
 };
 

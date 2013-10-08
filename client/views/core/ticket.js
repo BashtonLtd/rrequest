@@ -386,6 +386,9 @@ var get_groups = function (query_opts) {
   var user = Meteor.users.findOne({_id:Meteor.userId()});
   var requesters = $(".ticketrequester").select2('val');
   var grouplist = Groups.find({members: {$in: requesters}});
+  if (grouplist.count() < 1 && is_staff(user)) {
+    grouplist = Groups.find({}, {sort: {'name': 1}});
+  }
   var groups = [];
   grouplist.forEach(function (group) {
     groups.push({id:group._id, text:group.name});
