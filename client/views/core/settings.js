@@ -170,3 +170,47 @@ Template.moduleactivation.events({
     });
   }
 });
+
+Template.general.events({
+  'click .general-settings-save': function (event, template) {
+    var site_name = template.find(".site_name").value;
+    var support_email = template.find(".support_email").value;
+
+    var settings = [
+      {name: 'site_name', value: site_name},
+      {name: 'support_email', value: support_email}
+    ];
+
+    settings.forEach(function(setting) {
+      var setting_record = Settings.findOne({name: setting.name});
+      if (setting_record === undefined) {
+        Settings.insert({
+          name: setting.name,
+          value: setting.value
+        });
+      } else {
+        Settings.update(
+          {_id: setting_record._id},
+          {$set: {
+            name: setting.name,
+            value: setting.value
+          }}
+        );
+      }
+    });
+  }
+});
+
+Template.general.site_name = function() {
+  var setting = Settings.findOne({name: 'site_name'});
+  if (setting !== undefined) {
+    return setting.value;
+  }
+};
+
+Template.general.support_email = function() {
+  var setting = Settings.findOne({name: 'support_email'});
+  if (setting !== undefined) {
+    return setting.value;
+  }
+};

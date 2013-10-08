@@ -78,10 +78,14 @@ Meteor.Router.filter('redirectToTickets', {only: ['home']});
 
 Meteor.startup(function() {
   Meteor.autorun(function() {
+    site_name_setting = Settings.findOne({name: 'site_name'});
+    var site_name = 'rrequest';
+    if (site_name_setting !== undefined) {
+      site_name = site_name_setting.value;
+    }
     // grab the current page from the router, so this re-runs every time it changes
     Meteor.Router.page();
     if(Meteor.Router.page() !== "loading"){
-      console.log('------ '+Meteor.Router.page()+' ------');
     }
 
     if (Meteor.Router.page() == 'ticket') {
@@ -89,10 +93,10 @@ Meteor.startup(function() {
       if (ticket !== undefined) {
         document.title = ticket._id + ' - ' + ticket.subject;
       } else {
-        document.title = 'rrequest: ' + Meteor.Router.page();
+        document.title = site_name + ': ' + Meteor.Router.page();
       }
     } else {
-      document.title = 'rrequest: ' + Meteor.Router.page();
+      document.title = site_name + ': ' + Meteor.Router.page();
     }
 
     Session.set('currentScroll', null);

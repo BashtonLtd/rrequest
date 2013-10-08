@@ -21,3 +21,4 @@
 */
 Modules = new Meteor.Collection("modules");
 Hooks = new Meteor.Collection("hooks");
+Settings = new Meteor.Collection("settings");

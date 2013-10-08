@@ -19,11 +19,22 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-EMAIL_FROM = 'support@bashton.com';
-Accounts.emailTemplates.siteName = "Bashton Support";
-Accounts.emailTemplates.from = "Bashton Support <support@bashton.com>";
-
 Meteor.startup(function (){
+  // Setup email values
+  var site_name = Settings.findOne({name: 'site_name'});
+  if (site_name === undefined) {
+    site_name = {name: 'site_name', value: 'Rrequest Support'};
+  }
+
+  var support_email = Settings.findOne({name: 'support_email'});
+  if (support_email === undefined) {
+    support_email = {name: 'support_email', value: 'rrequest@invalid.com'};
+  }
+
+  EMAIL_FROM = support_email.value;
+  Accounts.emailTemplates.siteName = site_name.value;
+  Accounts.emailTemplates.from = site_name.value + ' <' + support_email.value + '>';
+
   // Initialise status collection
   var status_new = TicketStatus.findOne({name: 'new'});
   if (status_new === undefined) {

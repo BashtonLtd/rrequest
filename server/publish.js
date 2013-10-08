@@ -251,3 +251,36 @@ Meteor.startup(function(){
     }
   });
 });
+
+Meteor.publish('settings', function() {
+  if (is_staff_by_id(this.userId)) {
+    return Settings.find();
+  }
+});
+
+Meteor.startup(function(){
+  Settings.allow({
+    insert: function(userId, doc) {
+      if (is_staff_by_id(userId)) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    update: function(userId, docs, fieldNames, modifier) {
+      if (is_staff_by_id(userId)) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    remove: function(userId, docs) {
+      if (is_staff_by_id(userId)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  });
+});
+

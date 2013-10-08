@@ -25,7 +25,7 @@ Meteor.methods({
 
     if (!this.isSimulation) {
       var now = new Date();
-      var modifier = {$set: {}};
+      var modifier = {$set: {}, $unset: {}};
 
       var idx = _.indexOf(_.pluck(options.replyfields, 'name'), 'status');
       if (options.replyfields[idx].value == 'posted') {
@@ -33,6 +33,8 @@ Meteor.methods({
           modifier.$set["status"] = 'new';
         }
         modifier.$set["modified"] = now;
+        // This should be in the autoclose module, can't use the  ticket reply event as that is client side
+        modifier.$unset["close_warning"] = "";
       }
 
       for (var i = 0, l = _.size(options.replyfields); i < l; i++) {

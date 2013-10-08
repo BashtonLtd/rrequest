@@ -122,9 +122,16 @@ Meteor.methods({
         var text = body;
         var html = marked(body);
 
+        var site_name_setting = Settings.findOne({name: 'site_name'});
+        var site_name = 'rrequest';
+        if (site_name_setting !== undefined) {
+          site_name = site_name_setting.value;
+        }
+        var emailfrom = args.user.profile.name + ' via ' + site_name + ' <' + EMAIL_FROM + '>';
+        
         Email.send({
           text: text,
-          from: EMAIL_FROM,
+          from: emailfrom,
           to: requesteremails,
           subject: subject,
           headers: {

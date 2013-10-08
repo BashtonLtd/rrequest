@@ -40,3 +40,5 @@ Meteor.subscribe('modules', function() {
   EventHorizon.fire('modulescollectionready');
 });
 Meteor.subscribe('hooks');
+
+Meteor.subscribe('settings');
