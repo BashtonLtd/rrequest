@@ -23,35 +23,12 @@ Meteor.methods({
   updateReply: function (options) {
     options = options || {};
 
-    if (!this.isSimulation) {
-      var now = new Date();
-      var modifier = {$set: {}, $unset: {}};
+    var idx = _.indexOf(_.pluck(options.replyfields, 'name'), 'status');
 
-      var idx = _.indexOf(_.pluck(options.replyfields, 'name'), 'status');
-      if (options.replyfields[idx].value == 'posted') {
-        if (!is_staff_by_id(options.userId)) {
-          modifier.$set["status"] = 'new';
-        }
-        modifier.$set["modified"] = now;
-        // This should be in the autoclose module, can't use the  ticket reply event as that is client side
-        modifier.$unset["close_warning"] = "";
-      }
-
-      for (var i = 0, l = _.size(options.replyfields); i < l; i++) {
-        modifier.$set["replies." + options.replyIndex + "." + options.replyfields[i].name] = options.replyfields[i].value;
-      };
-
-      if (options.userId !== undefined) {
-        modifier.$set["replies." + options.replyIndex + ".posted_by"] = options.userId;
-        if (options.replyfields[idx].value == 'posted') {
-          modifier.$set["replies." + options.replyIndex + ".created"] = now;
-        }
-      }
-
-      return Tickets.update(
-        {_id: options.ticketId, "replies._id": options.replyId},
-        modifier
-      );
+    if (options.replyfields[idx].value == 'posted') {
+      update_ticket(options);
+    } else if (!this.isSimulation) {
+      update_ticket(options);
     }
   },
 
@@ -64,6 +41,37 @@ Meteor.methods({
     return insert_event(options);
   }
 });
+
+var update_ticket = function(options) {
+  var now = new Date();
+  var modifier = {$set: {}, $unset: {}};
+
+  var idx = _.indexOf(_.pluck(options.replyfields, 'name'), 'status');
+  if (options.replyfields[idx].value == 'posted') {
+    if (!is_staff_by_id(options.userId)) {
+      modifier.$set["status"] = 'new';
+    }
+    modifier.$set["modified"] = now;
+    // This should be in the autoclose module, can't use the  ticket reply event as that is client side
+    modifier.$unset["close_warning"] = "";
+  }
+
+  for (var i = 0, l = _.size(options.replyfields); i < l; i++) {
+    modifier.$set["replies." + options.replyIndex + "." + options.replyfields[i].name] = options.replyfields[i].value;
+  };
+
+  if (options.userId !== undefined) {
+    modifier.$set["replies." + options.replyIndex + ".posted_by"] = options.userId;
+    if (options.replyfields[idx].value == 'posted') {
+      modifier.$set["replies." + options.replyIndex + ".created"] = now;
+    }
+  }
+
+  return Tickets.update(
+    {_id: options.ticketId, "replies._id": options.replyId},
+    modifier
+  );
+};
 
 insert_event = function(options) {
   options = options || {};
