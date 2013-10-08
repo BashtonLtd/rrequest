@@ -26,9 +26,9 @@ Meteor.methods({
     var idx = _.indexOf(_.pluck(options.replyfields, 'name'), 'status');
 
     if (options.replyfields[idx].value == 'posted') {
-      update_ticket(options);
+      update_ticket_reply(options);
     } else if (!this.isSimulation) {
-      update_ticket(options);
+      update_ticket_reply(options);
     }
   },
 
@@ -39,10 +39,14 @@ Meteor.methods({
 
   insertEvent: function (options) {
     return insert_event(options);
+  },
+
+  updateTicket: function (options) {
+    return update_ticket(options);
   }
 });
 
-var update_ticket = function(options) {
+var update_ticket_reply = function(options) {
   var now = new Date();
   var modifier = {$set: {}, $unset: {}};
 
@@ -71,6 +75,14 @@ var update_ticket = function(options) {
     {_id: options.ticketId, "replies._id": options.replyId},
     modifier
   );
+};
+
+update_ticket  = function (options) {
+  options = options || {};
+
+  return Tickets.update({_id: options._id},
+      {$set: {subject: options.subject, requesters: options.requesters, group: options.groups, status:options.status}}
+    );
 };
 
 insert_event = function(options) {

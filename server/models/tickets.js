@@ -24,10 +24,6 @@ Meteor.methods({
     return create_ticket(options);
   },
 
-  updateTicket: function (options) {
-    return update_ticket(options);
-  },
-
   addTicketRequester: function (options) {
     return add_ticket_requester(options);
   },
@@ -86,14 +82,6 @@ create_ticket = function (options) {
       replies: []
     });
   }
-};
-
-update_ticket  = function (options) {
-  options = options || {};
-
-  return Tickets.update({_id: options._id},
-      {$set: {subject: options.subject, requesters: options.requesters, group: options.groups, status:options.status}}
-    );
 };
 
 get_ticket = function(ticketId) {
