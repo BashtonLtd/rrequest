@@ -233,11 +233,16 @@ get_requesters = function (query_opts) {
 var get_groups = function (query_opts) {
   var user = Meteor.users.findOne({_id:Meteor.userId()});
   var requesters = $(".ticketrequester").select2('val');
-  var grouplist = Groups.find({members: {$in: requesters}});
+  var grouplist = Groups.find({members: {$in: requesters}}, {sort: {'name': 1}});
+  if (grouplist.count() < 1 && is_staff(user)) {
+    grouplist = Groups.find({}, {sort: {'name': 1}});
+  }
   var groups = [];
   grouplist.forEach(function (group) {
     groups.push({id:group._id, text:group.name});
   });
+
+
   return {results: groups};
 };
 
