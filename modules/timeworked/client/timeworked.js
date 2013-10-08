@@ -74,3 +74,9 @@ Template.timeworked_ticket_sidebar.helpers({
   	return timeworked;
   }
 });
+
+Template.timeworked_reply_form_field.events({
+  'blur #timeworked': function (event, template) {
+    template.find("#timeworked").value = 15 * Math.ceil(template.find("#timeworked").value/15);
+  }
+});
