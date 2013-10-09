@@ -56,11 +56,11 @@ Meteor.startup(function() {
 
 var submit_count = function(state, count) {
   var settings = DashingSubmitSettings.findOne();
-  var post_data = '{"auth_token":"fishfishfish","current":' + count + '}';
+  var post_data = '{"auth_token":'+settings.auth_token+',"current":' + count + '}';
   var options = {
-    host: 'monitoring.bashton.net',
-    port: 3090,
-    path: '/widgets/tickets' + state.replace(new RegExp(' ', 'g'), '_'),
+    host: settings.host,
+    port: settings.port,
+    path: settings.path + state.replace(new RegExp(' ', 'g'), '_'),
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
