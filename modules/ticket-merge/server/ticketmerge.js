@@ -133,7 +133,7 @@ merge_tickets = function (userId, target, source) {
 			Tickets.update(
 				{_id: source_id},
 				{
-					$set: { replies: replies_to_keep, isVisible: false, mergedInto: target}
+					$set: { replies: replies_to_keep, isVisible: false, mergedInto: target, status: 'closed'}
 				}
 			)
 
