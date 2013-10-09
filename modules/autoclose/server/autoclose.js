@@ -168,7 +168,7 @@ autoclose = function(data) {
 
 		});
 
-		opentickets = Tickets.find({status: {$ne: 'closed'}});
+		opentickets = Tickets.find({status: {$ne: 'closed'}, isVisible: {$ne: false}});
 
 		opentickets.forEach(function (ticket) {
 			// warning if no activity for 'age_warning' days
