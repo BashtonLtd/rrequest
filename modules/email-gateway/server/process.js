@@ -31,6 +31,9 @@ process_mail = function(mail_object) {
   if (mail_object.to[0].address.toLowerCase() != EMAIL_FROM.toLowerCase()) {
     var requestto = get_or_create_user(mail_object.to[0].address.toLowerCase());
     requesters.push({id:requestto._id, email:mail_object.to[0].address.toLowerCase()});
+    if (requestfrom === undefined) {
+      var requestfrom = requestto;
+    }
   }
 
   if (mail_object.cc !== undefined) {
@@ -42,6 +45,10 @@ process_mail = function(mail_object) {
         }
       }
     }
+  }
+
+  if (requestfrom === undefined) {
+    var requestfrom = get_or_create_user('unknown@bashton.com');
   }
 
   var ticket = get_or_create_ticket(requesters, mail_object.subject);

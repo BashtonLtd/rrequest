@@ -54,8 +54,7 @@ Meteor.startup(function (){
         password: settings.imap_password,
         host: settings.imap_host,
         port: settings.imap_port,
-        secure: settings.imap_secure,
-	debug: function(text){console.log(text);}
+        secure: settings.imap_secure
       });
     }
   }

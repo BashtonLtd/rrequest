@@ -118,10 +118,10 @@ get_or_create_ticket = function(requesters, subject) {
   if (ticketId !== null) {
     ticket = Tickets.findOne({_id: ticketId});
     // ticket found check if it has been merged
-    if (ticket.mergedInto !== undefined) {
+    if (ticket !== undefined && ticket.mergedInto !== undefined) {
       // Ticket has been merged, get the target ticket
       ticket = Tickets.findOne({_id: ticket.mergedInto});
-    } 
+    }
   }
 
   if (ticket !== null && ticket !== undefined) {
