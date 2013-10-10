@@ -74,11 +74,14 @@ Handlebars.registerHelper('isNotGrouped', function(ticketId) {
   if (ticket !== undefined) {
     if (ticket.group == null || ticket.group == undefined || ticket.group.length == 0) {
         return true;
-    } else {
-        return false;
+    } else if (ticket.group.length == 1) {
+      if (ticket.group[0] == null) {
+        return true;
+      }
+      return false
     }
-  } else {
     return true;
   }
+  return false;
 
 });
