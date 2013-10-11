@@ -38,7 +38,7 @@ Template.users.showEditUserDialog = function () {
 };
 
 var openEditUserDialog = function (user_id) {
-  Session.set('currentScroll',$('body').scrollTop());
+  Session.set('currentScroll',$(document).scrollTop());
   Session.set("selectedUser", user_id);
   Session.set("showEditUserDialog", true);
 };

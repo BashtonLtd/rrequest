@@ -274,7 +274,7 @@ Template.ticket.events({
 });
 
 var openEditTicketDialog = function () {
-  Session.set('currentScroll',$('body').scrollTop());
+  Session.set('currentScroll',$(document).scrollTop());
   Session.set("showEditTicketDialog", true);
 };
 

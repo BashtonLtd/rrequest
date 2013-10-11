@@ -25,9 +25,9 @@ Template.body.created = function(){
 
 Template.body.rendered = function(){
   var currentScroll = Session.get('currentScroll') !== null ? Session.get('currentScroll') : 0;
-  $('body').scrollTop(currentScroll);
+  $(document).scrollTop(currentScroll);
 };
 
 window.onscroll = function(){
-  Session.set('currentScroll',$('body').scrollTop());
+  Session.set('currentScroll',$(document).scrollTop());
 };

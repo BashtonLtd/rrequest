@@ -161,7 +161,7 @@ Template.tickets.events({
 });
 
 var openCreateTicketDialog = function () {
-  Session.set('currentScroll',$('body').scrollTop());
+  Session.set('currentScroll',$(document).scrollTop());
   Session.set("showCreateTicketDialog", true);
 };
 
