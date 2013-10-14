@@ -34,8 +34,34 @@ Meteor.methods({
 
   getTicket: function (ticketId) {
     return get_ticket(ticketId);
+  },
+
+  getTotalTimeworked: function (groupname) {
+    return get_total_timeworked(groupname);
   }
 });
+
+get_total_timeworked = function (groupname) {
+  var group = Groups.findOne({name: groupname});
+  var tickets = Tickets.find({group: {$in: [group._id]}});
+  var total = 0;
+  tickets.forEach(function(ticket) {
+    ticket.replies.forEach(function(reply) {
+      if (reply.timeworked !== undefined) {
+        total = +total + +reply.timeworked;
+      }
+    })
+    // also get timeworked from comments
+    var comments = Comments.find({ticketId: ticket._id});
+    comments.forEach(function(comment) {
+      console.log(comment.timeworked);
+      if (comment.timeworked !== undefined) {
+        total = +total + +comment.timeworked;
+      }
+    })
+  })
+  return total;
+};
 
 set_ticket_groups = function (options) {
   options = options || {};
