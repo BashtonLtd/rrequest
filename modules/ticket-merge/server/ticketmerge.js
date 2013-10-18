@@ -134,7 +134,7 @@ merge_tickets = function (userId, target, source) {
           Tickets.update(
             {_id: target},
             {
-              group: source_ticket.group
+              $set: {group: source_ticket.group}
             }
           )
         } else if (target_ticket.group.length == 1) {
@@ -142,7 +142,7 @@ merge_tickets = function (userId, target, source) {
             Tickets.update(
               {_id: target},
               {
-                group: source_ticket.group
+                $set: {group: source_ticket.group}
               }
             )
           }
