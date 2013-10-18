@@ -181,6 +181,30 @@ Template.ticket.created = function () {
 };
 
 Template.ticket.events({
+  'blur .ticketreplybody': function (event, template) {
+    var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
+
+    var replyId = template.find(".ticketreplyId").value;
+    var level = template.find(".ticketreplylevel").value;
+    var body = template.find(".ticketreplybody").value;
+
+    var replyIndex = _.indexOf(_.pluck(ticket.replies, '_id'), replyId);
+
+    Meteor.call('updateReply', {
+      ticketId: Session.get('viewticketId'),
+      replyId: replyId,
+      replyIndex: replyIndex,
+      level: level,
+      replyfields: [
+        {name: 'body', value: body},
+        {name: 'status', value: 'unposted'}
+      ]
+    }, function (error, group) {
+      if (! error) {
+      }
+    });
+  },
+
   'keydown .ticketreplybody': function (event, template) {
     var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
 
