@@ -121,7 +121,6 @@ merge_tickets = function (userId, target, source) {
 				{
 					$addToSet: {
 						requesters: {$each: source_ticket.requesters},
-						group: {$each: source_ticket.group}
 					},
 					$set: {
 						original_requesters: original_requesters,
@@ -129,6 +128,35 @@ merge_tickets = function (userId, target, source) {
 					}
 				}
 			)
+
+      if (source_ticket.group.length != 0) {
+        if (target_ticket.group == null || target_ticket.group == undefined || target_ticket.group.length == 0) {
+          Tickets.update(
+            {_id: target},
+            {
+              group: source_ticket.group
+            }
+          )
+        } else if (target_ticket.group.length == 1) {
+          if (target_ticket.group[0] == null) {
+            Tickets.update(
+              {_id: target},
+              {
+                group: source_ticket.group
+              }
+            )
+          }
+        } else {
+          Tickets.update(
+            {_id: target},
+            {
+              $addToSet: {
+                group: {$each: source_ticket.group}
+              }
+            }
+          )
+        }
+      }
 
 			Tickets.update(
 				{_id: source_id},

@@ -54,7 +54,6 @@ get_total_timeworked = function (groupname) {
     // also get timeworked from comments
     var comments = Comments.find({ticketId: ticket._id});
     comments.forEach(function(comment) {
-      console.log(comment.timeworked);
       if (comment.timeworked !== undefined) {
         total = +total + +comment.timeworked;
       }

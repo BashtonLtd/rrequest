@@ -101,7 +101,7 @@ Handlebars.registerHelper('isNotGrouped', function(ticketId) {
       }
       return false
     }
-    return true;
+    return false;
   }
   return false;
 
