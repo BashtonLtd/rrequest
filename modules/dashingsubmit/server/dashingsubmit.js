@@ -50,13 +50,13 @@ Meteor.startup(function() {
     module = Modules.findOne({name: 'dashingsubmit'});
 
     if (module.enabled) {
-        start_submitting();
+      start_submitting();
     }
 });
 
 var submit_count = function(state, count) {
   var settings = DashingSubmitSettings.findOne();
-  var post_data = '{"auth_token":'+settings.auth_token+',"current":' + count + '}';
+  var post_data = '{"auth_token":"'+settings.auth_token+'","current":' + count + '}';
   var options = {
     host: settings.host,
     port: settings.port,
