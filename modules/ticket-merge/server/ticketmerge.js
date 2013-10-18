@@ -145,6 +145,15 @@ merge_tickets = function (userId, target, source) {
                 $set: {group: source_ticket.group}
               }
             )
+          } else {
+            Tickets.update(
+              {_id: target},
+              {
+                $addToSet: {
+                  group: {$each: source_ticket.group}
+                }
+              }
+            )
           }
         } else {
           Tickets.update(
