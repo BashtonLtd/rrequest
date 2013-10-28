@@ -1,17 +1,22 @@
 <template name="timeworked_reply_form_field">
+{{#if currentUser.profile.isStaff}}
 <label>Time Worked (in minutes):</label>
 <input id="timeworked" name="timeworked" type="number" min="0" step="15"/>
+{{/if}}
 </template>
 
 <template name="timeworked_reply_header">
+{{#if currentUser.profile.isStaff}}
 {{#with reply replyId}}
   {{#if timeworked}}
 	<span class="label label-info">worked: {{timeworked}} minutes</span>
   {{/if}}
 {{/with}}
+{{/if}}
 </template>
 
 <template name="timeworked_ticket_sidebar">
+  {{#if currentUser.profile.isStaff}}
   <div class="box">
     <div class="box-header">
       <div class="sidebarheader">TIME WORKED</div>
@@ -21,4 +26,5 @@
       <div class="statusunits">minutes</div>
     </div>
   </div>
+  {{/if}}
 </template>
