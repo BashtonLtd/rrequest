@@ -26,52 +26,52 @@ Template.timeworked_reply_header.helpers({
     var replies = [];
     ticket.replies.forEach(function(reply){
       if(reply.status == 'posted') {
-      	replies.push(reply);
+        replies.push(reply);
       }
     });
 
-	  // Fetch replies from other modules
-	  var hooks = Hooks.find({hook:'ticket_replies'});
-	  hooks.forEach(function (hook) {
-  	  var ticketreplies = window[hook.data]({ticketId: Session.get('viewticketId')});
-	    ticketreplies.forEach(function(ticketreply) {
-  	  	replies.push(ticketreply);
-	    });
-	  });
+    // Fetch replies from other modules
+    var hooks = Hooks.find({hook:'ticket_replies'});
+    hooks.forEach(function (hook) {
+      var ticketreplies = window[hook.data]({ticketId: Session.get('viewticketId')});
+      ticketreplies.forEach(function(ticketreply) {
+        replies.push(ticketreply);
+      });
+    });
 
-	  var replyIndex = _.indexOf(_.pluck(replies, '_id'), replyId);
-	  return replies[replyIndex];
+    var replyIndex = _.indexOf(_.pluck(replies, '_id'), replyId);
+    return replies[replyIndex];
   }
 });
 
 Template.timeworked_ticket_sidebar.helpers({
   totaltimeworked: function() {
 
-  	var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
-  	var timeworked = 0;
-  	if (ticket !== undefined) {
-  	  ticket.replies.forEach(function(reply){
-  	  	if(reply !== undefined) {
-  	  	  if(reply.status == 'posted') {
-  	  	  	if (reply.timeworked) {
-  	  	  	  timeworked = timeworked + parseInt(reply.timeworked);
-  	  	  	}
-  	  	  }
-  	  	}
-  	  });
+    var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
+    var timeworked = 0;
+    if (ticket !== undefined) {
+      ticket.replies.forEach(function(reply){
+        if(reply !== undefined) {
+          if(reply.status == 'posted') {
+            if (reply.timeworked) {
+              timeworked = timeworked + parseInt(reply.timeworked);
+            }
+          }
+        }
+      });
 
-  	  // Fetch replies from other modules
-	    var hooks = Hooks.find({hook:'ticket_replies'});
-  	  hooks.forEach(function (hook) {
-	      var ticketreplies = window[hook.data]({ticketId: Session.get('viewticketId')});
-	      ticketreplies.forEach(function(ticketreply) {
-  	  	  if (ticketreply.timeworked) {
-	  	      timeworked = timeworked + parseInt(ticketreply.timeworked);
-	  	    }
-	      });
-	    });
-  	}
-  	return timeworked;
+      // Fetch replies from other modules
+      var hooks = Hooks.find({hook:'ticket_replies'});
+      hooks.forEach(function (hook) {
+        var ticketreplies = window[hook.data]({ticketId: Session.get('viewticketId')});
+        ticketreplies.forEach(function(ticketreply) {
+          if (ticketreply.timeworked) {
+            timeworked = timeworked + parseInt(ticketreply.timeworked);
+          }
+        });
+      });
+    }
+    return timeworked;
   }
 });
 
