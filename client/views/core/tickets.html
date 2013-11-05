@@ -35,11 +35,9 @@
         <div class="box-header">
           <div class="pagetitle"></div>
           <div class="btn-group pull-right">
-          {{#if currentUser.profile.isStaff}}
             {{#each ticketlistfooter_items}}
               {{{template}}}
             {{/each}}
-          {{/if}}
             {{#if ticketsReady}}
               <button class="btn load-more">Load More</button>
             {{else}}

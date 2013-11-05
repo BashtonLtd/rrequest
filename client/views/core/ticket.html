@@ -32,17 +32,17 @@
             {{/with}}
           </div>
         </div>
-        {{#if currentUser.profile.isStaff}}
         <div class="box-footer">
           <div class="btn-group pull-right">
             {{#each ticketfooter_items}}
               {{{template}}}
             {{/each}}
+            {{#if currentUser.profile.isStaff}}
             <button class="btn edit-ticket"><i class="icon-wrench"></i> Edit</button>
+            {{/if}}
             </div>
           <div class="clearfix"></div>
         </div>
-        {{/if}}
       </div>
 
       {{#each posted_replies}}

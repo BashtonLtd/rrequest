@@ -42,6 +42,7 @@ Meteor.methods({
             module_id: args.module_id,
             name: 'Edit Groups',
             type: 'ticket',
+            staff_only: true,
             callback: 'action_editgroups',
             template: 'action_editgroups'
         });
@@ -51,6 +52,7 @@ Meteor.methods({
             module_id: args.module_id,
             name: 'Resolve Tickets',
             type: 'ticketlist',
+            staff_only: false,
             callback: 'action_resolvetickets',
             template: 'action_resolvetickets'
         });
@@ -60,6 +62,7 @@ Meteor.methods({
             module_id: args.module_id,
             name: 'Resolve Ticket',
             type: 'ticket',
+            staff_only: false,
             callback: 'action_resolvetickets',
             template: 'action_resolvetickets'
         });

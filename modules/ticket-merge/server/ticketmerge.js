@@ -42,6 +42,7 @@ Meteor.methods({
       		module_id: args.module_id,
       		name: 'Merge Tickets',
       		type: 'ticketlist',
+      		staff_only: true,
       		callback: 'ticketmerge',
       		template: 'ticketmerge'
 	    });
@@ -51,6 +52,7 @@ Meteor.methods({
       		module_id: args.module_id,
       		name: 'Unmerge Ticket',
       		type: 'ticket',
+      		staff_only: true,
       		callback: 'ticketunmerge',
       		template: 'ticketunmerge'
 	    });

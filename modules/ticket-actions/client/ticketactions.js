@@ -21,7 +21,12 @@
 */
 Handlebars.registerHelper('ticketlistactions', function() {
   var ticketactions = [];
-  var hooks = Hooks.find({hook:'ticketactions', type: 'ticketlist'});
+  var user = Meteor.users.findOne({_id: Meteor.userId()});
+  if(user.profile.isStaff) {
+    var hooks = Hooks.find({hook:'ticketactions', type: 'ticketlist'});
+  } else {
+    var hooks = Hooks.find({hook:'ticketactions', type: 'ticketlist', staff_only: false});
+  }
   hooks.forEach(function (hook) {
     ticketactions.push({name: hook.name, callback: hook.callback, id: hook._id});
   });
@@ -55,7 +60,12 @@ Template.ticketlistactionlist.events({
 
 Handlebars.registerHelper('ticketactions', function() {
   var ticketactions = [];
-  var hooks = Hooks.find({hook:'ticketactions', type: 'ticket'});
+  var user = Meteor.users.findOne({_id: Meteor.userId()});
+  if(user.profile.isStaff) {
+    var hooks = Hooks.find({hook:'ticketactions', type: 'ticket'});
+  } else {
+    var hooks = Hooks.find({hook:'ticketactions', type: 'ticket', staff_only: false});
+  }
   hooks.forEach(function (hook) {
     ticketactions.push({name: hook.name, callback: hook.callback, id: hook._id});
   });
