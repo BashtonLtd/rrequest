@@ -50,7 +50,7 @@ Meteor.methods({
         Hooks.insert({
             hook: 'ticketactions',
             module_id: args.module_id,
-            name: 'Resolve Tickets',
+            name: 'Close Tickets',
             type: 'ticketlist',
             staff_only: false,
             callback: 'action_resolvetickets',
@@ -60,7 +60,7 @@ Meteor.methods({
         Hooks.insert({
             hook: 'ticketactions',
             module_id: args.module_id,
-            name: 'Resolve Ticket',
+            name: 'Close Ticket',
             type: 'ticket',
             staff_only: false,
             callback: 'action_resolvetickets',
