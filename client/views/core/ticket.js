@@ -200,6 +200,7 @@ Template.ticket.events({
           ticketId: Session.get('viewticketId'),
           replyId: replyId,
           replyIndex: replyIndex,
+          userId: Meteor.userId(),
           level: level,
           replyfields: [
             {name: 'body', value: body},
@@ -210,6 +211,12 @@ Template.ticket.events({
 
           }
         });
+
+        EventHorizon.fire('typingticketreply',{
+          ticketId: Session.get('viewticketId'),
+          postedBy: Meteor.userId()
+        });
+
         Session.set('lastkeypresswasspace', true);
       }
     } else {
@@ -265,6 +272,37 @@ Template.ticket.events({
       });
       $("#ticketreplyextrafields input").not(':button, :submit, :reset, :hidden').val('');
       template.find(".ticketreplybody").value = '';
+    }
+  },
+
+  'click .clearreply': function (event, template) {
+    var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
+    var replyId = template.find(".ticketreplyId").value;
+    var level = template.find(".ticketreplylevel").value;
+    var body = template.find(".ticketreplybody").value;
+
+    if (body.trim() != '') {
+      template.find(".ticketreplybody").value = '';
+
+      var replyIndex = _.indexOf(_.pluck(ticket.replies, '_id'), replyId);
+      var args = {
+        ticketId: Session.get('viewticketId'),
+        replyId: replyId,
+        replyIndex: replyIndex,
+        userId: Meteor.userId(),
+        level: level,
+        replyfields: [
+          {name: 'type', value: 'reply'},
+          {name: 'body', value: ''},
+          {name: 'status', value: 'unposted'}
+        ]
+      };
+
+      Meteor.call('updateReply', args, function (error, ticketId) {
+        if (! error) {
+
+        }
+      });
     }
   },
 

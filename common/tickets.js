@@ -22,7 +22,6 @@
 Meteor.methods({
   updateReply: function (options) {
     options = options || {};
-
     var idx = _.indexOf(_.pluck(options.replyfields, 'name'), 'status');
 
     if (options.replyfields[idx].value == 'posted') {

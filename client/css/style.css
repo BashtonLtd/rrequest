@@ -49,7 +49,6 @@ label {
 
 .box-header {
   background-color: #fff;
-  
   vertical-align: top;
   padding: 9px;
 }
@@ -76,6 +75,18 @@ label {
 
 .reply-header {
   float:left;
+}
+
+.replybodycontainer {
+
+}
+
+.replybodycontainer input {
+
+}
+
+.replybodycontainer button {
+  vertical-align: top;
 }
 
 .ticket-subject {

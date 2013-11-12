@@ -1,0 +1,25 @@
+<template name="autostatussettings">
+  <div class="box">
+    <div class="box-header">
+      <h4>Settings</h4>
+    </div>
+
+    <div class="box-body">
+      <label>When staff start typing a reply</label>
+      <select class="staff_typing">
+        {{#each ticketstatus}}
+          <option value="{{name}}" {{selectedstatus name}}>{{name}}</option>
+        {{/each}}
+      </select>
+      <div class="help-block">The status to set on a ticket when a staff member starts to type a reply to a ticket.</div>
+
+    </div>
+
+    <div class="box-footer">
+      <div class="btn-group pull-right">
+      <button class="btn btn-primary autostatus-settings-save"><i class="icon-ok icon-white"></i> Save</button>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</template>

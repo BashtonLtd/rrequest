@@ -57,7 +57,10 @@
         <div class="box-body">
           <input type="hidden" class="ticketreplyId" value="{{unposted_reply._id}}">
           <input type="hidden" class="ticketreplylevel" value="{{unposted_reply.level}}">
-          <textarea id="replybody" rows="10" class="ticketreplybody span9">{{unposted_reply.body}}</textarea>
+          <div class="replybodycontainer">
+          <textarea id="replybody" rows="10" class="ticketreplybody span8">{{unposted_reply.body}}</textarea>
+          <button class="clearreply" type="submit"><i class="icon-trash"></i> Clear</button>
+          </div>
 
           <form id="ticketreplyextrafields">
           {{#each replyentryformfields unposted_reply._id}}
