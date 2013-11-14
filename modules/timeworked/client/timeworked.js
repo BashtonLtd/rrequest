@@ -75,6 +75,36 @@ Template.timeworked_ticket_sidebar.helpers({
   }
 });
 
+Template.timeworked_reply_form_field.helpers({
+  timeworked_initial: function() {
+    var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
+    if (ticket !== undefined) {
+      var replies = [];
+      ticket.replies.forEach(function(reply){
+        if(reply !== undefined) {
+          if(reply.status == 'posted' && reply.type == 'event') {
+            replies.push(reply);
+          }
+        }
+      });
+      replies.sort(sortByDate);
+
+      if (replies[replies.length-1] !== undefined) {
+        var last_event = moment(replies[replies.length-1].created).unix();
+        var now = moment(Date.now()).unix();
+        var diff = (now - last_event) / 60;
+      } else {
+        return '';
+      }
+      if (diff > 240) {
+        return '';
+      } else {
+        return 15 * Math.ceil(diff/15);
+      }
+    }
+  }
+})
+
 Template.timeworked_reply_form_field.events({
   'blur #timeworked': function (event, template) {
     template.find("#timeworked").value = 15 * Math.ceil(template.find("#timeworked").value/15);

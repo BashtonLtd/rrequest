@@ -1,7 +1,7 @@
 <template name="timeworked_reply_form_field">
 {{#if currentUser.profile.isStaff}}
 <label>Time Worked (in minutes):</label>
-<input id="timeworked" name="timeworked" type="number" min="0" step="15"/>
+<input id="timeworked" name="timeworked" type="number" value="{{timeworked_initial}}" min="0" step="15"/>
 {{/if}}
 </template>
 
