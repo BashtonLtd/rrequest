@@ -67,6 +67,21 @@ var update_ticket_reply = function(options) {
     modifier.$set["replies." + options.replyIndex + ".posted_by"] = options.userId;
     if (options.replyfields[idx].value == 'posted') {
       modifier.$set["replies." + options.replyIndex + ".created"] = now;
+      if (!is_staff_by_id(options.userId)) {
+        var ticket = Tickets.findOne({_id: options.ticketId});
+        var addToRequesters = true;
+        ticket.requesters.forEach(function(requester) {
+          if (requester == options.userId) {
+            addToRequesters = true;
+          }
+        })
+        if (addToRequesters == true) {
+          Meteor.call('addTicketRequester', {
+            ticketId: options.ticketId,
+            requesterId: options.userId
+          });
+        }
+      }
     }
   }
 
