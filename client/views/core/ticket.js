@@ -196,20 +196,16 @@ Template.ticket.events({
 
       } else {
         // Save reply
-        Meteor.call('updateReply', {
-          ticketId: Session.get('viewticketId'),
-          replyId: replyId,
-          replyIndex: replyIndex,
-          userId: Meteor.userId(),
-          level: level,
-          replyfields: [
-            {name: 'body', value: body},
-            {name: 'status', value: 'unposted'}
-          ]
-        }, function (error, group) {
-          if (! error) {
-
-          }
+        update_ticket_reply({
+           ticketId: Session.get('viewticketId'),
+           replyId: replyId,
+           replyIndex: replyIndex,
+           userId: Meteor.userId(),
+           level: level,
+           replyfields: [
+             {name: 'body', value: body},
+             {name: 'status', value: 'unposted'}
+           ]
         });
 
         EventHorizon.fire('typingticketreply',{
@@ -254,22 +250,14 @@ Template.ticket.events({
       };
       args.replyfields = args.replyfields.concat(extrafields);
       
-      Meteor.call('updateReply', args, function (error, ticketId) {
-        if (! error) {
-          if (original_status !== 'new') {
-            insert_event({
-              ticketId: ticketId,
-              body: 'Status automatically set to "new" by requester reply.'
-            });
-          }
-          // Fire ticket updated event
-          EventHorizon.fire('ticketreply',{
-            ticketId: Session.get('viewticketId'),
-            replyId: replyId,
-            postedBy: Meteor.userId()
-          });
-        }
+      update_ticket_reply(args);
+
+      EventHorizon.fire('ticketreply',{
+        ticketId: Session.get('viewticketId'),
+        replyId: replyId,
+        postedBy: Meteor.userId()
       });
+
       $("#ticketreplyextrafields input").not(':button, :submit, :reset, :hidden').val('');
       template.find(".ticketreplybody").value = '';
     }
@@ -298,11 +286,7 @@ Template.ticket.events({
         ]
       };
 
-      Meteor.call('updateReply', args, function (error, ticketId) {
-        if (! error) {
-
-        }
-      });
+      update_ticket_reply(args);
     }
   },
 
@@ -310,6 +294,65 @@ Template.ticket.events({
     openEditTicketDialog();
   }
 });
+
+var update_ticket_reply = function(options) {
+  var now = new Date();
+  var modifier = {$set: {}, $unset: {}};
+
+  var idx = _.indexOf(_.pluck(options.replyfields, 'name'), 'status');
+  if (options.replyfields[idx].value == 'posted') {
+    if (!is_staff_by_id(options.userId)) {
+      modifier.$set["status"] = 'new';
+    }
+    modifier.$set["modified"] = now;
+    // This should be in the autoclose module, can't use the ticket reply event as that is client side
+    modifier.$unset["close_warning"] = "";
+  }
+
+  for (var i = 0, l = _.size(options.replyfields); i < l; i++) {
+    modifier.$set["replies." + options.replyIndex + "." + options.replyfields[i].name] = options.replyfields[i].value;
+  };
+
+  if (options.userId !== undefined) {
+    modifier.$set["replies." + options.replyIndex + ".posted_by"] = options.userId;
+    if (options.replyfields[idx].value == 'posted') {
+      modifier.$set["replies." + options.replyIndex + ".created"] = now;
+      if (!is_staff_by_id(options.userId)) {
+        var ticket = Tickets.findOne({_id: options.ticketId});
+        var addToRequesters = true;
+        ticket.requesters.forEach(function(requester) {
+          if (requester == options.userId) {
+            addToRequesters = true;
+          }
+        })
+        if (addToRequesters == true) {
+          add_ticket_requesters(options.ticketId, options.userId);
+          // Meteor.call('addTicketRequester', {
+          //   ticketId: options.ticketId,
+          //   requesterId: options.userId
+          // });
+        }
+      }
+    }
+  }
+
+  return Tickets.update(
+    {_id: options.ticketId},
+    modifier
+  );
+}
+
+var add_ticket_requesters = function(ticketId, requesterId) {
+  var user = Meteor.users.findOne({_id:requesterId});
+  if (user !== undefined) {
+    return Tickets.update(
+      {_id:ticketId},
+      {
+        $push: {requesters: {id:requesterId, email:user.profile.email}}
+      }
+    );
+  }
+}
 
 var openEditTicketDialog = function () {
   Session.set('currentScroll',$(document).scrollTop());
