@@ -31,7 +31,8 @@ function openInbox(cb) {
   imap.connect(function(err) {
     if (!err) {
       try {
-        imap.openBox('INBOX', false, cb);
+        // open inbox in read only mode
+        imap.openBox('INBOX', true, cb);
       } catch (error) {
         console.log(error);
       }
@@ -39,7 +40,7 @@ function openInbox(cb) {
   });
 }
 
-var imap = null;
+imap = null;
 var getmail = false;
 
 Meteor.startup(function (){

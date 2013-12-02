@@ -20,6 +20,68 @@
  *
 */
 fs = Npm.require('fs');
+
+confirm_reply_created = function(ticketId, replyId) {
+  var ticket = Tickets.findOne({_id: ticketId})
+  var reply_found = false;
+  var msgId = null;
+  if (ticket !== undefined) {
+    // Check if reply exists
+    for (var i = 0, l = ticket.replies.length; i < l; i++) {
+      if (ticket.replies[i]._id == replyId) {
+        reply_found = true;
+        msgId = ticket.replies[i].message_id;
+      }
+    }
+  }
+  if (reply_found == true) {
+    if (msgId !== null) {
+      mark_message_seen(msgId);
+    } else {
+      // Add to the error log
+      console.log('Failed to mark message');
+    }
+  } else {
+    // Add to the error log
+    console.log('reply not found');
+  }
+};
+
+mark_message_seen = function(msgId) {
+  var settings = EmailGatewaySettings.findOne();
+  if (settings !== undefined) {
+    if (settings.imap_username && settings.imap_password && settings.imap_host && settings.imap_port){
+      var imap = new Imap({
+        user: settings.imap_username,
+        password: settings.imap_password,
+        host: settings.imap_host,
+        port: settings.imap_port,
+        secure: settings.imap_secure
+      });
+      imap.connect(function(err) {
+        if (!err) {
+          try {
+            imap.openBox('INBOX', false, function(err, mailbox) {
+              imap.search([['HEADER', 'message-id', msgId]], function(err, results) {
+                if (!err) {
+                  imap.addFlags(results[0], '\\Seen', function(e) {
+                    if (e) {
+                      console.log('ERROR ADDING FLAG TO EMAIL');
+                      // Add to error log
+                    }
+                  });
+                }
+              });
+            });
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      })
+    }
+  }
+};
+
 process_mail = function(mail_object) {
   // check from address and try to match to a requester
   var requesters = [];
@@ -69,6 +131,8 @@ process_mail = function(mail_object) {
       status: 'posted'
     }
   });
+
+  confirm_reply_created(ticket._id, replyId);
 
   if (mail_object.attachments !== undefined) {
     mail_object.attachments.forEach(function(elem, index){
