@@ -317,20 +317,17 @@ var update_ticket_reply = function(options) {
     modifier.$set["replies." + options.replyIndex + ".posted_by"] = options.userId;
     if (options.replyfields[idx].value == 'posted') {
       modifier.$set["replies." + options.replyIndex + ".created"] = now;
+      modifier.$set["replies." + options.replyIndex + ".notified"] = false;
       if (!is_staff_by_id(options.userId)) {
         var ticket = Tickets.findOne({_id: options.ticketId});
         var addToRequesters = true;
         ticket.requesters.forEach(function(requester) {
           if (requester == options.userId) {
-            addToRequesters = true;
+            addToRequesters = false;
           }
         })
         if (addToRequesters == true) {
           add_ticket_requesters(options.ticketId, options.userId);
-          // Meteor.call('addTicketRequester', {
-          //   ticketId: options.ticketId,
-          //   requesterId: options.userId
-          // });
         }
       }
     }

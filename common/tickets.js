@@ -82,7 +82,6 @@ update_status = function(options) {
   );
 };
 
-
 create_reply = function(options) {
   var ticket = Tickets.findOne({_id: options.ticketId});
   var original_status = ticket.status;

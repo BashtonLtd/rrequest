@@ -19,17 +19,17 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-EventHorizon.on('ticketreply', function(){
-  module_enabled = Modules.findOne({name:'email-gateway'}).enabled;
-  if (module_enabled) {
-    var postedBy = Meteor.users.findOne({_id: this.postedBy});
-    if (postedBy !== undefined) {
-      Meteor.call('emailgateway_send_ticket_updated_email', {
-        ticketId: this.ticketId,
-        user: postedBy,
-        replyId: this.replyId
-      });
-    }
+// EventHorizon.on('ticketreply', function(){
+//   module_enabled = Modules.findOne({name:'email-gateway'}).enabled;
+//   if (module_enabled) {
+//     var postedBy = Meteor.users.findOne({_id: this.postedBy});
+//     if (postedBy !== undefined) {
+//       Meteor.call('emailgateway_send_ticket_updated_email', {
+//         ticketId: this.ticketId,
+//         user: postedBy,
+//         replyId: this.replyId
+//       });
+//     }
 
-  }
-});
+//   }
+// });
