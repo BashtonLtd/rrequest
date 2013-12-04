@@ -31,8 +31,31 @@ function openInbox(cb) {
   imap.connect(function(err) {
     if (!err) {
       try {
-        // open inbox in read only mode
-        imap.openBox('INBOX', true, cb);
+        // Mark created replies as read
+        var msgIds = created_replies.slice(0);
+        var failed = [];
+        imap.openBox('INBOX', false, function(err, mailbox) {
+          msgIds.forEach(function(msgId) {
+            imap.search([['HEADER', 'message-id', msgId]], function(err, results) {
+              if (!err) {
+                imap.addFlags(results[0], '\\Seen', function(e) {
+                  if (e) {
+                    failed.push(msgId);
+                    console.log('ERROR ADDING FLAG TO EMAIL');
+                    // Add to error log
+                  } else {
+                    var idx = created_replies.indexOf(msgId);
+                    if (idx > -1) {
+                      created_replies.splice(idx, 1);
+                    }
+                  }
+                });
+              }
+            });
+          });
+        });
+        // Collect new mail
+        imap.openBox('INBOX', false, cb);
       } catch (error) {
         console.log(error);
       }
@@ -71,7 +94,7 @@ var collectmail = function (err, mailbox) {
       imap.search([ 'UNSEEN' ], function(err, results) {
         if (!err) {
           try {
-           imap.fetch(results, {markSeen: true},
+           imap.fetch(results, {markSeen: false},
               { body: true, headers: {parse: false},
                 cb: function(fetch) {
                   fetch.on('message', function(msg) {

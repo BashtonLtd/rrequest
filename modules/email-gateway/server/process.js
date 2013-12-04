@@ -21,6 +21,15 @@
 */
 fs = Npm.require('fs');
 
+created_replies = []
+
+reply_exists = function(msgId) {
+  if (Tickets.find({'replies.message_id': msgId}).count() > 0) {
+    return true;
+  }
+  return false;
+}
+
 confirm_reply_created = function(ticketId, replyId) {
   var ticket = Tickets.findOne({_id: ticketId})
   var reply_found = false;
@@ -36,49 +45,14 @@ confirm_reply_created = function(ticketId, replyId) {
   }
   if (reply_found == true) {
     if (msgId !== null) {
-      mark_message_seen(msgId);
+      created_replies.push(msgId);
     } else {
       // Add to the error log
-      console.log('Failed to mark message');
+      console.log('Failed to mark message as seen');
     }
   } else {
     // Add to the error log
     console.log('reply not found');
-  }
-};
-
-mark_message_seen = function(msgId) {
-  var settings = EmailGatewaySettings.findOne();
-  if (settings !== undefined) {
-    if (settings.imap_username && settings.imap_password && settings.imap_host && settings.imap_port){
-      var imap = new Imap({
-        user: settings.imap_username,
-        password: settings.imap_password,
-        host: settings.imap_host,
-        port: settings.imap_port,
-        secure: settings.imap_secure
-      });
-      imap.connect(function(err) {
-        if (!err) {
-          try {
-            imap.openBox('INBOX', false, function(err, mailbox) {
-              imap.search([['HEADER', 'message-id', msgId]], function(err, results) {
-                if (!err) {
-                  imap.addFlags(results[0], '\\Seen', function(e) {
-                    if (e) {
-                      console.log('ERROR ADDING FLAG TO EMAIL');
-                      // Add to error log
-                    }
-                  });
-                }
-              });
-            });
-          } catch (error) {
-            console.log(error);
-          }
-        }
-      })
-    }
   }
 };
 
@@ -122,42 +96,47 @@ process_mail = function(mail_object) {
     ticketBody = text2markdown(mail_object.text);
   }
 
-  replyId = create_reply({
-    user: requestfrom,
-    ticketId: ticket._id,
-    reply: {
-      message_id: mail_object.headers['message-id'],
-      body: ticketBody,
-      status: 'posted'
-    }
-  });
-
-  confirm_reply_created(ticket._id, replyId);
-
-  if (mail_object.attachments !== undefined) {
-    mail_object.attachments.forEach(function(elem, index){
-      Fiber(function() {
-        var filelocation = "/mediafiles/" + Random.id();
-        fs.writeFile(filelocation, elem.content, function(error) {
-          if (error) {
-            console.log(error);
-          } else {
-            
-          }
-        });
-
-        Attachments.storeBuffer(elem.generatedFileName, elem.content, {
-          contentType: elem.contentType,
-          encoding: 'utf-8',
-          metadata: {
-            ticketId:ticket._id,
-            replyId:replyId,
-            requester:requestfrom._id,
-            group:ticket.group,
-            ondisk:filelocation
-          }
-        });
-      }).run();
+  // Check that reply does not already exist
+  if (reply_exists(mail_object.headers['message-id'])) {
+    created_replies.push(mail_object.headers['message-id']);
+  } else {
+    replyId = create_reply({
+      user: requestfrom,
+      ticketId: ticket._id,
+      reply: {
+        message_id: mail_object.headers['message-id'],
+        body: ticketBody,
+        status: 'posted'
+      }
     });
+
+    confirm_reply_created(ticket._id, replyId);
+
+    if (mail_object.attachments !== undefined) {
+      mail_object.attachments.forEach(function(elem, index){
+        Fiber(function() {
+          var filelocation = "/mediafiles/" + Random.id();
+          fs.writeFile(filelocation, elem.content, function(error) {
+            if (error) {
+              console.log(error);
+            } else {
+              
+            }
+          });
+
+          Attachments.storeBuffer(elem.generatedFileName, elem.content, {
+            contentType: elem.contentType,
+            encoding: 'utf-8',
+            metadata: {
+              ticketId:ticket._id,
+              replyId:replyId,
+              requester:requestfrom._id,
+              group:ticket.group,
+              ondisk:filelocation
+            }
+          });
+        }).run();
+      });
+    }
   }
 };
