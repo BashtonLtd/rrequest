@@ -87,19 +87,19 @@ process_mail = function(mail_object) {
     var requestfrom = get_or_create_user('unknown@bashton.com');
   }
 
-  var ticket = get_or_create_ticket(requesters, mail_object.subject);
-
-  var ticketBody = mail_object.text;
-  if (mail_object.html !== undefined) {
-    ticketBody = html2markdown(mail_object.html);
-  } else {
-    ticketBody = text2markdown(mail_object.text);
-  }
-
   // Check that reply does not already exist
   if (reply_exists(mail_object.headers['message-id'])) {
     created_replies.push(mail_object.headers['message-id']);
   } else {
+    var ticket = get_or_create_ticket(requesters, mail_object.subject);
+
+    var ticketBody = mail_object.text;
+    if (mail_object.html !== undefined) {
+      ticketBody = html2markdown(mail_object.html);
+    } else {
+      ticketBody = text2markdown(mail_object.text);
+    }
+
     replyId = create_reply({
       user: requestfrom,
       ticketId: ticket._id,
