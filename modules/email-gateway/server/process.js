@@ -25,6 +25,7 @@ created_replies = []
 
 reply_exists = function(msgId) {
   if (Tickets.find({'replies.message_id': msgId}).count() > 0) {
+    bound_create_event_log({level:'INFO', tags:['imap'], message:'Reply already exists - ' + msgId});
     return true;
   }
   return false;
@@ -91,6 +92,7 @@ process_mail = function(mail_object) {
   if (reply_exists(mail_object.headers['message-id'])) {
     created_replies.push(mail_object.headers['message-id']);
   } else {
+    bound_create_event_log({level:'INFO', tags:['imap'], message:'Creating reply for ' + mail_object.headers['message-id']});
     var ticket = get_or_create_ticket(requesters, mail_object.subject);
 
     var ticketBody = mail_object.text;

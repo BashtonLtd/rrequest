@@ -55,6 +55,7 @@ Meteor.methods({
 });
 
 process_tasks = function() {
+    bound_create_event_log({level:'INFO', tags:['tasks'], message:'Starting to process tasks.'});
     tasks.process('tasks', 5, function(task, done){
         var status = global[task.data.callback](task.data.args);
         if (status == true) {

@@ -103,7 +103,7 @@ autoclose_closeticket = function(data) {
   Fiber(function() {
     var settings = AutocloseSettings.findOne();
     var ticket = Tickets.findOne({_id: data.ticket_id});
-    console.log('Closing: ' + ticket._id);
+    bound_create_event_log({level:'INFO', tags:['tasks', 'autoclose'], message:'Closing ticket ' + ticket._id +'.'});
     update_status({ticketId: ticket._id, status: 'closed'});
 
     insert_event({
@@ -146,7 +146,7 @@ autoclose_warnticket = function(data) {
   Fiber(function() {
     var settings = AutocloseSettings.findOne();
     var ticket = Tickets.findOne({_id: data.ticket_id});
-    console.log('Old: ' + ticket._id);
+    bound_create_event_log({level:'INFO', tags:['tasks', 'autoclose'], message:'Marking ' + ticket._id + ' as closing soon.'});
     insert_event({
       ticketId: ticket._id,
       body: 'Ticket to be closed due to inactivity.'
@@ -195,7 +195,7 @@ autoclose = function(data) {
   Fiber(function() {
     var settings = AutocloseSettings.findOne();
     warnedtickets = Tickets.find({status: {$ne: 'closed'}, close_warning: {$exists:true}});
-
+    bound_create_event_log({level:'INFO', tags:['tasks', 'autoclose'], message:'Starting ticket autoclose tasks.'});
     warnedtickets.forEach(function (ticket) {
       // if more than 'age_close' days after close_warning date then close
       // if there is newer activity on the ticket remove close_warning field

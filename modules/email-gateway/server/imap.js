@@ -28,22 +28,21 @@ function show(obj) {
 }
 
 function openInbox(cb) {
+  bound_create_event_log({level:'INFO', tags:['imap'], message:'Starting email collection.'});
   imap.connect(function(err) {
     if (!err) {
       try {
         // Mark created replies as read
         var msgIds = created_replies.slice(0);
-        var failed = [];
         imap.openBox('INBOX', false, function(err, mailbox) {
           msgIds.forEach(function(msgId) {
             imap.search([['HEADER', 'message-id', msgId]], function(err, results) {
               if (!err) {
                 imap.addFlags(results[0], '\\Seen', function(e) {
                   if (e) {
-                    failed.push(msgId);
-                    console.log('ERROR ADDING FLAG TO EMAIL');
-                    // Add to error log
+                    bound_create_event_log({level:'ERROR', tags:['imap'], message:'Failed to mark ' + msgId + ' as seen.'});
                   } else {
+                    bound_create_event_log({level:'INFO', tags:['imap'], message:'Marked ' + msgId + ' as seen.'});
                     var idx = created_replies.indexOf(msgId);
                     if (idx > -1) {
                       created_replies.splice(idx, 1);
@@ -57,7 +56,7 @@ function openInbox(cb) {
         // Collect new mail
         imap.openBox('INBOX', false, cb);
       } catch (error) {
-        console.log(error);
+        bound_create_event_log({level:'ERROR', tags:['imap'], message:error.message});
       }
     }
   });
@@ -119,7 +118,7 @@ var collectmail = function (err, mailbox) {
                       try {
                         parser.write(data.toString());
                       } catch (error) {
-                        console.log(error);
+                        bound_create_event_log({level:'ERROR', tags:['imap'], message:error.message});
                       }
                     });
 
@@ -127,13 +126,13 @@ var collectmail = function (err, mailbox) {
                       try {
                         parser.end();
                       } catch (error) {
-                        console.log(error);
+                        bound_create_event_log({level:'ERROR', tags:['imap'], message:error.message});
                       }
                     });
                   });
                 }
               }, function(err) {
-                console.log('Done fetching all messages!');
+                bound_create_event_log({level:'INFO', tags:['imap'], message:'Finished fetching all messages.'});
                 imap.logout();
               }
             );
@@ -142,7 +141,7 @@ var collectmail = function (err, mailbox) {
         }
       });
     } catch(error) {
-      console.log(error);
+      bound_create_event_log({level:'ERROR', tags:['imap'], message:error.message});
     }
   }
 };
@@ -151,9 +150,9 @@ var fetchmail = function () {
   if(getmail === true) {
     try {
       openInbox(collectmail);
-      imap.logout();
+      //imap.logout();
     } catch (error) {
-      console.log(error);
+      bound_create_event_log({level:'ERROR', tags:['imap'], message:error.message});
     }
   }
 };

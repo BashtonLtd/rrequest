@@ -1,0 +1,78 @@
+<template name="eventlog">
+  <div class="row">
+    <div class="box">
+      <div class="box-header">
+        <div class="pagetitle">Eventlog</div>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row"><div class="span12">{{> eventfilter}}</div></div>
+  <div class="row"><div class="span12">{{> eventlist}}</div></div>
+
+  <div class="row">
+    <div class="span12">
+      <div class="box">
+        <div class="box-header">
+          <div class="pagetitle"></div>
+          <div class="btn-group pull-right">
+            {{#if eventsReady}}<button class="btn load-more">Load More</button>
+            {{else}}<div>{{> spinner}}</div>
+            {{/if}}
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="eventlist">
+  <div class="box">
+    <div class="box-body">
+      {{#each eventitems}}
+      <div class="ticket-item">
+        <span class="event-item-level label {{getLabelClass level}}">{{getLabel level}}</span><br/>
+        <span class="ticket-item-id">
+          {{#each tags}}<span class="ticket-label badge {{getTagClass}}">{{getTag}}</span>{{/each}}
+        </span>
+        <h4 class="ticket-item-name">{{message}}</h4>
+        <div class="ticket-item-meta">
+          <div>{{#with created}}<span title="{{this}}">{{>age}} - {{this}}</span>{{/with}}</div>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+</template>
+
+<template name="eventfilter">
+  <div class="box">
+    <div class="box-header">
+      <div class="pagetitle">Filters</div>
+      <div class="clearfix"></div>
+    </div>
+    <div class="box-body">
+      {{> eventcalendarfilter}}
+      <div class="span2">
+        <table>
+          <tr><th>Levels</th></tr>
+        {{#each levels}}
+          <tr class="{{selected}} filterrow">
+            <td id="{{_id}}" class="{{selected}}">{{name}}</td>
+          </tr>
+        {{/each}}
+      </table>
+      </div>
+      <div class="span4">
+        <input id="eventsearchfilter" class="searchfilter" type="text" placeholder="Search..."/>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</template>
+
+<template name="eventcalendarfilter">
+  <div class="span4" id="multi-calendar"></div>
+</template>

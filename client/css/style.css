@@ -206,6 +206,13 @@ a {
   padding: 0;
 }
 
+.event-item-level {
+  position: absolute;
+  left: 12px;
+  box-sizing: border-box;
+  padding: 0;
+}
+
 .ticket-item-icon {
   float: left;
   margin-top: 1px;
@@ -255,6 +262,14 @@ a {
 
 .ticket-item-meta a {
   color: #000;
+}
+
+.eventmessage {
+  color: #000;
+}
+
+.right {
+  float: right;
 }
 
 .dropdown-menu>div>a {
