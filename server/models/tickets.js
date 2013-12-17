@@ -41,21 +41,32 @@ Meteor.methods({
   }
 });
 
-get_total_timeworked = function (groupname) {
-  var group = Groups.findOne({name: groupname});
+get_total_timeworked = function (args) {
+  var start = moment(args.start).unix();
+  var end = args.end;
+  if (end === null || end === undefined) {
+    end = moment(new Date()).unix();
+  } else {
+    end = moment(args.end).unix();
+  }
+  var group = Groups.findOne({name: args.groupname});
   var tickets = Tickets.find({group: {$in: [group._id]}});
   var total = 0;
   tickets.forEach(function(ticket) {
     ticket.replies.forEach(function(reply) {
       if (reply.timeworked !== undefined) {
-        total = +total + +reply.timeworked;
+        if (moment(reply.created).unix() > start && moment(reply.created).unix() < end) {
+          total = +total + +reply.timeworked;
+        }
       }
     })
     // also get timeworked from comments
     var comments = Comments.find({ticketId: ticket._id});
     comments.forEach(function(comment) {
       if (comment.timeworked !== undefined) {
-        total = +total + +comment.timeworked;
+        if (moment(comment.created).unix() > start && moment(comment.created).unix() < end) {
+          total = +total + +comment.timeworked;
+        }
       }
     })
   })
