@@ -3,87 +3,13 @@
     {{> editTicketDialog}}
   {{/if}}
 
-  {{#with ticket}}
   <div class="row">
     <div class="span10">
-      <div class="box">
-        <div class="box-header">
-          <div class="ticket-subject">{{subject}}</div>
-          <div class="box-topright" title="{{ticketcreated}}">{{#with ticketcreated}}{{>age}}{{/with}}</div>
-          <div class="clearfix"></div>
-        </div>
-        <div class="box-body">
-          <div class="row">
-            <div class="span1"><label>Requesters:</label></div>
-            <div class="span8">{{getRequesters _id}}</div>
-          </div>
-
-          {{#if currentUser.profile.isStaff}}
-          <div class="row">
-            <div class="span1"><label>Groups:</label></div>
-            <div class="span8">{{getGroups}}</div>
-          </div>
-          {{/if}}
-
-          <div class="row">
-            <div class="span1"><label>Status:</label></div>
-            {{#with ticketstatus}}
-            <div class="span8"><span title="{{name}}" class="ticket-item-icon"><i class="{{icon}}" style="color:#{{colour}}"></i> {{name}}</span></div>
-            {{/with}}
-          </div>
-        </div>
-        <div class="box-footer">
-          <div class="btn-group pull-right">
-            {{#each ticketfooter_items}}
-              {{{template}}}
-            {{/each}}
-            {{#if currentUser.profile.isStaff}}
-            <button class="btn edit-ticket"><i class="icon-wrench"></i> Edit</button>
-            {{/if}}
-            </div>
-          <div class="clearfix"></div>
-        </div>
-      </div>
-
-      {{#each posted_replies}}
-        {{#if displayreply type}}
-        {{> replies}}
-        {{/if}}
-      {{/each}}
-    
-      <div class="box">
-        <div class="box-header">
-        </div>
-        <div class="box-body">
-          <input type="hidden" class="ticketreplyId" value="{{unposted_reply._id}}">
-          <input type="hidden" class="ticketreplylevel" value="{{unposted_reply.level}}">
-          <div class="replybodycontainer">
-          <textarea id="replybody" rows="10" class="ticketreplybody span8">{{unposted_reply.body}}</textarea>
-          <button class="clearreply" type="submit"><i class="icon-trash"></i> Clear</button>
-          </div>
-
-          <form id="ticketreplyextrafields">
-          {{#each replyentryformfields unposted_reply._id}}
-            {{{template}}}
-          {{/each}}
-          </form>
-
-          {{#each replyentryfooter_items unposted_reply._id}}
-            {{{template}}}
-          {{/each}}
-        </div>
-        <div class="box-footer">
-          <div class="btn-group pull-right">
-            {{#each ticket_reply_button}}
-              {{{html}}}
-            {{/each}}
-            <button class="btn post-reply"><i class="icon-edit"></i> Reply</button>
-          </div>
-          <div class="clearfix"></div>
-        </div>
-      </div>
-
-
+      {{> ticketheader}}
+      
+      {{> ticketreplies}}
+      
+      {{> ticketreplybox}}
     </div>
 
     <div class="span2">
@@ -92,7 +18,93 @@
       {{/each}}
     </div>
   </div>
+</template>
+
+<template name="ticketheader">
+{{#with ticket}}
+  <div class="box">
+    <div class="box-header">
+      <div class="ticket-subject">{{subject}}</div>
+      <div class="box-topright" title="{{ticketcreated}}">{{#with ticketcreated}}{{>age}}{{/with}}</div>
+      <div class="clearfix"></div>
+    </div>
+    <div class="box-body">
+      <div class="row">
+        <div class="span1"><label>Requesters:</label></div>
+        <div class="span8">{{getRequesters _id}}</div>
+      </div>
+
+      {{#if currentUser.profile.isStaff}}
+      <div class="row">
+        <div class="span1"><label>Groups:</label></div>
+        <div class="span8">{{getGroups}}</div>
+      </div>
+      {{/if}}
+
+      <div class="row">
+        <div class="span1"><label>Status:</label></div>
+        {{#with ticketstatus}}
+        <div class="span8"><span title="{{name}}" class="ticket-item-icon"><i class="{{icon}}" style="color:#{{colour}}"></i> {{name}}</span></div>
+        {{/with}}
+      </div>
+    </div>
+    <div class="box-footer">
+      <div class="btn-group pull-right">
+        {{#each ticketfooter_items}}
+        {{{template}}}
+        {{/each}}
+        {{#if currentUser.profile.isStaff}}
+        <button class="btn edit-ticket"><i class="icon-wrench"></i> Edit</button>
+        {{/if}}
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+{{/with}}
+</template>
+
+<template name="ticketreplies">
+  {{#with ticket}}
+    {{#each posted_replies}}
+      {{#if displayreply type}}
+      {{> replies}}
+      {{/if}}
+    {{/each}}
   {{/with}}
+</template>
+
+<template name="ticketreplybox">
+    <div class="box">
+      <div class="box-header">
+      </div>
+      <div class="box-body">
+        <input type="hidden" class="ticketreplyId" value="{{unposted_reply._id}}">
+        <input type="hidden" class="ticketreplylevel" value="{{unposted_reply.level}}">
+        <div class="replybodycontainer">
+          <textarea id="replybody" rows="10" class="ticketreplybody span8">{{unposted_reply.body}}</textarea>
+          <button class="clearreply" type="submit"><i class="icon-trash"></i> Clear</button>
+        </div>
+
+        <form id="ticketreplyextrafields">
+          {{#each replyentryformfields unposted_reply._id}}
+          {{{template}}}
+          {{/each}}
+        </form>
+
+        {{#each replyentryfooter_items unposted_reply._id}}
+        {{{template}}}
+        {{/each}}
+      </div>
+      <div class="box-footer">
+        <div class="btn-group pull-right">
+          {{#each ticket_reply_button}}
+          {{{html}}}
+          {{/each}}
+          <button class="btn post-reply"><i class="icon-edit"></i> Reply</button>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+    </div>
 </template>
 
 <template name="replies">

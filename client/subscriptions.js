@@ -26,6 +26,12 @@ Meteor.autorun(function() {
   Meteor.subscribe('singleTicket', Session.get('viewticketId'));
 });
 
+Meteor.autorun(function() {
+  Meteor.subscribe('unpostedReply', Session.get('viewticketId'), function unpostedReady() {
+    Session.set('unpostedRepliesReady', true);
+  });
+});
+
 Meteor.subscribe('ticketstatus', function() {
   var tstatus = TicketStatus.find({});
   tstatus.forEach(function(status) {

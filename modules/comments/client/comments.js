@@ -53,17 +53,7 @@ Template.ticket.events({
       Comments.insert(args);
 
       var replyId = template.find(".ticketreplyId").value;
-      var replyIndex = _.indexOf(_.pluck(ticket.replies, '_id'), replyId);
-
-      Meteor.call('updateReply', {
-        ticketId: ticket._id,
-        replyId: replyId,
-        replyIndex: replyIndex,
-        replyfields: [
-          {name: 'body', value: ''},
-          {name: 'status', value: 'unposted'}
-        ]
-      });
+      UnpostedReplies.remove({_id: replyId});
       template.find(".ticketreplybody").value = "";
     }
   }

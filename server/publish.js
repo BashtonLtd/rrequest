@@ -81,6 +81,23 @@ Meteor.startup(function(){
   });
 });
 
+Meteor.publish('unpostedReply', function(ticketId) {
+  var user = Meteor.users.findOne({_id: this.userId});
+  if (user && user.profile.isStaff) {
+    return UnpostedReplies.find({ticket_id: ticketId, level: 'staff'});
+  } else {
+    var usergroups = Groups.find({members: {$in: [this.userId]}});
+    var groupids = [];
+    usergroups.forEach(function(group){
+      groupids.push(group._id);
+    });
+    var ticket = Tickets.findOne({_id: ticketId, isVisible: {$ne: false}, $or: [{group: {$in: groupids}}, {'requesters.id': {$in: [this.userId]}}]});
+    if (ticket !== undefined) {
+      return UnpostedReplies.find({ticket_id: ticketId, level: 'requester'});
+    }
+  }
+});
+
 Meteor.publish('singleTicket', function(id) {
   var user = Meteor.users.findOne({_id: this.userId});
   var usergroups = Groups.find({members: {$in: [this.userId]}});
@@ -152,6 +169,20 @@ Meteor.publish("counts-by-ticketstate", function (state) {
 //TODO: set permissions for tickets
 Meteor.startup(function(){
   Tickets.allow({
+    insert: function(userId, doc) {
+      return true;
+    },
+    update: function(userId, docs, fieldNames, modifier) {
+      return true;
+    },
+    remove: function(userId, docs) {
+      return true;
+    }
+  });
+});
+
+Meteor.startup(function(){
+  UnpostedReplies.allow({
     insert: function(userId, doc) {
       return true;
     },

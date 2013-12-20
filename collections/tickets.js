@@ -21,3 +21,4 @@
 */
 Tickets = new Meteor.Collection("tickets");
 TicketStatus = new Meteor.Collection("ticketstatus");
+UnpostedReplies = new Meteor.Collection("unpostedreplies");

@@ -28,44 +28,29 @@ Handlebars.registerHelper('ticketfooter_items', function() {
   return footer_items;
 });
 
-Template.ticket.unposted_reply = function () {
+Template.ticketreplybox.unposted_reply = function () {
   var user = Meteor.users.findOne({_id: Meteor.userId()});
-  var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
-  if (ticket !== undefined) {
-    var unposted_reply = null;
-    var user_level = 'requester';
-    if (user !== undefined) {
-      if(user.profile.isStaff) {
-        user_level = 'staff';
+  var user_level = 'requester';
+  if (user !== undefined) {
+    if(user.profile.isStaff) {
+      user_level = 'staff';
+    }
+  } 
+  var reply = UnpostedReplies.findOne({ticket_id: Session.get('viewticketId'), level: user_level});
+  if (reply !== undefined) {
+    return reply;
+  } else {
+    var replydata = {ticket_id: Session.get('viewticketId'), level: user_level, body:''};
+    if (Session.get('unpostedRepliesReady') == true) {
+      var count = UnpostedReplies.find({ticket_id: Session.get('viewticketId'), level: user_level}).count();
+      if (count === 0) {
+        return UnpostedReplies.insert(replydata);
       }
-      ticket.replies.forEach(function(reply){
-        if(reply !== {}) {
-          if(reply.status == 'unposted' && reply.level == user_level){
-            var replycount = _.filter(ticket.replies, function(r){return r._id == reply._id}).length;
-            if (replycount == 1) {
-              unposted_reply = reply;
-            }
-          }
-        }
-      });
-
-      if (unposted_reply === null) {
-        // create an unposted reply for the current user level
-        var reply = {_id: Random.id(), status: 'unposted', body: '', level: user_level};
-        Tickets.update(
-          {_id: Session.get('viewticketId')},
-          {
-            $push: { replies: reply}
-          }
-        );
-        unposted_reply = reply;
-      }
-      return unposted_reply;
     }
   }
 };
 
-Template.ticket.ticket_reply_button = function () {
+Template.ticketreplybox.ticket_reply_button = function () {
   var hooks = Hooks.find({hook:'ticket_reply_button'});
   var buttons = [];
   var user_id = Meteor.userId();
@@ -97,21 +82,70 @@ Handlebars.registerHelper('reply_header_items', function(replyId) {
 
 Handlebars.registerHelper('footer_items', function(replyId) {
   var footer_items = [];
-  var hooks = Hooks.find({hook:'reply_footer'});
+  var hooks = Hooks.find({hook:'reply_footer'}, {reactive: false});
   hooks.forEach(function (hook) {
     footer_items.push({template: Template[hook.template]({replyId:replyId})});
   });
   return footer_items;
 });
 
+Handlebars.registerHelper('ticket', function() {
+  var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {fields: {unpostedstaffreply: 0, unpostedrequesterreply: 0}});
+  if (ticket === undefined && Session.get('viewticketId') != null) {
+    Meteor.call('getTicket', Session.get('viewticketId'), function(error, ticket) {
+      if (ticket !== undefined) {
+        Session.set('viewticketId', ticket._id);
+        Meteor.Router.to('/ticket/'+ticket._id);
+      }
+    });
+  }
+  return ticket;
+});
+
+Handlebars.registerHelper('getGroups', function() {
+  var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {fields: {unpostedstaffreply: 0, unpostedrequesterreply: 0}});
+  var groups = [];
+  if (ticket.group !== null) {
+    ticket.group.forEach(function (group) {
+      groups.push(groupname(group));
+    });
+    return groups.join(', ');
+  }
+  return '';
+});
+
+Handlebars.registerHelper('displayreply', function(replytype) {
+  var user = Meteor.users.findOne({_id: Meteor.userId()});
+  if(user.profile.isStaff) {
+    return true;
+  } else {
+    if (replytype == 'reply' || replytype == 'event') {
+      return true;
+    }
+  }
+  return false;
+});
+
+Handlebars.registerHelper('displayname', function(replytype) {
+  if (replytype != 'event') {
+    return true;
+  }
+  return false;
+});
+
+Handlebars.registerHelper('isMuted', function(replytype) {
+  if (replytype == 'event') {
+    return 'muted';
+  }
+});
+
 Template.ticket.replyentryformfields = function(replyId) {
   var extraformfields = [];
-  var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
   var hooks = Hooks.find({hook:'ticket_reply_form_field'});
   hooks.forEach(function (hook) {
     extraformfields.push({
       template: Template[hook.template]({
-        ticketId: ticket._id,
+        ticketId: Session.get('viewticketId'),
         replyId:replyId
       })
     });
@@ -121,7 +155,7 @@ Template.ticket.replyentryformfields = function(replyId) {
 
 Template.ticket.replyentryfooter_items = function(replyId) {
   var replyentryfooter_items = [];
-  var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
+  var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {fields: {unpostedstaffreply: 0, unpostedrequesterreply: 0}});
   var hooks = Hooks.find({hook:'replyentry_footer'});
   hooks.forEach(function (hook) {
     replyentryfooter_items.push({
@@ -136,9 +170,9 @@ Template.ticket.replyentryfooter_items = function(replyId) {
   return replyentryfooter_items;
 };
 
-Template.ticket.posted_replies = function () {
+Template.ticketreplies.posted_replies = function () {
   var user = Meteor.users.findOne({_id: Meteor.userId()});
-  var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
+  var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {fields: {unpostedstaffreply: 0, unpostedrequesterreply: 0}});
 
   if (ticket !== undefined) {
     var replies = [];
@@ -170,7 +204,7 @@ Template.ticket.posted_replies = function () {
 };
 
 Template.ticket.ticketcreated = function () {
-  var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
+  var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {fields: {unpostedstaffreply: 0, unpostedrequesterreply: 0}});
   if (ticket !== undefined) {
     return ticket.created;
   }
@@ -181,39 +215,82 @@ Template.ticket.created = function () {
 };
 
 Template.ticket.events({
-  'keydown .ticketreplybody': function (event, template) {
-    var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
+  'keyup .ticketreplybody': function (event, template) {
+    if (this.count === undefined) {
+      this.count = 5;
+    }
 
     var replyId = template.find(".ticketreplyId").value;
     var level = template.find(".ticketreplylevel").value;
     var body = template.find(".ticketreplybody").value;
 
-    var replyIndex = _.indexOf(_.pluck(ticket.replies, '_id'), replyId);
-
-    if (event.keyCode == 32 || event.keyCode == 13) {
-      //space or return pressed
+    // KeyCodes:
+    // 32 - Space
+    // 13 - Return
+    // 190 - Fullstop
+    if (event.keyCode == 32 || event.keyCode == 13 || event.keyCode == 190) {
+      //space, return or fullstop  pressed
       if (Session.get('lastkeypresswasspace')) {
 
       } else {
-        // Save reply
-        update_ticket_reply({
-           ticketId: Session.get('viewticketId'),
-           replyId: replyId,
-           replyIndex: replyIndex,
-           userId: Meteor.userId(),
-           level: level,
-           replyfields: [
-             {name: 'body', value: body},
-             {name: 'status', value: 'unposted'}
-           ]
-        });
+        if (this.count > 4) {
 
-        EventHorizon.fire('typingticketreply',{
-          ticketId: Session.get('viewticketId'),
-          postedBy: Meteor.userId()
-        });
+          // remove save timer here
+          Meteor.clearTimeout(this.timer);
+          // Save reply
+          update_ticket_unpostedreply({
+            ticketId: Session.get('viewticketId'),
+            replyId: replyId,
+            userId: Meteor.userId(),
+            level: level,
+            replyfields: [
+              {name: 'body', value: body},
+              {name: 'status', value: 'unposted'}
+            ]
+          });
 
-        Session.set('lastkeypresswasspace', true);
+          EventHorizon.fire('typingticketreply',{
+            ticketId: Session.get('viewticketId'),
+            postedBy: Meteor.userId()
+          });
+
+          Session.set('lastkeypresswasspace', true);
+          this.count = 0;
+        } else {
+          if (event.keyCode == 13) {
+            // if return is pressed save now
+            Meteor.clearTimeout(this.timer);
+            update_ticket_unpostedreply({
+              ticketId: Session.get('viewticketId'),
+              replyId: replyId,
+              userId: Meteor.userId(),
+              level: level,
+              replyfields: [
+                {name: 'body', value: body},
+                {name: 'status', value: 'unposted'}
+              ]
+            });
+            Session.set('lastkeypresswasspace', true);
+            this.count = 0;
+          } else {
+            // start timer here to save, if timer already exists remove it
+            Meteor.clearTimeout(this.timer);
+            this.timer = Meteor.setTimeout(function() {
+              update_ticket_unpostedreply({
+                ticketId: Session.get('viewticketId'),
+                replyId: replyId,
+                userId: Meteor.userId(),
+                level: level,
+                replyfields: [
+                  {name: 'body', value: body},
+                  {name: 'status', value: 'unposted'}
+                ]
+              })
+            }, 10000);
+            Session.set('replytimerid', this.timer);
+            this.count += 1;
+          }
+        }
       }
     } else {
       Session.set('lastkeypresswasspace', false);
@@ -228,8 +305,6 @@ Template.ticket.events({
     var body = template.find(".ticketreplybody").value;
 
     if (body.trim() != '') {
-      var replyIndex = _.indexOf(_.pluck(ticket.replies, '_id'), replyId);
-
       var extras = $('#ticketreplyextrafields').serializeArray();
       var extrafields = [];
       $.each(extras, function() {
@@ -239,7 +314,6 @@ Template.ticket.events({
       var args = {
         ticketId: Session.get('viewticketId'),
         replyId: replyId,
-        replyIndex: replyIndex,
         userId: Meteor.userId(),
         level: level,
         replyfields: [
@@ -250,7 +324,8 @@ Template.ticket.events({
       };
       args.replyfields = args.replyfields.concat(extrafields);
       
-      update_ticket_reply(args);
+      Meteor.clearTimeout(Session.get('replytimerid'));
+      promote_ticket_reply(args);
 
       EventHorizon.fire('ticketreply',{
         ticketId: Session.get('viewticketId'),
@@ -264,7 +339,6 @@ Template.ticket.events({
   },
 
   'click .clearreply': function (event, template) {
-    var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
     var replyId = template.find(".ticketreplyId").value;
     var level = template.find(".ticketreplylevel").value;
     var body = template.find(".ticketreplybody").value;
@@ -272,11 +346,9 @@ Template.ticket.events({
     if (body.trim() != '') {
       template.find(".ticketreplybody").value = '';
 
-      var replyIndex = _.indexOf(_.pluck(ticket.replies, '_id'), replyId);
       var args = {
         ticketId: Session.get('viewticketId'),
         replyId: replyId,
-        replyIndex: replyIndex,
         userId: Meteor.userId(),
         level: level,
         replyfields: [
@@ -285,8 +357,7 @@ Template.ticket.events({
           {name: 'status', value: 'unposted'}
         ]
       };
-
-      update_ticket_reply(args);
+      update_ticket_unpostedreply(args);
     }
   },
 
@@ -295,46 +366,68 @@ Template.ticket.events({
   }
 });
 
-var update_ticket_reply = function(options) {
+var promote_ticket_reply = function(options) {
+  // Create reply in ticket
   var now = new Date();
-  var modifier = {$set: {}, $unset: {}};
+  var modifier = {$set: {}, $unset: {}, $push: {}};
 
-  var idx = _.indexOf(_.pluck(options.replyfields, 'name'), 'status');
-  if (options.replyfields[idx].value == 'posted') {
-    if (!is_staff_by_id(options.userId)) {
-      modifier.$set["status"] = 'new';
-    }
-    modifier.$set["modified"] = now;
-    // This should be in the autoclose module, can't use the ticket reply event as that is client side
-    modifier.$unset["close_warning"] = "";
+  if (!is_staff_by_id(options.userId)) {
+    modifier.$set['status'] = 'new';
   }
+  modifier.$set["modified"] = now;
+  // This should be in the autoclose module, can't use the ticket reply event as that is client side
+  modifier.$unset["close_warning"] = "";
 
+  var replydata = {};
   for (var i = 0, l = _.size(options.replyfields); i < l; i++) {
-    modifier.$set["replies." + options.replyIndex + "." + options.replyfields[i].name] = options.replyfields[i].value;
+    replydata[options.replyfields[i].name] = options.replyfields[i].value;
   };
 
   if (options.userId !== undefined) {
-    modifier.$set["replies." + options.replyIndex + ".posted_by"] = options.userId;
-    if (options.replyfields[idx].value == 'posted') {
-      modifier.$set["replies." + options.replyIndex + ".created"] = now;
-      modifier.$set["replies." + options.replyIndex + ".notified"] = false;
-      if (!is_staff_by_id(options.userId)) {
-        var ticket = Tickets.findOne({_id: options.ticketId});
-        var addToRequesters = true;
-        ticket.requesters.forEach(function(requester) {
-          if (requester == options.userId) {
-            addToRequesters = false;
-          }
-        })
-        if (addToRequesters == true) {
-          add_ticket_requesters(options.ticketId, options.userId);
+    replydata._id = options.replyId;
+    replydata.posted_by = options.userId;
+    replydata.level = options.level;
+    replydata.created = now;
+    replydata.notified = false;
+    if (!is_staff_by_id(options.userId)) {
+      var ticket = Tickets.findOne({_id: options.ticketId});
+      var addToRequesters = true;
+      ticket.requesters.forEach(function(requester) {
+        if (requester == options.userId) {
+          addToRequesters = false;
         }
+      })
+      if (addToRequesters == true) {
+        add_ticket_requesters(options.ticketId, options.userId);
       }
     }
   }
+  modifier.$push['replies'] = replydata;
+  //modifier.$unset['unposted' + options.level + 'reply'] = {};
+
+
+  UnpostedReplies.remove({_id: options.replyId});
 
   return Tickets.update(
     {_id: options.ticketId},
+    modifier
+  );
+};
+
+var update_ticket_unpostedreply = function(options) {
+  var modifier = {$set: {}};
+
+  for (var i = 0, l = _.size(options.replyfields); i < l; i++) {
+    modifier.$set[options.replyfields[i].name] = options.replyfields[i].value;
+  };
+
+  if (options.userId !== undefined) {
+    modifier.$set["posted_by"] = options.userId;
+    modifier.$set["level"] = options.level;
+  }
+
+  return UnpostedReplies.update(
+    {_id: options.replyId},
     modifier
   );
 }
@@ -359,58 +452,6 @@ var openEditTicketDialog = function () {
 Template.ticket.showEditTicketDialog = function () {
  return Session.get("showEditTicketDialog");
 };
-
-Template.ticket.helpers({
-  ticket: function(){
-    var ticket = Tickets.findOne(Session.get('viewticketId'));
-    if (ticket === undefined && Session.get('viewticketId') != null) {
-      Meteor.call('getTicket', Session.get('viewticketId'), function(error, ticket) {
-        if (ticket !== undefined) {
-          Session.set('viewticketId', ticket._id);
-          Meteor.Router.to('/ticket/'+ticket._id);
-        }
-      });
-    }
-    return ticket;
-  },
-
-  getGroups: function() {
-    var ticket = Tickets.findOne(Session.get('viewticketId'));
-    var groups = [];
-    if (ticket.group !== null) {
-      ticket.group.forEach(function (group) {
-        groups.push(groupname(group));
-      });
-      return groups.join(', ');
-    }
-    return '';
-  },
-
-  displayreply: function(replytype){
-    var user = Meteor.users.findOne({_id: Meteor.userId()});
-    if(user.profile.isStaff) {
-      return true;
-    } else {
-      if (replytype == 'reply' || replytype == 'event') {
-        return true;
-      }
-    }
-    return false;
-  },
-
-  displayname: function(replytype){
-    if (replytype != 'event') {
-      return true;
-    }
-    return false;
-  },
-
-  isMuted: function(replytype){
-    if (replytype == 'event') {
-      return 'muted';
-    }
-  }
-});
 
 Template.editTicketDialog.ticketstatus = function() {
   return TicketStatus.find({}, {sort: {'name': 1}});
@@ -446,7 +487,7 @@ Template.editTicketDialog.rendered = function () {
     multiple: true
   });
   
-  var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
+  var ticket = Tickets.findOne({_id:Session.get('viewticketId')}, {fields: {requesters: 1, group: 1}});
   $(".ticketrequester").val(_.pluck(ticket.requesters, 'id')).trigger('change');
   $(".ticketgroup").val(ticket.group, 'id').trigger('change');
 };
@@ -475,12 +516,8 @@ var get_groups = function (query_opts) {
 };
 
 Template.editTicketDialog.helpers({
-  ticket: function(){
-    return Tickets.findOne({_id:Session.get('viewticketId')});
-  },
-
   selectedstatus: function(statusname){
-    var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
+    var ticket = Tickets.findOne({_id:Session.get('viewticketId')}, {fields: {status: 1}});
     if (ticket !== undefined) {
       if (ticket.status == statusname) {
         return 'selected';
@@ -499,7 +536,7 @@ Template.editTicketDialog.events({
     var requesters = $(".ticketrequester").select2('val');
     var groups = $(".ticketgroup").select2('val');
     var status = template.find(".ticketstatus").value;
-    var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
+    var ticket = Tickets.findOne({_id:Session.get('viewticketId')}, {fields: {status: 1}});
     var original_status = ticket.status;
 
     var existing_users = [];
