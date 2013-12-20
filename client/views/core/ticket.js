@@ -139,7 +139,7 @@ Handlebars.registerHelper('isMuted', function(replytype) {
   }
 });
 
-Template.ticket.replyentryformfields = function(replyId) {
+Template.ticketreplybox.replyentryformfields = function(replyId) {
   var extraformfields = [];
   var hooks = Hooks.find({hook:'ticket_reply_form_field'});
   hooks.forEach(function (hook) {
@@ -153,7 +153,7 @@ Template.ticket.replyentryformfields = function(replyId) {
   return extraformfields;
 };
 
-Template.ticket.replyentryfooter_items = function(replyId) {
+Template.ticketreplybox.replyentryfooter_items = function(replyId) {
   var replyentryfooter_items = [];
   var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {fields: {unpostedstaffreply: 0, unpostedrequesterreply: 0}});
   var hooks = Hooks.find({hook:'replyentry_footer'});
@@ -203,7 +203,7 @@ Template.ticketreplies.posted_replies = function () {
   }
 };
 
-Template.ticket.ticketcreated = function () {
+Template.ticketheader.ticketcreated = function () {
   var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {fields: {unpostedstaffreply: 0, unpostedrequesterreply: 0}});
   if (ticket !== undefined) {
     return ticket.created;
