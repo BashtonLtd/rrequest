@@ -36,11 +36,11 @@ Template.ticketreplybox.unposted_reply = function () {
       user_level = 'staff';
     }
   } 
-  var reply = UnpostedReplies.findOne({ticket_id: Session.get('viewticketId'), level: user_level});
+  var reply = UnpostedReplies.findOne({ticket_id: Session.get('viewticketId'), level: user_level}, {sort: {created: 1}});
   if (reply !== undefined) {
     return reply;
   } else {
-    var replydata = {ticket_id: Session.get('viewticketId'), level: user_level, body:''};
+    var replydata = {ticket_id: Session.get('viewticketId'), level: user_level, body:'', created: new Date().getTime()};
     if (Session.get('unpostedRepliesReady') == true) {
       var count = UnpostedReplies.find({ticket_id: Session.get('viewticketId'), level: user_level}).count();
       if (count === 0) {
@@ -286,7 +286,7 @@ Template.ticket.events({
                   {name: 'status', value: 'unposted'}
                 ]
               })
-            }, 10000);
+            }, 5000);
             Session.set('replytimerid', this.timer);
             this.count += 1;
           }
