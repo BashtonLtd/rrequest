@@ -78,7 +78,7 @@ dashboard_widgets.push({
 Template.widget_ticket_list.events({
   'click .load-more': function(event) {
     event.preventDefault();
-    var id = event.toElement.id;
+    var id = $(event.target).context.id;
     if (_.contains(_.pluck(widgetData, 'id'), id)) {
       var widgetEntry = _.find(widgetData, function(widget) {
         if (widget.id == id) {

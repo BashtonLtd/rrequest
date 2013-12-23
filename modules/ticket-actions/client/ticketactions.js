@@ -37,13 +37,13 @@ Handlebars.registerHelper('ticketlistactions', function() {
 Template.ticketlistactionlist.events({
   'click .ticketaction': function (event, template) {
     event.preventDefault();
-    var hook_id = event.toElement.id;
+    var hook_id = $(event.target).context.id;
     var ticketlist = [];
-    var selected_tickets = $(event.toElement).parents(".row").prev('.row').find('.ticket-item-check:checked');
+    var selected_tickets = $(event.target).parents(".row").prev('.row').find('.ticket-item-check:checked');
 
     if (selected_tickets.length == 0) {
       // we may be on the dashboard page
-      selected_tickets = $(event.toElement).parents(".box-footer").prev('.box-body').find('.ticket-item-check:checked');
+      selected_tickets = $(event.target).parents(".box-footer").prev('.box-body').find('.ticket-item-check:checked');
     }
 
     selected_tickets.each(function(ticketitem) {
@@ -76,7 +76,7 @@ Handlebars.registerHelper('ticketactions', function() {
 Template.ticketactionlist.events({
   'click .ticketaction': function (event, template) {
     event.preventDefault();
-    var hook_id = event.toElement.id;
+    var hook_id = $(event.target).context.id;
     var ticketlist = [];
     
     ticketlist.push(Session.get('viewticketId'));
