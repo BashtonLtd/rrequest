@@ -19,6 +19,9 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
+var http = Npm.require('http');
+var querystring = Npm.require('querystring');
+
 Meteor.startup(function (){
   // register the eventlog module
   Meteor.call('registerModule', {
@@ -34,7 +37,7 @@ Meteor.startup(function (){
 
   var module = Modules.findOne({name: 'eventlog'});
   if (module !== undefined && module.enabled) {
-    Meteor.call('enable_eventlog_module', {}, function(error, module_id) {
+    Meteor.call('add_navbar_item', {}, function(error, module_id) {
       if (!error) {}
     });
   }
@@ -51,12 +54,24 @@ create_event_log = function(args) {
 
   var module = Modules.findOne({name: 'eventlog'});
   if (module !== undefined && module.enabled) {
+    // Check entry against rules
+    var rules = EventlogSettings.find();
+    rules.forEach(function(rule) {
+      var idx = _.indexOf(args.tags, rule.tag);
+      if (idx != -1) {
+        // tag matches
+        http_post(rule, args.message);
+      } else {
+
+      }
+    });
     return Eventlog.insert({
       created: new Date(),
       level: args.level,
       tags: args.tags,
       message: args.message
     });
+
   } else {
     console.log(new Date() + ' ['+args.level+'] ' + '[' + args.tags + '] ' + args.message);
   }
@@ -65,3 +80,40 @@ create_event_log = function(args) {
 bound_create_event_log = Meteor.bindEnvironment(create_event_log, function(e) {
     console.log("exception! " + e);
 });
+
+var http_post = function(rule, message) {
+  var roomname = rule.data;
+  if (rule.data[0] != '#') {
+    roomname = '#' + rule.data;
+  }
+
+  var post_data = querystring.stringify({
+    'room': roomname,
+    'message': message
+  });
+
+  var options = {
+    host: rule.host,
+    port: rule.port,
+    path: rule.path,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Length': post_data.length
+    }
+  };
+
+  try {
+    var req = http.request(options, function(res) {
+      res.setEncoding('utf8');
+    });
+
+    req.on('error', function(error) {
+      console.log('failed to post to hubot');
+    });
+    req.write(post_data);
+    req.end();
+  } catch (e) {
+    console.log('failed to post to hubot');
+  }
+};

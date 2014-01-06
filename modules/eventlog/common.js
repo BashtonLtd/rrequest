@@ -20,9 +20,7 @@
  *
 */
 Meteor.methods({
-  enable_eventlog_module: function(args) {
-    args = args || {};
-
+  add_navbar_item: function() {
     if (this.isSimulation) {
       var nav = Session.get('navbar');
       nav = _.extend([], nav);
@@ -36,6 +34,31 @@ Meteor.methods({
     }
   },
 
+  enable_eventlog_module: function(args) {
+    args = args || {};
+
+    if (this.isSimulation) {
+      var nav = Session.get('navbar');
+      nav = _.extend([], nav);
+      nav.push({
+        name: 'eventlog',
+        pageurl: '/eventlog',
+        display_name: 'Eventlog',
+        user_level: 'staff'
+      });
+      Session.set('navbar', nav);
+    } else {
+      var hook = Hooks.findOne({module_id: args.module_id});
+      if (hook === undefined) {
+        Hooks.insert({
+          hook: 'settings_page',
+          module_id: args.module_id,
+          data: 'eventlog_settings_page'
+        });
+      }
+    }
+  },
+
   disable_eventlog_module: function(args) {
     args = args || {};
 
@@ -44,6 +67,10 @@ Meteor.methods({
       nav = _.extend([], nav);
       nav = _(nav).reject(function(el) { return el.name === "eventlog"; });
       Session.set('navbar', nav);
+    } else {
+      Hooks.remove({
+        modue_id: args.module_id
+      });
     }
 
   }

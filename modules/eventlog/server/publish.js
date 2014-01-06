@@ -49,3 +49,33 @@ Meteor.startup(function(){
     }
   });
 });
+
+Meteor.publish('eventlogsettings', function() {
+  var user = Meteor.users.findOne({_id: this.userId});
+  if (user && user.profile.isStaff) {
+    return EventlogSettings.find();
+  }
+});
+
+Meteor.startup(function(){
+  EventlogSettings.allow({
+    insert: function(userId, doc) {
+      if (is_staff_by_id(userId)) {
+        return true;
+      }
+      return false;
+    },
+    update: function(userId, doc, fieldNames, modifier) {
+      if (id_staff_by_id(userId)) {
+        return true;
+      }
+      return false;
+    },
+    remove: function(userId, docs) {
+      if (id_staff_by_id(userId)) {
+        return true;
+      }
+      return false;
+    }
+  });
+});

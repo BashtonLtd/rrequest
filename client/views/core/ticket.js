@@ -155,12 +155,12 @@ Template.ticketreplybox.replyentryformfields = function(replyId) {
 
 Template.ticketreplybox.replyentryfooter_items = function(replyId) {
   var replyentryfooter_items = [];
-  var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {fields: {unpostedstaffreply: 0, unpostedrequesterreply: 0}});
+  var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
   var hooks = Hooks.find({hook:'replyentry_footer'});
   hooks.forEach(function (hook) {
     replyentryfooter_items.push({
       template: Template[hook.template]({
-        ticketId: ticket._id, 
+        ticketId: Session.get('viewticketId'),
         replyId:replyId, 
         groups:ticket.groups, 
         requester:Meteor.userId()
@@ -383,6 +383,8 @@ var promote_ticket_reply = function(options) {
     replydata[options.replyfields[i].name] = options.replyfields[i].value;
   };
 
+  var ticket = Tickets.findOne({_id: options.ticketId});
+
   if (options.userId !== undefined) {
     replydata._id = options.replyId;
     replydata.posted_by = options.userId;
@@ -390,7 +392,6 @@ var promote_ticket_reply = function(options) {
     replydata.created = now;
     replydata.notified = false;
     if (!is_staff_by_id(options.userId)) {
-      var ticket = Tickets.findOne({_id: options.ticketId});
       var addToRequesters = true;
       ticket.requesters.forEach(function(requester) {
         if (requester == options.userId) {
@@ -403,8 +404,16 @@ var promote_ticket_reply = function(options) {
     }
   }
   modifier.$push['replies'] = replydata;
-  //modifier.$unset['unposted' + options.level + 'reply'] = {};
 
+  var log_email = useremail(options.userId);
+  var log_subject = ticket.subject;
+  var log_ticket_url = Meteor.absoluteUrl('ticket/' + ticket._id, {});
+
+  Meteor.call('createEventLog',{
+    level:'INFO',
+    tags:['replycreated'],
+    message: log_email + ' replied to ' + log_subject + ' [' + log_ticket_url + '].'
+  });
 
   UnpostedReplies.remove({_id: options.replyId});
 

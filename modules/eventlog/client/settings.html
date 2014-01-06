@@ -1,0 +1,81 @@
+<template name="eventlogsettings">
+  {{#if showAddRuleDialog}}
+    {{> addRuleDialog}}
+  {{/if}}
+
+  <div class="box">
+    <div class="box-header">
+      
+      <div class="btn-group pull-right">
+        <button class="btn add_rule">
+          <i class="icon-plus"></i> Add Rule
+        </button>
+      </div>
+      <h4>Event Log Rules</h4>
+    </div>
+
+    <div class="box-body">
+      <table class="table table-striped">
+        <thead>
+          <tr><th>Tag</th><th>Host</th><th>Port</th><th>Path</th><th>Data</th><th></th></tr>
+        </thead>
+        {{#each eventrules}}
+          <tr>
+            <td>{{tag}}</td>
+            <td>{{host}}</td>
+            <td>{{port}}</td>
+            <td>{{path}}</td>
+            <td>{{data}}</td>
+            <td></td>
+          </tr>
+        {{/each}}
+      </table>
+    </div>
+
+    <div class="box-footer">
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</template>
+
+<template name='addRuleDialog'>
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close addRuleCancel">&times;</button>
+      <h3>Add eventlog rule</h3>
+    </div>
+
+    <div class="modal-body">
+      {{#if error}}
+        <div class="alert alert-error">{{error}}</div>
+      {{/if}}
+
+      <label>Tag</label>
+      <input type="text" id="tag" class="tag span5"/>
+      <div class="help-block">Tag name to trigger rule.</div>
+
+      <label>Host and Port</label>
+      <form class="form-inline">
+      <input type="text" id="host" class="host span4"/>
+      <label>:</label>
+      <input type="text" id="port" class="port span1"/>
+      </form>
+      <div class="help-block">Host and port for the http post.</div>
+
+      <label>Path</label>
+      <input type="text" id="path" class="path span5"/>
+      <div class="help-block">Path for the http post.</div>
+
+      <label>Room</label>
+      <input type="text" id="data" class="data span5"/>
+      <div class="help-block">Name of the room to post the update.</div>
+    </div>
+
+    <div class="modal-footer">
+      <a href="#" class="btn addRuleCancel">Cancel</a>
+      <a href="#" class="btn btn-primary save">Add</a>
+    </div>
+  </div>
+
+</template>

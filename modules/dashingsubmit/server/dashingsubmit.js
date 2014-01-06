@@ -68,12 +68,15 @@ var submit_count = function(state, count) {
     }
   };
 
-  var req = http.request(options, function(res) {
-    res.setEncoding('utf8');
-  });
-
-  req.write(post_data);
-  req.end();
+  try {
+    var req = http.request(options, function(res) {
+      res.setEncoding('utf8');
+    });
+    req.write(post_data);
+    req.end();
+  } catch (e) {
+    bound_create_event_log({level:'ERROR', tags:['dashingsubmit'], message:'Failed to submit dashing stats.'});
+  }
 };
 
 var start_submitting = function() {
