@@ -407,12 +407,12 @@ var promote_ticket_reply = function(options) {
 
   var log_email = useremail(options.userId);
   var log_subject = ticket.subject;
-  var log_ticket_url = Meteor.absoluteUrl('ticket/' + ticket._id, {});
+  var log_ticket_url = Meteor.absoluteUrl('ticket/' + ticket._id, {secure: true});
 
   Meteor.call('createEventLog',{
     level:'INFO',
     tags:['replycreated'],
-    message: log_email + ' replied to ' + log_subject + ' [' + log_ticket_url + '].'
+    message: log_email + ' replied to ' + log_subject + ' ' + log_ticket_url
   });
 
   UnpostedReplies.remove({_id: options.replyId});
