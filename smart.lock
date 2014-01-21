@@ -7,11 +7,14 @@
       "marked": {},
       "collection-api": {},
       "collectionFS": {
-        "git": "https://github.com/mxab/Meteor-CollectionFS.git",
+        "git": "https://github.com/aldeed/Meteor-CollectionFS.git",
         "branch": "master"
       },
       "meteor-mailparser": {},
-      "meteor-node-imap": {},
+      "meteor-node-imap": {
+        "git": "https://github.com/BashtonLtd/meteor-node-imap.git",
+        "tag": "v0.0.4"
+      },
       "meteor-pagedown": {},
       "meteor-tomarkdown": {},
       "spin": {},
@@ -25,9 +28,9 @@
         "commit": "d00e380dda2184b70e909fc4a0fb5358d602c586"
       },
       "moment": {
-        "git": "https://github.com/possibilities/meteor-moment.git",
-        "tag": "v1.7.0",
-        "commit": "c64b6ec0e714b9556f4b6643d430b868ba69d3d7"
+        "git": "https://github.com/acreeger/meteor-moment.git",
+        "tag": "v2.2.1",
+        "commit": "9ee12e714afe56b189f53076447b7b54f3012065"
       },
       "marked": {
         "git": "https://github.com/chuangbo/meteor-marked.git",
@@ -40,24 +43,24 @@
         "commit": "b62c51f387287726cf3b64077f7bc69604ec2f5e"
       },
       "collectionFS": {
-        "git": "https://github.com/mxab/Meteor-CollectionFS.git",
+        "git": "https://github.com/aldeed/Meteor-CollectionFS.git",
         "branch": "master",
-        "commit": "d888011537fe5c7503b325f60ea12603b690e4c3"
+        "commit": "a1cd774a5e52c271d1a8b6f9af96686e91df66a0"
       },
       "meteor-mailparser": {
         "git": "https://github.com/BashtonLtd/meteor-mailparser.git",
-        "tag": "v0.3.6",
-        "commit": "6d86779d4e7439c2bdbdedd50066da94b5be8137"
+        "tag": "v0.3.8",
+        "commit": "862891a69b2977c7b60edf0c3c1842f73d792b62"
       },
       "meteor-node-imap": {
         "git": "https://github.com/BashtonLtd/meteor-node-imap.git",
-        "tag": "v0.0.3",
-        "commit": "fe06b9918cfc7fbd46a1188362739173fc8e2f33"
+        "tag": "v0.0.4",
+        "commit": "74e1576610767e1a830de23064c5d4b258725771"
       },
       "meteor-pagedown": {
         "git": "https://github.com/BashtonLtd/meteor-pagedown.git",
-        "tag": "v1.1.0",
-        "commit": "e61278a6a77e1f947f3a00b8ff93025f072cf043"
+        "tag": "v1.1.1",
+        "commit": "b719e2d705928bf0d5d9d5d9a3faed28820b77c8"
       },
       "meteor-tomarkdown": {
         "git": "https://github.com/BashtonLtd/meteor-tomarkdown.git",
@@ -66,8 +69,8 @@
       },
       "spin": {
         "git": "https://github.com/SachaG/meteor-spin.git",
-        "tag": "v0.2.0",
-        "commit": "fd3a2871a69442848b4b4e74f5e1ae28fa4a95a4"
+        "tag": "v0.2.2",
+        "commit": "3f655f0016228e4195acc784c45d3e3a247dc39f"
       },
       "paginated-subscription": {
         "git": "https://github.com/tmeasday/meteor-paginated-subscription.git",

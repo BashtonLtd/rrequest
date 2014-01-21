@@ -5,11 +5,14 @@
     "marked": {},
     "collection-api": {},
     "collectionFS": {
-      "git": "https://github.com/mxab/Meteor-CollectionFS.git",
+      "git": "https://github.com/aldeed/Meteor-CollectionFS.git",
       "branch": "master"
     },
     "meteor-mailparser": {},
-    "meteor-node-imap": {},
+    "meteor-node-imap": {
+      "git": "https://github.com/BashtonLtd/meteor-node-imap.git",
+      "tag": "v0.0.4"
+    },
     "meteor-pagedown": {},
     "meteor-tomarkdown": {},
     "spin": {},
