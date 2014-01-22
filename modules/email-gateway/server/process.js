@@ -102,7 +102,7 @@ process_mail = function(mail_object) {
       ticketBody = text2markdown(mail_object.text);
     }
 
-    replyId = create_reply({
+    var replyId = create_reply({
       user: requestfrom,
       ticketId: ticket._id,
       reply: {
