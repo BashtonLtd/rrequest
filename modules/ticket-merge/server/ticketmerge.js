@@ -93,109 +93,110 @@ merge_tickets = function (userId, target, source) {
 		);
 	}
 
-	source.forEach(function(source_id) {
-		var source_ticket = Tickets.findOne({_id: source_id});
-		if (source_ticket !== undefined) {
-			var replies_to_keep = [];
-			source_ticket.replies.forEach(function(reply){
-				if (reply.status == 'posted' && reply.type != 'event') {
-					reply.original_ticket = source_id;
-					Tickets.update(
-	          			{_id: target},
-          				{
-	            			$push: { replies: reply}
-          				}
-	        		);
-				} else {
-					replies_to_keep.push(reply);
-				}
-			});
 
-			if (source_ticket.group === null) {
-				source_ticket.group = [];
-			}
+  Tickets.update(
+    {_id: {$in: source}},
+    {$set: {isVisible: false}},
+    {multi: true}
+  );
 
-			var original_requesters = target_ticket.requesters;
-			var original_group = target_ticket.group;
+  var source_tickets = Tickets.find({_id: {$in: source}});
 
-			Tickets.update(
-				{_id: target},
-				{
-					$addToSet: {
-						requesters: {$each: source_ticket.requesters},
-					},
-					$set: {
-						original_requesters: original_requesters,
-						original_group: original_group
-					}
-				}
-			)
-
-      if (source_ticket.group.length != 0) {
-        if (target_ticket.group == null || target_ticket.group == undefined || target_ticket.group.length == 0) {
-          Tickets.update(
-            {_id: target},
-            {
-              $set: {group: source_ticket.group}
-            }
-          )
-        } else if (target_ticket.group.length == 1) {
-          if (target_ticket.group[0] == null) {
-            Tickets.update(
-              {_id: target},
-              {
-                $set: {group: source_ticket.group}
-              }
-            )
-          } else {
-            Tickets.update(
-              {_id: target},
-              {
-                $addToSet: {
-                  group: {$each: source_ticket.group}
-                }
-              }
-            )
-          }
-        } else {
-          Tickets.update(
-            {_id: target},
-            {
-              $addToSet: {
-                group: {$each: source_ticket.group}
-              }
-            }
-          )
-        }
+  var replies_to_merge = [];
+  var groups_to_merge = [];
+  var original_requesters = target_ticket.requesters;
+  var original_group = target_ticket.group;
+  var source_ticket_requesters = [];
+  source_tickets.forEach(function(source_ticket) {
+    var replies_to_keep = [];
+    source_ticket.replies.forEach(function(reply){
+      if (reply.status == 'posted' && reply.type != 'event') {
+        reply.original_ticket = source_ticket._id;
+        replies_to_merge.push(reply);
+      } else {
+        replies_to_keep.push(reply);
       }
+    });
 
-			Tickets.update(
-				{_id: source_id},
+    if (source_ticket.requesters instanceof Array) {
+      source_ticket.requesters.forEach(function(requester) {
+        source_ticket_requesters.push(requester);
+      }); 
+    } else {
+      source_ticket_requesters.push(source_ticket.requesters);
+    }
+
+    if (source_ticket.group === null) {
+      source_ticket.group = [];
+    }
+    if (source_ticket.group.length != 0) {
+      // this should be a loop over the entries if it is array
+      if (source_ticket.group instanceof Array) {
+        // loop and add
+        source_ticket.group.forEach(function(group) {
+          groups_to_merge.push(group);
+        });
+      } else {
+        groups_to_merge.push(source_ticket.group);
+      }
+    }
+
+		Tickets.update(
+			{_id: source_ticket._id},
+			{
+				$set: { replies: replies_to_keep, isVisible: false, mergedInto: target, status: 'closed'}
+			}
+		)
+
+		var comments = Comments.find({ticketId: source_ticket._id});
+		comments.forEach(function(comment) {
+			var id = comment._id;
+			var original_ticket = comment.ticketId;
+			Comments.update(
+				{_id: id},
 				{
-					$set: { replies: replies_to_keep, isVisible: false, mergedInto: target, status: 'closed'}
+					$set: {original_ticket: original_ticket, ticketId: target}
 				}
 			)
+		});
 
-			var comments = Comments.find({ticketId: source_id});
-			comments.forEach(function(comment) {
-				var id = comment._id;
-				var original_ticket = comment.ticketId;
-				Comments.update(
-					{_id: id},
-					{
-						$set: {original_ticket: original_ticket, ticketId: target}
-					}
-				)
-			});
-
-			var user = Meteor.users.findOne({_id: userId});
-			insert_event({
-				ticketId: target,
-				user: user._id,
-				body: 'Ticket ' + source_id + ' merged by ' + user.profile.email
-			});
-		}
+		var user = Meteor.users.findOne({_id: userId});
+		insert_event({
+			ticketId: target,
+			user: user._id,
+			body: 'Ticket ' + source_ticket._id + ' merged by ' + user.profile.email
+		});
 	});
+  
+  var modifier = {
+    $pushAll: {},
+    $addToSet: {},
+    $set: {}
+  };
+
+  modifier.$pushAll['replies'] = replies_to_merge;
+  modifier.$addToSet['requesters'] = {$each: source_ticket_requesters};
+  modifier.$set['original_requester'] = original_requesters;
+  modifier.$set['original_group'] = original_group;
+
+  if (target_ticket.group === null || target_ticket.group === undefined || target_ticket.group.length == 0) {
+    modifier.$set['group'] = groups_to_merge;
+  } else if (target_ticket.group.length == 1) {
+    if (target_ticket.group[0] == null) {
+      modifier.$set['group'] = groups_to_merge;
+    } else {
+      modifier.$addToSet['group'] = {$each: groups_to_merge}; 
+    }
+  } else {
+    modifier.$addToSet['group'] = {$each: groups_to_merge}; 
+  }
+
+  Tickets.update(
+    {_id: target},
+    modifier
+  );
+
+
 };
 
 unmerge_tickets = function (userId, target) {	
