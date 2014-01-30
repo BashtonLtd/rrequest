@@ -156,17 +156,20 @@ Template.ticketreplybox.replyentryformfields = function(replyId) {
 Template.ticketreplybox.replyentryfooter_items = function(replyId) {
   var replyentryfooter_items = [];
   var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
-  var hooks = Hooks.find({hook:'replyentry_footer'});
-  hooks.forEach(function (hook) {
-    replyentryfooter_items.push({
-      template: Template[hook.template]({
-        ticketId: Session.get('viewticketId'),
-        replyId:replyId, 
-        groups:ticket.groups, 
-        requester:Meteor.userId()
-      })
+
+  if (ticket !== undefined) {
+    var hooks = Hooks.find({hook:'replyentry_footer'});
+    hooks.forEach(function (hook) {
+      replyentryfooter_items.push({
+        template: Template[hook.template]({
+          ticketId: Session.get('viewticketId'),
+          replyId:replyId,
+          groups:ticket.group,
+          requester:Meteor.userId()
+        })
+      });
     });
-  });
+  }
   return replyentryfooter_items;
 };
 
