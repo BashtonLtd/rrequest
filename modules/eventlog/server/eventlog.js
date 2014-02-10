@@ -83,9 +83,6 @@ bound_create_event_log = Meteor.bindEnvironment(create_event_log, function(e) {
 
 var http_post = function(rule, message) {
   var roomname = rule.data;
-  if (rule.data[0] != '#') {
-    roomname = '#' + rule.data;
-  }
 
   var post_data = querystring.stringify({
     'room': roomname,

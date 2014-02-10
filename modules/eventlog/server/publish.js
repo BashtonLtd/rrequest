@@ -66,13 +66,13 @@ Meteor.startup(function(){
       return false;
     },
     update: function(userId, doc, fieldNames, modifier) {
-      if (id_staff_by_id(userId)) {
+      if (is_staff_by_id(userId)) {
         return true;
       }
       return false;
     },
     remove: function(userId, docs) {
-      if (id_staff_by_id(userId)) {
+      if (is_staff_by_id(userId)) {
         return true;
       }
       return false;
