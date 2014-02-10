@@ -95,7 +95,7 @@ create_reply = function(options) {
     now = options.created;
   }
 
-  reply = options.reply;
+  var reply = options.reply;
   reply['_id'] = Random.id();
   reply['type'] = 'reply';
   reply['level'] = user_level;
