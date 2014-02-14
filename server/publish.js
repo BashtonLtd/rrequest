@@ -25,7 +25,7 @@ Meteor.publish('currentUser', function() {
 
 Meteor.publish('allUsers', function() {
   var user = Meteor.users.findOne({_id: this.userId});
-  if (user && user.isAdmin) {
+  if (user && user.profile.isStaff) {
     return Meteor.users.find();
   } else {
     var usergroups = Groups.find({members: {$in: [this.userId]}});

@@ -94,30 +94,28 @@ add_ticket_requester = function (options) {
       }
     );
   }
-}
+};
 
 create_ticket = function (options) {
   options = options || {};
+  var args = {};
   if (options._id !== undefined) {
-    return Tickets.insert({
-      _id: options._id,
-      subject: options.subject,
-      created: new Date(),
-      status: options.status,
-      requesters: options.requesters,
-      group: options.groups,
-      replies: []
-    });
-  } else {
-    return Tickets.insert({
-      subject: options.subject,
-      created: new Date(),
-      status: options.status,
-      requesters: options.requesters,
-      group: options.groups,
-      replies: []
+    args._id = options._id;
+  }
+  args.subject = options.subject;
+  args.created = new Date();
+  args.status = options.status;
+  args.requesters = options.requesters;
+  args.group = options.groups;
+  args.replies = [];
+
+  if (options.extrafields !== undefined && options.extrafields.length > 0) {
+    options.extrafields.forEach(function(item) {
+      args[item.name] = item.value;
     });
   }
+
+  return Tickets.insert(args);
 };
 
 get_ticket = function(ticketId) {

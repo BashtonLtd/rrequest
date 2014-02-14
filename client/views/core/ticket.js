@@ -71,6 +71,15 @@ Template.ticket.sidebaritems = function() {
   return sidebar_items;
 };
 
+Handlebars.registerHelper('tickettopright', function(ticketId) {
+  var items = [];
+  var hooks = Hooks.find({hook:'tickettopright'});
+  hooks.forEach(function (hook) {
+    items.push({template: Template[hook.template]({ticketId:ticketId})});
+  });
+  return items;
+});
+
 Handlebars.registerHelper('reply_header_items', function(replyId) {
   var header_items = [];
   var hooks = Hooks.find({hook:'reply_header'});
@@ -538,6 +547,17 @@ Template.editTicketDialog.helpers({
   }
 });
 
+Template.editTicketDialog.ticketeditformfields = function() {
+  var extraformfields = [];
+  var hooks = Hooks.find({hook:'ticket_edit_form_field'});
+  hooks.forEach(function (hook) {
+    extraformfields.push({
+      template: Template[hook.template]
+    });
+  });
+  return extraformfields;
+};
+
 Template.editTicketDialog.events({
   'click .cancel': function () {
     Session.set("showEditTicketDialog", false);
@@ -567,13 +587,23 @@ Template.editTicketDialog.events({
       }
     });
 
-    Meteor.call('updateTicket', {
+    var extras = $('#ticketeditextrafields').serializeArray();
+
+    var extrafields = [];
+    $.each(extras, function() {
+      extrafields.push({name: this.name, value: this.value || ''});
+    });
+ 
+    var args = {
       _id: ticket._id,
       subject: subject,
       requesters: existing_users,
       groups: groups,
-      status: status
-    } , function (error, ticketId) {
+      status: status,
+      extrafields: extrafields
+    };
+
+    Meteor.call('updateTicket', args, function (error, ticketId) {
       if (! error) {
         // create new users
         new_users.forEach(function (email_address) {

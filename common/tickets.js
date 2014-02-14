@@ -38,8 +38,20 @@ Meteor.methods({
 update_ticket  = function (options) {
   options = options || {};
 
+  var args = {};
+  args.subject = options.subject;
+  args.requesters = options.requesters;
+  args.group = options.groups;
+  args.status = options.status;
+
+  if (options.extrafields !== undefined && options.extrafields.length > 0) {
+    options.extrafields.forEach(function(item) {
+      args[item.name] = item.value;
+    });
+  }
+
   return Tickets.update({_id: options._id},
-      {$set: {subject: options.subject, requesters: options.requesters, group: options.groups, status:options.status}}
+      {$set: args}
     );
 };
 

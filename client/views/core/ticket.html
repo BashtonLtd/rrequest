@@ -27,6 +27,10 @@
       <div class="ticket-subject">{{subject}}</div>
       <div class="box-topright" title="{{ticketcreated}}">{{#with ticketcreated}}{{>age}}{{/with}}</div>
       <div class="clearfix"></div>
+      {{#each tickettopright _id}}
+         {{{template}}}
+      {{/each}}
+
     </div>
     <div class="box-body">
       <div class="row">
@@ -179,6 +183,12 @@
           <option value="{{name}}" {{selectedstatus name}}>{{name}}</option>
         {{/each}}
       </select>
+
+      <form id="ticketeditextrafields">
+        {{#each ticketeditformfields}}
+        {{{template}}}
+        {{/each}}
+      </form>
 
       {{/with}}
     </div>

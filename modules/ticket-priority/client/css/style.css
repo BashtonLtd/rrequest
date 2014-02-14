@@ -1,0 +1,11 @@
+.ticket-priority {
+  float: right;
+  margin-top: 5px;
+}
+
+.status-label {
+  color: #468847;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+}

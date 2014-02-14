@@ -35,6 +35,10 @@ label {
   width: 200px;
 }
 
+.highlight {
+  background-color: #E0FFE0;
+}
+
 .box {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;

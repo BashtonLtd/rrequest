@@ -1,0 +1,43 @@
+<template name="ticketpriority_ticket_create_form_field">
+  <label>Priority</label>
+  {{#if currentUser.profile.isStaff}}
+  <select name="priority" class="ticketpriority">
+    {{#each ticketpriority}}
+      <option name="priority" value="{{priority}}" {{selectedpriority priority}}>P{{priority}}</option>
+    {{/each}}
+  {{else}}
+  <label class="radio inline">
+  <input type="radio" name="priority" id="prioritydefault" value="{{defaultpriority}}" checked>
+  Important
+</label>
+<label class="radio inline">
+  <input type="radio" name="priority" id="prioritycritical" value="1">
+  Critical
+</label>
+<span class="help-block">Selecting 'Critical' will raise an alert to an on call engineer.</span>
+  {{/if}}
+</template>
+
+<template name="ticketpriority_ticket_edit_form_field">
+  <label>Priority</label>
+  <select name="priority" class="ticketpriority">
+    {{#each ticketpriority}}
+      <option name="priority" value="{{priority}}" {{selectedpriority priority}}>P{{priority}}</option>
+    {{/each}}
+  </select>
+</template>
+
+<template name="ticketpriority_ticketlistitemfooter">
+  <span class="ticket-priority badge badge-info">{{ticketPriority ticketId}}</span>
+</template>
+
+<template name="ticketpriority_tickettopright">
+  <div class="box-topright"><span class="ticket-priority badge badge-info">P{{priority ticketId}}</span></div>
+</template>
+
+<template name="ticketpriority_ticketlistsortfilter">
+  <tr id="sortpriority" class="{{ticketlist_sort_selected 'priority' '1'}} prioritysortrow">
+    <td id="sortpriority"><span class="ticket-item-icon"><i class="icon-warning-sign" id="sortpriority"></td>
+    <td id="sortpriority">Priority</td>
+  </tr>
+</template>

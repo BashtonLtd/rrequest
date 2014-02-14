@@ -73,9 +73,10 @@
 <template name="ticketrow">
   <div class="ticket-item">
     <input type="checkbox" class="ticket-item-check" name="tickets[]" value="{{this._id}}">
-    <span class="ticket-item-id">{{this._id}}<br/>
+    <span class="ticket-item-id">{{this._id}}
     {{#if currentUser.profile.isStaff}}
       {{#if isNotGrouped this._id}}
+        <br/>
         <span class="ticket-label label label-warning">Not grouped</span>
       {{/if}}
     {{/if}}
@@ -93,6 +94,11 @@
         modified {{#with modified}}<span title="{{this}}">{{>age}}</span>{{/with}}{{#with lastModifiedBy}} by <a href="#">{{this}}</a>{{/with}}.
       </div>
     </div>
+    <div class="clearfix"></div>
+    {{#each ticketlistitemfooter_items this._id}}
+      {{{template}}}
+    {{/each}}
+    <div class="clearfix"></div>
   </div>
 </template>
 
@@ -173,6 +179,12 @@
         <input class="ticketgroup" style="width:100%"/>
         <div class="help-block">All selected groups will be able to see this ticket.</div>
       </div>
+
+      <form id="ticketcreateextrafields">
+        {{#each ticketcreateformfields}}
+        {{{template}}}
+        {{/each}}
+      </form>
     </div>
 
     <div class="modal-footer">
@@ -212,14 +224,17 @@
     </div>
     <div class="box-body">
       <table>
-        <tr id="sortoldest" class="{{selected 1}} sortrow">
+        <tr id="sortoldest" class="{{ticketlist_sort_selected 'modified' '1'}} sortrow">
           <td id="sortoldest"><span class="ticket-item-icon"><i class="icon-arrow-up" id="sortoldest"></td>
           <td id="sortoldest">Oldest First</td>
         </tr>
-        <tr id="sortnewest" class="{{selected -1}} sortrow">
+        <tr id="sortnewest" class="{{ticketlist_sort_selected 'modified' '-1'}} sortrow">
           <td id="sortnewest"><span class="ticket-item-icon"><i class="icon-arrow-down" id="sortnewest"></td>
           <td id="sortnewest">Newest First</td>
         </tr>
+        {{#each ticketlist_sort_filter}}
+        {{{template}}}
+        {{/each}}
       </table>
       <div class="clearfix"></div>
     </div>

@@ -28,9 +28,36 @@ Handlebars.registerHelper('ticketlistfooter_items', function() {
   return footer_items;
 });
 
+Handlebars.registerHelper('ticketlistitemfooter_items', function(ticketId) {
+  var footer_items = [];
+  var hooks = Hooks.find({hook:'ticketlistitemfooter_items'});
+  hooks.forEach(function (hook) {
+    footer_items.push({template: Template[hook.template]({ticketId: ticketId})});
+  });
+  return footer_items;
+});
+
+Handlebars.registerHelper('ticketlist_sort_filter', function() {
+  var sort_filters = [];
+  var hooks = Hooks.find({hook:'ticketlist_sort_filter'});
+  hooks.forEach(function (hook) {
+    sort_filters.push({template: Template[hook.template]()});
+  });
+  return sort_filters;
+});
+
+Handlebars.registerHelper('ticketlist_sort_selected', function(field, order) {
+  if (order == Session.get('selected_sort_order') && field == Session.get('selected_sort_field')) {
+    return 'sortselected';
+  } else {
+    return 'sortunselected';
+  }
+});
+
 Template.ticketlist.tickets = function () {
   var searchfilter = Session.get('ticketsSearchfilter');
   var sortorder = Session.get('selected_sort_order');
+  var sortfield = Session.get('selected_sort_field');
   if (Session.get('selected_sort_order') == 1) {
     sortorder = 'asc';
   } else {
@@ -45,19 +72,22 @@ Template.ticketlist.tickets = function () {
         {subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
         {'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
       ]
-    }, 
-    {sort: [['modified', sortorder]], limit: ticketListSub.limit()}
+    },
+    {sort: [[Session.get('selected_sort_field'), sortorder]], limit: ticketListSub.limit()}
   );
   return tickets;
 };
 
 Template.tickets.created = function() {
   Session.set('ticketsSearchfilter', '');
-  if (Session.get('selected_filter_states') == undefined) {
+  if (Session.get('selected_filter_states') === undefined) {
     Session.set('selected_filter_states', []);
   }
-  if (Session.get('selected_sort_order') == undefined) {
+  if (Session.get('selected_sort_order') === undefined) {
     Session.set('selected_sort_order', -1);
+  }
+  if (Session.get('selected_sort_field') === undefined) {
+    Session.set('selected_sort_field', 'modified');
   }
   ticketListSub = Meteor.subscribeWithPagination(
     'sortedTickets',
@@ -67,7 +97,9 @@ Template.tickets.created = function() {
 };
 
 var getModified = function() {
-  return {'modified': Session.get('selected_sort_order')};
+  var filter_field = {};
+  filter_field[Session.get('selected_sort_field')] = Session.get('selected_sort_order');
+  return filter_field;
 };
 
 var getFilter = function() {
@@ -116,20 +148,11 @@ Template.statefilter.events({
 
 Template.ticketsortorder.events({
   'click .sortrow': function (event, template) {
+    Session.set('selected_sort_field', 'modified');
     if ($(event.target).context.id == 'sortnewest') {
       Session.set('selected_sort_order', -1);
     } else {
       Session.set('selected_sort_order', 1);
-    }
-  }
-});
-
-Template.ticketsortorder.helpers({
-  selected: function(order) {
-    if (order == Session.get('selected_sort_order')) {
-      return 'sortselected';
-    } else {
-      return 'sortunselected';
     }
   }
 });
@@ -167,6 +190,17 @@ var openCreateTicketDialog = function () {
 
 Template.createTicketDialog.created = function () {
   Session.set('ticketRequesterSearchTerm', "");
+};
+
+Template.createTicketDialog.ticketcreateformfields = function() {
+  var extraformfields = [];
+  var hooks = Hooks.find({hook:'ticket_create_form_field'});
+  hooks.forEach(function (hook) {
+    extraformfields.push({
+      template: Template[hook.template]
+    });
+  });
+  return extraformfields;
 };
 
 Template.createTicketDialog.rendered = function () {
@@ -267,12 +301,22 @@ Template.createTicketDialog.events({
       }
     });
 
-    Meteor.call('createTicket', {
+    var extras = $('#ticketcreateextrafields').serializeArray();
+
+    var extrafields = [];
+    $.each(extras, function() {
+      extrafields.push({name: this.name, value: this.value || ''});
+    });
+ 
+    var args = {
       subject: subject,
       requesters: existing_users,
       groups: groups,
-      status: 'creating'
-    }, function (error, ticketId) {
+      status: 'creating',
+      extrafields: extrafields
+    };
+
+    Meteor.call('createTicket', args, function (error, ticketId) {
       if (! error) {
         // create new users
         new_users.forEach(function (email_address) {
