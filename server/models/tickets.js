@@ -172,12 +172,23 @@ get_or_create_ticket = function(requesters, subject) {
     });
     return ticket;
   } else {
-    var new_ticketId = create_ticket({
-      subject: subject,
-      status: 'new',
-      requesters: requesters,
-      groups: group
+    // hooks for extrafields on new tickets
+    var args = {};
+    args.subject = subject;
+    args.status = 'new';
+    args.requesters = requesters;
+    args.groups = group;
+
+    var extrafields = [];
+
+    var hooks = Hooks.find({hook:'ticketextrafields'});
+    hooks.forEach(function(hook) {
+      var fn = new Function("term", "return " + hook.callback + "();");
+      extrafields.push(fn());
     });
+
+    args.extrafields = extrafields;
+    var new_ticketId = create_ticket(args);
     ticket = Tickets.findOne({_id: new_ticketId});
     return ticket;
   }

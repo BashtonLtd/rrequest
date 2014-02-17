@@ -49,6 +49,12 @@ Meteor.startup(function() {
   }
 });
 
+
+ticketpriority_extrafields = function () {
+  var settings = TicketPrioritySettings.findOne();
+  return {name: 'priority', value: settings.default_priority};
+};
+
 Meteor.methods({
   enable_ticketpriority_module: function(args) {
     args = args || {};
@@ -104,6 +110,12 @@ Meteor.methods({
       template: 'ticketpriority_tickettopright'
     });
 
+    Hooks.insert({
+      hook: 'ticketextrafields',
+      module_id: args.module_id,
+      callback: 'ticketpriority_extrafields'
+    });
+
     // Check for tickets without priority and add the default to them
     Tickets.update({priority: {$exists: false}}, {$set: {priority: settings.default_priority}}, {multi: true});
   },
@@ -114,5 +126,5 @@ Meteor.methods({
     Hooks.remove({
       module_id: args.module_id
     });
-  },
+  }
 });
