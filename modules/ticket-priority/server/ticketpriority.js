@@ -40,10 +40,10 @@ Meteor.startup(function() {
       max_response_time: 480,
       time_unit: 'minutes',
       priorities: [
-        {priority: 1, time: 15},
-        {priority: 2, time: 30},
-        {priority: 3, time: 240},
-        {priority: 4, time: 480}
+        {priority: '1', time: 15},
+        {priority: '2', time: 30},
+        {priority: '3', time: 240},
+        {priority: '4', time: 480}
       ]
     });
   }
@@ -66,10 +66,10 @@ Meteor.methods({
         max_response_time: 480,
         time_unit: 'minutes',
         priorities: [
-          {priority: 1, time: 15},
-          {priority: 2, time: 30},
-          {priority: 3, time: 240},
-          {priority: 4, time: 480}
+          {priority: '1', time: 15},
+          {priority: '2', time: 30},
+          {priority: '3', time: 240},
+          {priority: '4', time: 480}
         ]
       });
     }
