@@ -17,6 +17,7 @@
     "meteor-tomarkdown": {},
     "spin": {},
     "paginated-subscription": {},
-    "event-horizon": {}
+    "event-horizon": {},
+    "apm": {}
   }
 }
