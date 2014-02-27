@@ -1,7 +1,7 @@
 rrequest
 ========
 
-Open Source modulular support ticket tracker.
+Open Source modular support ticket tracker.
 
 # Installation
 - Install [Meteor](http://meteor.com)
@@ -9,7 +9,7 @@ Open Source modulular support ticket tracker.
 - Clone this repository
 - Run `mrt` from within the cloned repository
 
-# Configutation
+# Configuration
 - Edit the file `server/lib/init.js` 
   - Change the `URLROOT` variable to match the url that is used to access the site.
   - Change the `EMAIL_FROM` variable, this address is used when sending out email.
