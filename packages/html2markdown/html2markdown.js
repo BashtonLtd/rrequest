@@ -22,23 +22,25 @@ tags = {
 }
 
 text2markdown = function(sourcetext) {
-  var lines = sourcetext.split('\n');
   var outputtext = '';
-  var lastlinestart = '';
-  lines.forEach(function(line) {
-    if (line.charAt(0) == '>') {
-      if (!lastlinestart == '>') {
-        line = '\n' + line;
+  if (sourcetext !== undefined) {
+    var lines = sourcetext.split('\n');
+    var lastlinestart = '';
+    lines.forEach(function(line) {
+      if (line.charAt(0) == '>') {
+        if (!lastlinestart == '>') {
+          line = '\n' + line;
+        }
+        lastlinestart = '>';
+      } else {
+        if (lastlinestart = '>') {
+          line = '\n' + line;
+        }
+        lastlinestart = '';
       }
-      lastlinestart = '>';
-    } else {
-      if (lastlinestart = '>') {
-        line = '\n' + line;
-      }
-      lastlinestart = '';
-    }
-    outputtext = outputtext + '\n' + line;
-  });
+      outputtext = outputtext + '\n' + line;
+    });
+  }
   return outputtext;
 };
 
