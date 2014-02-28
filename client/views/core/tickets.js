@@ -63,7 +63,7 @@ Template.ticketlist.tickets = function () {
   } else {
     sortorder = 'desc';
   }
-  if (searchfilter == '') {
+  if (searchfilter == '' || searchfilter == undefined) {
     var tickets = Tickets.find(
       {
         status: {$nin: Session.get('selected_filter_states')}
