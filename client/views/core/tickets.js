@@ -112,15 +112,22 @@ var getModified = function() {
 };
 
 var getFilter = function() {
-  return {
-    status: {$nin: Session.get('selected_filter_states')},
-    $or:
-    [
-      {_id: {$regex: ".*"+ Session.get('ticketsSearchfilter') +".*", $options: 'i'}},
-      {subject: {$regex: ".*"+ Session.get('ticketsSearchfilter') +".*", $options: 'i'}},
-      {'requesters.email': {$regex: ".*"+ Session.get('ticketsSearchfilter') +".*", $options: 'i'}}
-    ]
-  };
+  var searchfilter = Session.get('ticketsSearchfilter');
+  if (searchfilter === '' || searchfilter === undefined) {
+    return {
+      status: {$nin: Session.get('selected_filter_states')}
+    };
+  } else {
+    return {
+      status: {$nin: Session.get('selected_filter_states')},
+      $or:
+      [
+        {_id: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+        {subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+        {'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
+      ]
+    };
+  }
 };
 
 Template.statefilter.states = function() {
