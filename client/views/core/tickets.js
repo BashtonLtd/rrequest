@@ -63,18 +63,27 @@ Template.ticketlist.tickets = function () {
   } else {
     sortorder = 'desc';
   }
-  var tickets = Tickets.find(
-    {
-      status: {$nin: Session.get('selected_filter_states')},
-      $or:
-      [
-        {_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
-        {subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
-        {'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
-      ]
-    },
-    {sort: [[Session.get('selected_sort_field'), sortorder]], limit: ticketListSub.limit()}
-  );
+  if (searchfilter == '') {
+    var tickets = Tickets.find(
+      {
+        status: {$nin: Session.get('selected_filter_states')}
+      },
+      {sort: [[Session.get('selected_sort_field'), sortorder]], limit: ticketListSub.limit()}
+    );
+  } else {
+    var tickets = Tickets.find(
+      {
+        status: {$nin: Session.get('selected_filter_states')},
+        $or:
+        [
+          {_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
+          {subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+          {'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
+        ]
+      },
+      {sort: [[Session.get('selected_sort_field'), sortorder]], limit: ticketListSub.limit()}
+    );
+  }
   return tickets;
 };
 
