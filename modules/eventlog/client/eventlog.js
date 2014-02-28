@@ -56,13 +56,21 @@ Template.eventlog.created = function() {
 var getFilter = function() {
   var start = new Date(Session.get('fromdate'));
   var end = new Date(Session.get('todate'));
+  var searchfilter = Session.get('event_search_filter');
 
-  return {
-    created: {"$gte": start, "$lt": end},
-    level: {$nin: Session.get('selected_filter_levels')},
-    $or: [
-      {message: {$regex: ".*"+ Session.get('event_search_filter') +".*", $options: 'i'}}
-    ]
+  if (searchfilter === '' || searchfilter === undefined) {
+    return {
+      created: {"$gte": start, "$lt": end},
+      level: {$nin: Session.get('selected_filter_levels')}
+    }
+  } else {
+    return {
+      created: {"$gte": start, "$lt": end},
+      level: {$nin: Session.get('selected_filter_levels')},
+      $or: [
+        {message: {$regex: ".*"+ Session.get('event_search_filter') +".*", $options: 'i'}}
+      ]
+    }
   }
 };
 
