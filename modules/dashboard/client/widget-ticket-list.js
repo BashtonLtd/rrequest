@@ -22,15 +22,22 @@
 var widgetData = [];
 
 var getFilter = function(id, filter) {
-  return {
-    status: {$in: filter},
-    $or:
-    [
-      {_id: {$regex: ".*"+ Session.get('ticketsSearchfilter-'+id) +".*", $options: 'i'}},
-      {subject: {$regex: ".*"+ Session.get('ticketsSearchfilter-'+id) +".*", $options: 'i'}},
-      {'requesters.email': {$regex: ".*"+ Session.get('ticketsSearchfilter') +".*", $options: 'i'}}
-    ]
-  };
+  var searchfilter = Session.get('ticketsSearchfilter-'+id);
+  if (searchfilter === '' || searchfilter === undefined) {
+    return {
+      status: {$in: filter}
+    };
+  } else {
+    return {
+      status: {$in: filter},
+      $or:
+      [
+        {_id: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+        {subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+        {'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
+      ]
+    };
+  }
 };
 
 widget_ticket_list_save = function(event, template) {
@@ -159,19 +166,28 @@ Template.widget_ticket_list.helpers({
       Session.set('ticketsSearchfilter-'+id, '');
     }
 
-    var tickets = Tickets.find(
-      {
-        status: {$in: widget.extradata.filter},
-        $or:
-        [
-          {_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
-          {subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
-          {'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
-    
-        ]
-      },
-      sorting
-    );
+    if (searchfilter === '' || searchfilter === undefined) {
+      var tickets = Tickets.find(
+        {
+          status: {$in: widget.extradata.filter}
+        },
+        sorting
+      );
+    } else {
+      var tickets = Tickets.find(
+        {
+          status: {$in: widget.extradata.filter},
+          $or:
+          [
+            {_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
+            {subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+            {'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
+      
+          ]
+        },
+        sorting
+      );
+    }
     return {id: id, label: widget.label, tickets: tickets};
 
   },
