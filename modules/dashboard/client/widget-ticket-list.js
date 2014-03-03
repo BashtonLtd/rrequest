@@ -23,7 +23,7 @@ var widgetData = [];
 
 var getFilter = function(id, filter) {
   var searchfilter = Session.get('ticketsSearchfilter-'+id);
-  if (searchfilter === '' || searchfilter === undefined) {
+  if (searchfilter === '' || searchfilter === undefined || searchfilter.length < 3) {
     return {
       status: {$in: filter}
     };
@@ -166,7 +166,7 @@ Template.widget_ticket_list.helpers({
       Session.set('ticketsSearchfilter-'+id, '');
     }
 
-    if (searchfilter === '' || searchfilter === undefined) {
+    if (searchfilter === '' || searchfilter === undefined || searchfilter.length < 3) {
       var tickets = Tickets.find(
         {
           status: {$in: widget.extradata.filter}

@@ -56,33 +56,56 @@ Handlebars.registerHelper('ticketlist_sort_selected', function(field, order) {
 
 Template.ticketlist.tickets = function () {
   var searchfilter = Session.get('ticketsSearchfilter');
+  var selected_filter_states = Session.get('selected_filter_states');
   var sortorder = Session.get('selected_sort_order');
   var sortfield = Session.get('selected_sort_field');
+  var tickets;
   if (Session.get('selected_sort_order') == 1) {
     sortorder = 'asc';
   } else {
     sortorder = 'desc';
   }
-  if (searchfilter == '' || searchfilter == undefined) {
-    var tickets = Tickets.find(
-      {
-        status: {$nin: Session.get('selected_filter_states')}
-      },
-      {sort: [[Session.get('selected_sort_field'), sortorder]], limit: ticketListSub.limit()}
-    );
+  if (searchfilter == '' || searchfilter == undefined || searchfilter.length < 3) {
+    if (selected_filter_states.length === 0) {
+      tickets = Tickets.find(
+        {},
+        {sort: [[Session.get('selected_sort_field'), sortorder]], limit: ticketListSub.limit()}
+      );
+    } else {
+      tickets = Tickets.find(
+        {
+          status: {$nin: selected_filter_states}
+        },
+        {sort: [[Session.get('selected_sort_field'), sortorder]], limit: ticketListSub.limit()}
+      );
+    }
   } else {
-    var tickets = Tickets.find(
-      {
-        status: {$nin: Session.get('selected_filter_states')},
-        $or:
-        [
-          {_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
-          {subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
-          {'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
-        ]
-      },
-      {sort: [[Session.get('selected_sort_field'), sortorder]], limit: ticketListSub.limit()}
-    );
+    if (selected_filter_states.length === 0) {
+      tickets = Tickets.find(
+        {
+          $or:
+          [
+            {_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
+            {subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+            {'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
+          ]
+        },
+        {sort: [[Session.get('selected_sort_field'), sortorder]], limit: ticketListSub.limit()}
+      );
+    } else {
+      tickets = Tickets.find(
+        {
+          status: {$nin: selected_filter_states},
+          $or:
+          [
+            {_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
+            {subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+            {'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
+          ]
+        },
+        {sort: [[Session.get('selected_sort_field'), sortorder]], limit: ticketListSub.limit()}
+      );
+    }
   }
   return tickets;
 };
@@ -113,20 +136,36 @@ var getModified = function() {
 
 var getFilter = function() {
   var searchfilter = Session.get('ticketsSearchfilter');
-  if (searchfilter === '' || searchfilter === undefined) {
-    return {
-      status: {$nin: Session.get('selected_filter_states')}
-    };
+  var selected_filter_states = Session.get('selected_filter_states');
+  if (searchfilter === '' || searchfilter === undefined || searchfilter.length < 3) {
+    if (selected_filter_states.length === 0) {
+      return {};
+    } else {
+      return {
+        status: {$nin: selected_filter_states}
+      };
+    }
   } else {
-    return {
-      status: {$nin: Session.get('selected_filter_states')},
-      $or:
-      [
-        {_id: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
-        {subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
-        {'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
-      ]
-    };
+    if (selected_filter_states.length === 0) {
+      return {
+        $or:
+        [
+          {_id: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+          {subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+          {'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
+        ]
+      };
+    } else {
+      return {
+        status: {$nin: selected_filter_states},
+        $or:
+        [
+          {_id: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+          {subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+          {'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
+        ]
+      };
+    }
   }
 };
 
