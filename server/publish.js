@@ -135,21 +135,19 @@ Meteor.publish('sortedTickets', function(sort, filter, limit) {
             ]},
             {$or: filter['$or']}
           ]
-        }
+        };
       } else {
         var newfilter = {
           isVisible: {$ne: false},
           status: filter.status,
-          {$or: [
+          $or: [
             {group: {$in: groupids}},
             {'requesters.id': {$in: [this.userId]}}
-          ]}
+          ]
         }
       }
       return Tickets.find(newfilter, {sort: sort, limit:limit});
     }
-  } else {
-    return this.stop();
   }
 });
 
