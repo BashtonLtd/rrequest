@@ -81,25 +81,36 @@ Handlebars.registerHelper('getUserEmail', function(userId) {
   return email;
 });
 
-Handlebars.registerHelper('getRequesters', function(ticketId) {
+Handlebars.registerHelper('getRequesters', function(ticketId, verbose) {
   var ticket = Tickets.findOne(ticketId);
   var requesters = [];
   ticket.requesters.forEach(function (requester) {
-    requesters.push(useremail(requester));
+    if (requester !== null || requester !== undefined) {
+      requesters.push(useremail(requester));
+    }
   });
-  return requesters.join(', ');
+  if (verbose === false) {
+    if (requesters.length > 1) {
+      var extras = requesters.length -1;
+      return requesters[0] + ' and ' + extras + ' more';
+    } else {
+      return requesters.join(', ');
+    }
+  } else {
+    return requesters.join(', ');
+  }
 });
 
 Handlebars.registerHelper('isNotGrouped', function(ticketId) {
   var ticket = Tickets.findOne({_id: ticketId});
   if (ticket !== undefined) {
-    if (ticket.group == null || ticket.group == undefined || ticket.group.length == 0) {
+    if (ticket.group === null || ticket.group === undefined || ticket.group.length === 0) {
         return true;
     } else if (ticket.group.length == 1) {
-      if (ticket.group[0] == null) {
+      if (ticket.group[0] === null) {
         return true;
       }
-      return false
+      return false;
     }
     return false;
   }

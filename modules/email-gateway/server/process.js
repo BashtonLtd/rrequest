@@ -21,7 +21,7 @@
 */
 fs = Npm.require('fs');
 
-created_replies = []
+created_replies = [];
 
 reply_exists = function(msgId) {
   if (Tickets.find({'replies.message_id': msgId}).count() > 0) {
@@ -29,10 +29,10 @@ reply_exists = function(msgId) {
     return true;
   }
   return false;
-}
+};
 
 confirm_reply_created = function(ticketId, replyId) {
-  var ticket = Tickets.findOne({_id: ticketId})
+  var ticket = Tickets.findOne({_id: ticketId});
   var reply_found = false;
   var msgId = null;
   if (ticket !== undefined) {
@@ -96,12 +96,14 @@ process_mail = function(mail_object) {
     var ticket = get_or_create_ticket(requesters, mail_object.subject);
 
     var ticketBody = mail_object.text;
-    if (mail_object.html !== undefined) {
-      ticketBody = html2markdown(mail_object.html);
-    } else {
-      ticketBody = text2markdown(mail_object.text);
-    }
-
+    Fiber(function() {
+      if (mail_object.html !== undefined) {
+        ticketBody = html2markdown(mail_object.html);
+      } else {
+        ticketBody = text2markdown(mail_object.text);
+      }
+    }).run();
+    
     var replyId = create_reply({
       user: requestfrom,
       ticketId: ticket._id,

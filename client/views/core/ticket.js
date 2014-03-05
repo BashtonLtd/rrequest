@@ -35,13 +35,13 @@ Template.ticketreplybox.unposted_reply = function () {
     if(user.profile.isStaff) {
       user_level = 'staff';
     }
-  } 
+  }
   var reply = UnpostedReplies.findOne({ticket_id: Session.get('viewticketId'), level: user_level}, {sort: {created: 1}});
   if (reply !== undefined) {
     return reply;
   } else {
     var replydata = {ticket_id: Session.get('viewticketId'), level: user_level, body:'', created: new Date().getTime()};
-    if (Session.get('unpostedRepliesReady') == true) {
+    if (Session.get('unpostedRepliesReady') === true) {
       var count = UnpostedReplies.find({ticket_id: Session.get('viewticketId'), level: user_level}).count();
       if (count === 0) {
         return UnpostedReplies.insert(replydata);
@@ -100,7 +100,7 @@ Handlebars.registerHelper('footer_items', function(replyId) {
 
 Handlebars.registerHelper('ticket', function() {
   var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {fields: {unpostedstaffreply: 0, unpostedrequesterreply: 0}});
-  if (ticket === undefined && Session.get('viewticketId') != null) {
+  if (ticket === undefined && Session.get('viewticketId') !== null) {
     Meteor.call('getTicket', Session.get('viewticketId'), function(error, ticket) {
       if (ticket !== undefined) {
         Session.set('viewticketId', ticket._id);
@@ -297,7 +297,7 @@ Template.ticket.events({
                   {name: 'body', value: body},
                   {name: 'status', value: 'unposted'}
                 ]
-              })
+              });
             }, 5000);
             Session.set('replytimerid', this.timer);
             this.count += 1;
@@ -316,7 +316,7 @@ Template.ticket.events({
     var level = template.find(".ticketreplylevel").value;
     var body = template.find(".ticketreplybody").value;
 
-    if (body.trim() != '') {
+    if (body.trim() !== '') {
       var extras = $('#ticketreplyextrafields').serializeArray();
       var extrafields = [];
       $.each(extras, function() {
@@ -355,7 +355,7 @@ Template.ticket.events({
     var level = template.find(".ticketreplylevel").value;
     var body = template.find(".ticketreplybody").value;
 
-    if (body.trim() != '') {
+    if (body.trim() !== '') {
       template.find(".ticketreplybody").value = '';
 
       var args = {
@@ -393,7 +393,7 @@ var promote_ticket_reply = function(options) {
   var replydata = {};
   for (var i = 0, l = _.size(options.replyfields); i < l; i++) {
     replydata[options.replyfields[i].name] = options.replyfields[i].value;
-  };
+  }
 
   var ticket = Tickets.findOne({_id: options.ticketId});
 
@@ -409,8 +409,8 @@ var promote_ticket_reply = function(options) {
         if (requester == options.userId) {
           addToRequesters = false;
         }
-      })
-      if (addToRequesters == true) {
+      });
+      if (addToRequesters === true) {
         add_ticket_requesters(options.ticketId, options.userId);
       }
     }
@@ -425,7 +425,7 @@ var promote_ticket_reply = function(options) {
     level:'INFO',
     tags:['replycreated'],
     message: log_email + ' replied to ' + log_subject + ' ' + log_ticket_url
-  });
+  }, function(error, result){});
 
   UnpostedReplies.remove({_id: options.replyId});
 
@@ -440,7 +440,7 @@ var update_ticket_unpostedreply = function(options) {
 
   for (var i = 0, l = _.size(options.replyfields); i < l; i++) {
     modifier.$set[options.replyfields[i].name] = options.replyfields[i].value;
-  };
+  }
 
   if (options.userId !== undefined) {
     modifier.$set["posted_by"] = options.userId;
@@ -451,7 +451,7 @@ var update_ticket_unpostedreply = function(options) {
     {_id: options.replyId},
     modifier
   );
-}
+};
 
 var add_ticket_requesters = function(ticketId, requesterId) {
   var user = Meteor.users.findOne({_id:requesterId});
@@ -463,7 +463,7 @@ var add_ticket_requesters = function(ticketId, requesterId) {
       }
     );
   }
-}
+};
 
 var openEditTicketDialog = function () {
   Session.set('currentScroll',$(document).scrollTop());
@@ -499,7 +499,7 @@ Template.editTicketDialog.rendered = function () {
       } else {
         return term.text;
       }
-    } 
+    }
   });
   
   $(".ticketgroup").select2({

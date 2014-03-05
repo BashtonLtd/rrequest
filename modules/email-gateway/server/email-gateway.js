@@ -67,7 +67,7 @@ var start_watching_replies = function() {
           var replies = [];
           // find all with notified false and type reply
           ticket.replies.forEach(function(reply) {
-            if (reply.type == 'reply' && reply.notified == false) {
+            if (reply.type == 'reply' && reply.notified === false) {
               replies.push(reply);
             }
           });
@@ -122,7 +122,7 @@ Meteor.methods({
       } catch(error) {
         
       }
-    })
+    });
   },
 
   updateEmailGatewaySettings: function(args) {
@@ -181,17 +181,17 @@ var emailgateway_send_ticket_updated_email = function(args) {
         }
       }
     } else {
-      for (var i = 0, l = ticket.requesters.length; i < l; i++) {
-        if (useremail(ticket.requesters[i]) != args.user.profile.email) {
-          requesteremails += useremail(ticket.requesters[i]);
-          if (i < ticket.requesters.length -1) {
+      for (var j = 0, k = ticket.requesters.length; j < k; j++) {
+        if (useremail(ticket.requesters[j]) != args.user.profile.email) {
+          requesteremails += useremail(ticket.requesters[j]);
+          if (j < ticket.requesters.length -1) {
             requesteremails += ', ';
           }
         }
       }
     }
 
-    if (requesteremails != '') {
+    if (requesteremails !== '') {
       var subject = '[' + ticket._id + '] ' + ticket.subject;
 
       var ticketurl = Meteor.absoluteUrl('ticket/' + ticket._id, {});

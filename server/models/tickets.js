@@ -81,7 +81,7 @@ set_ticket_groups = function (options) {
       $set: {group: options.groups}
     }
   );
-}
+};
 
 add_ticket_requester = function (options) {
   options = options || {};

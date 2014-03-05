@@ -258,8 +258,8 @@ autoclose = function(data) {
 		    , args: { age_warning: settings.inactivity_warning, age_close: settings.close_period }
         , callback: 'autoclose'
 	    }).delay(delay).save();
-		}	
-	}).run();
+    }
+  }).run();
 
 	return true;
 };

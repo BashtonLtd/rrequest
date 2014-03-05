@@ -45,6 +45,7 @@ Meteor.startup(function (){
 
 Meteor.methods({
   createEventLog: function(args) {
+    this.unblock();
     return create_event_log(args);
   }
 });
@@ -77,7 +78,11 @@ create_event_log = function(args) {
   }
 };
 
-bound_create_event_log = Meteor.bindEnvironment(create_event_log, function(e) {
+create_event_log_stub = function(args) {
+  Meteor.call('createEventLog',args, function(error, result){});
+};
+
+bound_create_event_log = Meteor.bindEnvironment(create_event_log_stub, function(e) {
     console.log("exception! " + e);
 });
 

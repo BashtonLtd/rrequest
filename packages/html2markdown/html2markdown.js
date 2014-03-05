@@ -100,7 +100,7 @@ function process (node, parentprefix, parentpostfix) {
   
   if (node.children !== undefined) {
     node.children.forEach(function(child) {
-      if (eachline == true){
+      if (eachline === true){
         if (endsWith(text, '\n')) {
           text += parentprefix + process(child, prefix, postfix) + parentpostfix;
         } else {
@@ -109,14 +109,14 @@ function process (node, parentprefix, parentpostfix) {
       } else {
         text += parentprefix + process(child, '', '') + parentpostfix;
       }
-    })
+    });
   }
-  if (eachline == true) {
+  if (eachline === true) {
     text = text.replace(/\n{3,}/g, '\n');
     text = text.replace(/\n/g, '\n' + prefix);
   }
   if (!allowempty) {
-    if (text == '') {
+    if (text === '') {
       return text;
     } else {
       return prefix + text + postfix;
@@ -124,4 +124,4 @@ function process (node, parentprefix, parentpostfix) {
   } else {
     return prefix + text + postfix;
   }
-};
+}
