@@ -99,11 +99,20 @@ process_mail = function(mail_object) {
     Fiber(function() {
       if (mail_object.html !== undefined) {
         ticketBody = html2markdown(mail_object.html);
+        // Check that ticketBody does not exceed maximum bson data size
+        if (Buffer.byteLength(ticketBody, 'utf8') >= 16777216) {
+          ticketBody = text2markdown(mail_object.text);
+        }
       } else {
         ticketBody = text2markdown(mail_object.text);
       }
     }).run();
     
+    if (Buffer.byteLength(ticketBody, 'utf8') >= 16777216) {
+      bound_create_event_log({level:'ERROR', tags:['imap'], message:'Message too large ' + mail_object.headers['message-id']});
+      return false;
+    }
+
     var replyId = create_reply({
       user: requestfrom,
       ticketId: ticket._id,
