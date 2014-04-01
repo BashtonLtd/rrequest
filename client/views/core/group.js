@@ -103,7 +103,6 @@ Template.groupsTicketsFilterChoices.events({
         current_selection = _.extend([], current_selection);
         current_selection = _(current_selection).reject(function(el) {return el == state.name;});
       }
-      console.log(current_selection);
       Session.set('selectedfilterchoices-groupsTickets', current_selection);
     }
   }
