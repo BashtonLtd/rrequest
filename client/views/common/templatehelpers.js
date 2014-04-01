@@ -21,10 +21,10 @@
 */
 Handlebars.registerHelper('refreshEvery', function(seconds) {
   if (!Deps.active)
-    return
+    return;
     
-  var computation = Deps.currentComputation
-  Meteor.setTimeout(function() { 
+  var computation = Deps.currentComputation;
+  Meteor.setTimeout(function() {
     computation.invalidate();
   }, parseInt(seconds) * 1000);
 });

@@ -44,7 +44,7 @@ confirm_reply_created = function(ticketId, replyId) {
       }
     }
   }
-  if (reply_found == true) {
+  if (reply_found === true) {
     if (msgId !== null) {
       created_replies.push(msgId);
     } else {

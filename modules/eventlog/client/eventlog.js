@@ -151,7 +151,7 @@ Template.eventcalendarfilter.rendered = function () {
 
 Template.eventlist.helpers({
   getLabel: function(level) {
-    if(levels.indexOf(level) != -1) {  
+    if(levels.indexOf(level) != -1) {
       return level;
     } else {
       return 'INFO';

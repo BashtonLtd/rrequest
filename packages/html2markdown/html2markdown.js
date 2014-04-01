@@ -67,19 +67,20 @@ html2markdown = function (sourcehtml) {
     output = output + process(item, '', '');
   });
   output = cleanUp(output);
+  console.log('html2markdown end: ' + new Date().toISOString());
   return output;
 };
 
 function endsWith(str, suffix) {
   return str.indexOf(suffix, str.length - suffix.length) !== -1;
-};
+}
 
 function cleanUp(string) {
   string = string.replace(/^[\t\r\n]+|[\t\r\n]+$/g, ''); // trim leading/trailing whitespace
   string = string.replace(/\n\s+\n/g, '\n\n');
   string = string.replace(/\n{3,}/g, '\n\n'); // limit consecutive linebreaks to 2
   return string;
-};
+}
 
 function process (node, parentprefix, parentpostfix) {
   var text = '';
