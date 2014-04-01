@@ -19,21 +19,22 @@ tags = {
   code: {prefix: '`', postfix: '`', eachline: false, allowempty: true},
   a: {prefix: '', postfix: '', eachline: false, allowempty: true},
   img: {prefix: '', postfix: '', eachline: false, allowempty: true}
-}
+};
 
 text2markdown = function(sourcetext) {
+  console.log('text2markdown start: ' + new Date().toISOString());
   var outputtext = '';
   if (sourcetext !== undefined) {
     var lines = sourcetext.split('\n');
     var lastlinestart = '';
     lines.forEach(function(line) {
       if (line.charAt(0) == '>') {
-        if (!lastlinestart == '>') {
+        if (lastlinestart != '>') {
           line = '\n' + line;
         }
         lastlinestart = '>';
       } else {
-        if (lastlinestart = '>') {
+        if (lastlinestart == '>') {
           line = '\n' + line;
         }
         lastlinestart = '';
@@ -41,19 +42,21 @@ text2markdown = function(sourcetext) {
       outputtext = outputtext + '\n' + line;
     });
   }
+  console.log('text2markdown end: ' + new Date().toISOString());
   return outputtext;
 };
 
 html2markdown = function (sourcehtml) {
+  console.log('html2markdown start: ' + new Date().toISOString());
   var handler = new htmlparser.DefaultHandler(
-      function (error, dom) {
-        if (error) {
+    function (error, dom) {
+      if (error) {
 
-        } else {
-          
-        }
+      } else {
+        
       }
-    , { verbose: false, ignoreWhitespace: false }
+    },
+    { verbose: false, ignoreWhitespace: false }
     );
 
   var parser = new htmlparser.Parser(handler);

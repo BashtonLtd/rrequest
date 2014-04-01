@@ -1,0 +1,183 @@
+<template name="group">
+  <div class="row">
+    <div class="span12">
+      <div class="box">
+        <div class="box-header">
+          <div class="pagetitle">{{groupname}}</div>
+          <div class="btn-group pull-right"></div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="span12">
+      <div class="box">
+        <div class="box-body">
+          {{>groupstatboxes}}
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  {{collectionList 
+    listLabel='Groups Tickets'
+    name='groupsTickets'
+    collection=Tickets
+    collectionFilterKey='group'
+    collectionFilterValue='viewgroupId'
+    publication='sortedTickets'
+    rowtemplate='ticketrow'
+    perpage=5
+    searchfields='_id,subject,requesters.email'
+    sorttemplate='groupsTicketsSortFields'
+    filterrow='status'
+    filtertemplate='groupsTicketsFilterChoices'
+  }}
+
+</template>
+
+<template name="groupsTicketsSortFields">
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close cancel">&times;</button>
+      <h3>Set Sort Order</h3>
+    </div>
+
+    <div class="modal-body">
+      <input type="hidden" id="sortfieldvarname" value="sortfield-groupsTickets">
+      <input type="hidden" id="sortordervarname" value="sortorder-groupsTickets">
+      <table>
+        <tr id="sortoldest" class="{{sort_selected 'modified' '1'}} sortrow">
+          <td id="sortoldest"><span class="ticket-item-icon"><i class="icon-arrow-up" id="sortoldest"></td>
+          <td id="sortoldest">Oldest First</td>
+        </tr>
+        <tr id="sortnewest" class="{{sort_selected 'modified' '-1'}} sortrow">
+          <td id="sortnewest"><span class="ticket-item-icon"><i class="icon-arrow-down" id="sortnewest"></td>
+          <td id="sortnewest">Newest First</td>
+        </tr>
+        {{#each ticketlist_sort_filter}}
+          {{{template}}}
+        {{/each}}
+      </table>
+    </div>
+  
+    <div class="modal-footer">
+      <a href="#" class="btn cancel">Close</a>
+    </div>
+  </div>
+</template>
+
+<template name="groupsTicketsFilterChoices">
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close cancel">&times;</button>
+      <h3>Set Filter</h3>
+    </div>
+
+    <div class="modal-body">
+      <table>
+      {{#each states}}
+      <tr id="{{_id}}" class="{{filter_selected}} filterrow">
+        <td id="{{_id}}">
+          <span id="{{_id}}" class="ticket-item-icon"><i id="{{_id}}" class="{{icon}}" style="color:#{{colour}}"></i></span>
+        </td>
+        <td id="{{_id}}" class="{{selected}}">{{name}}</td>
+      </tr>
+      {{/each}}
+      </table>
+    </div>
+  
+    <div class="modal-footer">
+      <a href="#" class="btn cancel">Close</a>
+    </div>
+  </div>
+</template>
+
+<template name="groupstatboxes">
+  <div class="statboxcontainer">
+    <div class="statboxtitle">tickets created</div>
+    <div class="statbox">
+      <div class="statboxtext">
+        <div class="statboxvalue">{{ticketscreated 1}}</div>
+        <div class="statboxsubtext">today</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="statboxcontainer">
+    <div class="statboxtitle">tickets created</div>
+    <div class="statbox">
+      <div class="statboxtext">
+        <div class="statboxvalue">{{ticketscreated 7}}</div>
+        <div class="statboxsubtext">last 7 days</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="statboxcontainer">
+    <div class="statboxtitle">tickets created</div>
+    <div class="statbox">
+      <div class="statboxtext">
+        <div class="statboxvalue">{{ticketscreated 28}}</div>
+        <div class="statboxsubtext">last 28 days</div>
+      </div>
+    </div>
+  </div>
+
+  {{#each boxes}}
+    {{{template}}}
+  {{/each}}
+  <div class="clearfix"></div>
+</template>
+
+
+
+
+
+
+
+
+
+
+<template name="_collectionList">
+  {{#if showSortOrderDialog}}
+    {{{sortTemplate}}}
+  {{/if}}
+
+  {{#if showFilterDialog}}
+    {{{filterTemplate}}}
+  {{/if}}
+
+  <div class="row">
+    <div class="span12">
+      <div class="box">
+        <div class="box-header">
+          <div class="pagetitle">{{listLabel}}</div>
+
+          <div class="btn-group pull-right">
+            <input id="searchfilter" class="searchfilter" type="text" placeholder="Search..."/>
+            <button class="btn btn-fix sortorder"><i class="icon-sort"></i> Sort</button>
+            <button class="btn btn-fix filter"><i class="icon-filter"> Filter</i></button>
+
+          </div>
+          <div class="clearfix"></div>
+        </div>
+        <div class="box-body">
+          {{#each collection}}
+            {{{rowTemplate}}}
+          {{/each}}
+          <button class="btn pull-right load-more">
+            {{#if collectionReady}}Load More
+            {{else}}<div class="loading">&nbsp;</div>
+            {{/if}}
+          </button>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

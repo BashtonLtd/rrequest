@@ -110,3 +110,102 @@ Template.timeworked_reply_form_field.events({
     template.find("#timeworked").value = 15 * Math.ceil(template.find("#timeworked").value/15);
   }
 });
+
+Template.timeworked_groupstatbox.events({
+  'click #openoptions': function (event, template) {
+    event.preventDefault();
+    Session.set('showTimeworkedStatOptionsDialog', true);
+  }
+});
+
+Template.timeworked_groupstatbox.getDateRange = function () {
+  if (Session.get('timeworkedstart') === undefined) {
+    var to = new Date();
+    var from = new Date(to.getTime() - 1000 * 60 * 60 * 24 * 28);
+    Session.set('timeworkedstart', from);
+    Session.set('timeworkedend', to);
+  }
+  var range = moment(Session.get('timeworkedstart')).twix(Session.get('timeworkedend'), true);
+  return range.format();
+};
+
+Template.timeworked_groupstatbox.dateclass = function () {
+  var rangelength = moment(Session.get('timeworkedstart')).twix(Session.get('timeworkedend'), true).format().length;
+  if (rangelength > 16) {
+    return 'statboxsubtext-small';
+  } else {
+    return 'statboxsubtext';
+  }
+};
+
+Template.timeworked_groupstatbox.getTimeworked = function () {
+  Meteor.call('getTotalTimeworked',
+    {start: Session.get('timeworkedstart'), end: Session.get('timeworkedend'), groupId: Session.get('viewgroupId')},
+    function (error, timeworked) {
+      Session.set('timeworked', timeworked);
+    }
+  );
+  var time = Session.get('timeworked');
+  if (time !== undefined) {
+    var hours = parseInt(time/60, 10);
+    if (hours < 10) {
+      hours = '0' + hours;
+    }
+    var minutes = time - (hours * 60);
+    if (minutes < 10) {
+      minutes = '0' + minutes;
+    }
+    return hours + ':' + minutes;
+  } else {
+    return '...';
+  }
+};
+
+Template.timeworked_groupstatbox.showTimeworkedStatOptionsDialog = function () {
+  return Session.get('showTimeworkedStatOptionsDialog');
+};
+
+Template.timeworkedStatOptionsDialog.rendered = function () {
+  var to = new Date();
+  var from = new Date(to.getTime() - 1000 * 60 * 60 * 24 * 28);
+  Session.set('fromdate', from);
+  Session.set('todate', to);
+
+  var self = this;
+  $('#multi-calendar').DatePicker({
+    mode: 'range',
+    inline: true,
+    calendars: 2,
+    lastSel: this.lastSel,
+    date: [from, to],
+    onChange: function(dates,el) {
+      // update the range session variables
+
+      self.lastSel = $('#multi-calendar').DatePickerGetOptions().lastSel;
+
+      if (Session.get('fromdate') != dates[0]) {
+        Session.set('fromdate', dates[0]);
+      }
+      if (Session.get('todate') != dates[1]) {
+        Session.set('todate', dates[1]);
+      }
+    }
+  });
+  this.lastSel = $('#multi-calendar').DatePickerGetOptions().lastSel;
+  if (Session.get('timeworkedstart' === undefined)) {
+    Session.set('timeworkedstart', from);
+    Session.set('timeworkedend', to);
+  }
+};
+
+Template.timeworkedStatOptionsDialog.events({
+  'click .cancel': function () {
+    Session.set('showTimeworkedStatOptionsDialog', false);
+  },
+
+  'click .update': function (event, template) {
+    Session.set('timeworkedstart', Session.get('fromdate'));
+    Session.set('timeworkedend', Session.get('todate'));
+    Session.set('showTimeworkedStatOptionsDialog', false);
+  }
+});

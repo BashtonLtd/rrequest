@@ -28,3 +28,40 @@
   </div>
   {{/if}}
 </template>
+
+<template name="timeworked_groupstatbox">
+  {{#if showTimeworkedStatOptionsDialog}}
+    {{> timeworkedStatOptionsDialog}}
+  {{/if}}
+  <div class="statboxcontainer">
+    <div id="openoptions" class="statboxoptions">
+      <span><i class="icon-calendar"></i></span>
+    </div>
+    <div class="statboxtitle">time worked</div>
+    <div class="statbox">
+      <div class="statboxtext">
+        <div class="statboxvalue">{{getTimeworked}}</div>
+        <div class="{{dateclass}}">{{getDateRange}}</div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="timeworkedStatOptionsDialog">
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close cancel">&times;</button>
+      <h3>Set Date Range</h3>
+    </div>
+
+    <div class="modal-body">
+      <div style="width: 344px; margin-left: auto; margin-right: auto" id="multi-calendar"></div>
+    </div>
+
+    <div class="modal-footer">
+      <a href="#" class="btn cancel">Cancel</a>
+      <a href="#" class="btn btn-primary update">Update</a>
+    </div>
+  </div>
+</template>

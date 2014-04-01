@@ -60,8 +60,9 @@ confirm_reply_created = function(ticketId, replyId) {
 process_mail = function(mail_object) {
   // check from address and try to match to a requester
   var requesters = [];
+  var requestfrom;
   if (mail_object.from[0].address.toLowerCase() != EMAIL_FROM.toLowerCase()) {
-    var requestfrom = get_or_create_user(mail_object.from[0].address.toLowerCase());
+    requestfrom = get_or_create_user(mail_object.from[0].address.toLowerCase());
     requesters.push({id:requestfrom._id, email:mail_object.from[0].address.toLowerCase()});
   }
   
@@ -69,7 +70,7 @@ process_mail = function(mail_object) {
     var requestto = get_or_create_user(mail_object.to[0].address.toLowerCase());
     requesters.push({id:requestto._id, email:mail_object.to[0].address.toLowerCase()});
     if (requestfrom === undefined) {
-      var requestfrom = requestto;
+      requestfrom = requestto;
     }
   }
 
@@ -85,7 +86,7 @@ process_mail = function(mail_object) {
   }
 
   if (requestfrom === undefined) {
-    var requestfrom = get_or_create_user('unknown@bashton.com');
+    requestfrom = get_or_create_user('unknown@bashton.com');
   }
 
   // Check that reply does not already exist

@@ -90,8 +90,13 @@
     <div class="ticket-item-meta">
       <div>
         Opened {{#with created}}<span title="{{this}}">{{>age}}</span>{{/with}} 
-        by <a href="#">{{#if currentUser.profile.isStaff}}{{getGroupOrRequester}}{{else}}{{getRequesters this._id}}{{/if}}</a>, 
-        modified {{#with modified}}<span title="{{this}}">{{>age}}</span>{{/with}}{{#with lastModifiedBy}} by <a href="#">{{this}}</a>{{/with}}.
+        by 
+        {{#if currentUser.profile.isStaff}}
+          {{{getGroupOrRequester}}},
+        {{else}}
+          {{getRequesters this._id false}},
+        {{/if}}
+        modified {{#with modified}}<span title="{{this}}">{{>age}}</span>{{/with}}{{#with lastModifiedBy}} by {{this}}{{/with}}.
       </div>
     </div>
     <div class="clearfix"></div>
@@ -120,13 +125,12 @@
     <div class="ticket-item-meta">
       <div>
         Opened {{#with created}}<span title="{{this}}">{{>age}}</span>{{/with}} 
-        by <a href="#">
+        by 
         {{#if currentUser.profile.isStaff}}
           {{getGroupOrRequester}}
         {{else}}
-          {{getRequesters this._id}}
-        {{/if}}
-        </a>, 
+          {{getRequesters this._id false}}
+        {{/if}}, 
         modified {{#with modified}}<span title="{{this}}">{{>age}}</span>{{/with}}.
       </div>
     </div>
@@ -166,8 +170,9 @@
       <label>Subject</label>
       <input id="ticketsubject" type="text" class="subject span5">
 
-      <label>Requesters</label>          
+      <label>Requesters</label>
       <input id="requesterlist" style="width:100%" type="hidden" class="ticketrequester"/>
+
       <div class="help-block">To add a brand new requester, type their email address followed by a space.</div>
 
       {{#if displayGroups}}
@@ -223,6 +228,8 @@
       <div class="clearfix"></div>
     </div>
     <div class="box-body">
+      <input type="hidden" id="sortfieldvarname" value="selected_sort_field">
+      <input type="hidden" id="sortordervarname" value="selected_sort_order">
       <table>
         <tr id="sortoldest" class="{{ticketlist_sort_selected 'modified' '1'}} sortrow">
           <td id="sortoldest"><span class="ticket-item-icon"><i class="icon-arrow-up" id="sortoldest"></td>

@@ -57,23 +57,28 @@ Handlebars.registerHelper('lastModifiedBy', function() {
     return null;
   }
 });
+
 Handlebars.registerHelper('getGroupOrRequester', function() {
   var ticket = Tickets.findOne({_id:this._id});
+  var output = '';
   if (ticket !== undefined) {
-    if (ticket.group == null || ticket.group == undefined || ticket.group.length == 0) {
+    if (ticket.group === null || ticket.group === undefined || ticket.group.length === 0) {
       // return first requester
-      return useremail(ticket.requesters[0]);
-    } else if (ticket.group[0] == null) {
-      return useremail(ticket.requesters[0]);
+      output = useremail(ticket.requesters[0]);
+    } else if (ticket.group[0] === null) {
+      output = useremail(ticket.requesters[0]);
     } else {
       // return group
-      var groups = []
+      var groups = [];
       ticket.group.forEach(function (group) {
-        groups.push(groupname(group));
+        if (group !== null && group !== '') {
+          groups.push('<a href="/group/' + group + '">' + groupname(group) + '</a>');
+        }
       });
-      return groups.join(', ');
+      output = groups.join(', ');
     }
   }
+  return output;
 });
 
 Handlebars.registerHelper('getUserEmail', function(userId) {

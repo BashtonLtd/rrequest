@@ -65,8 +65,10 @@ Template.ticketpriority_ticketlistitemfooter.helpers({
 
 Template.ticketpriority_ticketlistsortfilter.events({
   'click .prioritysortrow': function (event, template) {
-    Session.set('selected_sort_field', 'priority');
-    Session.set('selected_sort_order', 1);
+    var sortfield = $('#sortpriority').parent().parent().parent().find('#sortfieldvarname').val();
+    var sortorder = $('#sortpriority').parent().parent().parent().find('#sortordervarname').val();
+    Session.set(sortfield, 'priority');
+    Session.set(sortorder, 1);
   }
 });
 

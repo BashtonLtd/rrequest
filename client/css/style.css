@@ -322,3 +322,89 @@ a {
   color: #ADADAD;
   cursor: pointer;
 }
+
+.loading {
+  line-height: 1;
+  background-image: url(data:image/gif;base64,R0lGODlhEAALAPQAAP///wAAANra2tDQ0Orq6gYGBgAAAC4uLoKCgmBgYLq6uiIiIkpKSoqKimRkZL6+viYmJgQEBE5OTubm5tjY2PT09Dg4ONzc3PLy8ra2tqCgoMrKyu7u7gAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCwAAACwAAAAAEAALAAAFLSAgjmRpnqSgCuLKAq5AEIM4zDVw03ve27ifDgfkEYe04kDIDC5zrtYKRa2WQgAh+QQJCwAAACwAAAAAEAALAAAFJGBhGAVgnqhpHIeRvsDawqns0qeN5+y967tYLyicBYE7EYkYAgAh+QQJCwAAACwAAAAAEAALAAAFNiAgjothLOOIJAkiGgxjpGKiKMkbz7SN6zIawJcDwIK9W/HISxGBzdHTuBNOmcJVCyoUlk7CEAAh+QQJCwAAACwAAAAAEAALAAAFNSAgjqQIRRFUAo3jNGIkSdHqPI8Tz3V55zuaDacDyIQ+YrBH+hWPzJFzOQQaeavWi7oqnVIhACH5BAkLAAAALAAAAAAQAAsAAAUyICCOZGme1rJY5kRRk7hI0mJSVUXJtF3iOl7tltsBZsNfUegjAY3I5sgFY55KqdX1GgIAIfkECQsAAAAsAAAAABAACwAABTcgII5kaZ4kcV2EqLJipmnZhWGXaOOitm2aXQ4g7P2Ct2ER4AMul00kj5g0Al8tADY2y6C+4FIIACH5BAkLAAAALAAAAAAQAAsAAAUvICCOZGme5ERRk6iy7qpyHCVStA3gNa/7txxwlwv2isSacYUc+l4tADQGQ1mvpBAAIfkECQsAAAAsAAAAABAACwAABS8gII5kaZ7kRFGTqLLuqnIcJVK0DeA1r/u3HHCXC/aKxJpxhRz6Xi0ANAZDWa+kEAA7AAAAAAAAAAAA);
+  width: 16px;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+.statboxcontainer {
+  color: #333;
+  background-color: #e6e6e6;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  border-radius: 4px;
+  outline: none;
+  border: none;
+  width: 130px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-right: 9px;
+  margin-bottom: 9px;
+  position: relative;
+  padding: 10px 20px;
+  min-width: 130px;
+  min-height: 76px;
+  font-size: 0.75em;
+  float: left;
+}
+
+.statboxtitle {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: normal;
+  text-transform: none;
+}
+
+.statbox {
+
+}
+
+.statboxtext {
+  margin-top: 3px;
+  margin-right: 0;
+  line-height: 1.5em;
+  text-align: center;
+}
+
+.statboxvalue {
+  font-size: 2rem;
+  line-height: 1em;
+  margin-bottom: 5px;
+}
+
+.statboxoptions {
+  float: right;
+  top: -7px;
+  right: -12px;
+  color: #f000000;
+  opacity: 0.2;
+  position: relative;
+}
+
+.statboxoptions:hover {
+  opacity: 0.8;
+}
+
+.statboxsubtext {
+  font-size: 1rem;
+  font-weight: normal;
+  text-transform: none;
+  line-height: 1em;
+}
+
+.statboxsubtext-small {
+  font-size: 0.59rem;
+  font-weight: normal;
+  text-transform: none;
+  line-height: 1em;
+}
+
+.btn-fix {
+  top: -5px;
+}

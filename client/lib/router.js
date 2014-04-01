@@ -72,8 +72,8 @@ Meteor.Router.filters({
 
 });
 
-Meteor.Router.filter('requireAdmin', {only: ['users']});
-Meteor.Router.filter('requireStaff', {only: ['groups']});
+Meteor.Router.filter('requireAdmin', {only: ['users', 'settings']});
+Meteor.Router.filter('requireStaff', {only: ['groups', 'group']});
 Meteor.Router.filter('redirectToTickets', {only: ['home']});
 
 Meteor.startup(function() {
