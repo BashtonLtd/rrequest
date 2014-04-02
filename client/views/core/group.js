@@ -101,7 +101,7 @@ Template.groupsTicketsFilterChoices.events({
         current_selection.unshift(state.name);
       } else {
         current_selection = _.extend([], current_selection);
-        current_selection = _(current_selection).reject(function(el) {return el == state.name;});
+        current_selection = _.reject(current_selection, function(el) {return el == state.name;});
       }
       Session.set('selectedfilterchoices-groupsTickets', current_selection);
     }
