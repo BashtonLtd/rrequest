@@ -116,7 +116,7 @@ Handlebars.registerHelper('getGroups', function() {
   var groups = [];
   if (ticket.group !== null) {
     ticket.group.forEach(function (group) {
-      groups.push(groupname(group));
+      groups.push('<a href="/group/' + group + '">'+groupname(group)+'</a>');
     });
     return groups.join(', ');
   }
