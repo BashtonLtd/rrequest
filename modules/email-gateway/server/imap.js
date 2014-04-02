@@ -79,6 +79,9 @@ Meteor.startup(function (){
         port: settings.imap_port,
         secure: settings.imap_secure
       });
+      imap.on('error', function(err) {
+        console.log('imap error: ' + err);
+      });
     }
   }
 
@@ -129,6 +132,9 @@ var collectmail = function (err, mailbox) {
                         bound_create_event_log({level:'ERROR', tags:['imap'], message:error.message});
                       }
                     });
+                  });
+                  fetch.once('error', function(err) {
+                    console.log('imap error: ' + err);
                   });
                 }
               }, function(err) {

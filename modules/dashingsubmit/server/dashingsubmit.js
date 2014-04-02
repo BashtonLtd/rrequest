@@ -72,6 +72,10 @@ var submit_count = function(state, count) {
     var req = http.request(options, function(res) {
       res.setEncoding('utf8');
     });
+    req.on('error', function(e) {
+      bound_create_event_log({level:'ERROR', tags:['dashingsubmit'], message:e.message});
+    });
+
     req.write(post_data);
     req.end();
   } catch (e) {
