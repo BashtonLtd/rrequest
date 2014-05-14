@@ -5,6 +5,7 @@
     {{#each ticketpriority}}
       <option name="priority" value="{{priority}}" {{selectedpriority priority}}>P{{priority}}</option>
     {{/each}}
+  </select>
   {{else}}
   <label class="radio inline">
   <input type="radio" name="priority" id="prioritydefault" value="{{defaultpriority}}" checked>
@@ -36,8 +37,7 @@
 </template>
 
 <template name="ticketpriority_ticketlistsortfilter">
-  <tr id="sortpriority" class="{{sort_selected 'priority' '1'}} prioritysortrow">
-    <td id="sortpriority"><span class="ticket-item-icon"><i class="icon-warning-sign" id="sortpriority"></td>
-    <td id="sortpriority">Priority</td>
-  </tr>
+  <div id="sortpriority" class="{{sort_selected 'priority' '1'}} prioritysortrow">
+    <span id="sortpriority" class="ticket-item-icon"><i class="icon-warning-sign" id="sortpriority"></i> Priority</span>
+  </div>
 </template>

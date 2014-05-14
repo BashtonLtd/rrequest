@@ -34,15 +34,15 @@
       <div class="box">
         <div class="box-header">
           <div class="pagetitle"></div>
-          <div class="btn-group pull-right">
+          <div id="ticketlistfooter_items" class="btn-group pull-right">
             {{#each ticketlistfooter_items}}
-              {{{template}}}
+              {{> ticketlistfooter_template}}
             {{/each}}
-            {{#if ticketsReady}}
-              <button class="btn load-more">Load More</button>
-            {{else}}
-              <div>{{> spinner}}</div>
+            <button class="btn pull-right load-more">
+            {{#if ticketsReady}}Load More
+            {{else}}<div class="loading">&nbsp;</div>
             {{/if}}
+            </button>
           </div>
           <div class="clearfix"></div>
         </div>
@@ -100,9 +100,10 @@
       </div>
     </div>
     <div class="clearfix"></div>
-    {{#each ticketlistitemfooter_items this._id}}
-      {{{template}}}
+    {{#each ticketlistitemfooter_items}}
+      {{> ticketlistitemfooter_template ticketlistitemfooter_data}}
     {{/each}}
+
     <div class="clearfix"></div>
   </div>
 </template>
@@ -177,19 +178,15 @@
 
       {{#if displayGroups}}
         <div>
+          <label>Group</label>
+          <input class="ticketgroup" style="width:100%"/>
+          <div class="help-block">All selected groups will be able to see this ticket.</div>
+        </div>
       {{else}}
-        <div style="display:none;">
+        <div style="display:none;"></div>
       {{/if}}
-        <label>Group</label>
-        <input class="ticketgroup" style="width:100%"/>
-        <div class="help-block">All selected groups will be able to see this ticket.</div>
-      </div>
 
-      <form id="ticketcreateextrafields">
-        {{#each ticketcreateformfields}}
-        {{{template}}}
-        {{/each}}
-      </form>
+      <form id="ticketcreateextrafields"></form>
     </div>
 
     <div class="modal-footer">
@@ -228,21 +225,22 @@
       <div class="clearfix"></div>
     </div>
     <div class="box-body">
+
       <input type="hidden" id="sortfieldvarname" value="selected_sort_field">
       <input type="hidden" id="sortordervarname" value="selected_sort_order">
-      <table>
-        <tr id="sortoldest" class="{{ticketlist_sort_selected 'modified' '1'}} sortrow">
-          <td id="sortoldest"><span class="ticket-item-icon"><i class="icon-arrow-up" id="sortoldest"></td>
-          <td id="sortoldest">Oldest First</td>
-        </tr>
-        <tr id="sortnewest" class="{{ticketlist_sort_selected 'modified' '-1'}} sortrow">
-          <td id="sortnewest"><span class="ticket-item-icon"><i class="icon-arrow-down" id="sortnewest"></td>
-          <td id="sortnewest">Newest First</td>
-        </tr>
+
+      <div id="sortoldest" class="{{ticketlist_sort_selected 'modified' '1'}} sortrow">
+        <span id="sortoldest" class="ticket-item-icon"><i class="icon-arrow-up" id="sortoldest"></i> Oldest First</span>
+      </div>
+
+      <div id="sortnewest" class="{{ticketlist_sort_selected 'modified' '-1'}} sortrow">
+        <span id="sortnewest" class="ticket-item-icon"><i class="icon-arrow-down" id="sortnewest"></i> Newest First</span>
+      </div>
+      <span id="ticketlist_sort_filter">
         {{#each ticketlist_sort_filter}}
-        {{{template}}}
+          {{> ticketlist_sort_filter_template}}
         {{/each}}
-      </table>
+      </span>
       <div class="clearfix"></div>
     </div>
   </div>

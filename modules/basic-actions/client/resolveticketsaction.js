@@ -21,8 +21,10 @@
 */
 action_resolvetickets = function(ticketList) {
   if ($('.resolveticketscontainer').length == 0) {
-    var dialog = Meteor.render(Template['action_resolvetickets']);
-    $(".container").append(dialog);
+    UI.insert(UI.render
+      (Template['action_resolvetickets']),
+      $('.container').get(0)
+    );
   } else {
     Session.set("showResolveticketsDialog", true);
   }

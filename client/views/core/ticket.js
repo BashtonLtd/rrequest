@@ -19,14 +19,14 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-Handlebars.registerHelper('ticketfooter_items', function() {
-  var footer_items = [];
+Template.ticketheader.ticketfooter_items = function() {
   var hooks = Hooks.find({hook:'ticketfooter_items'});
-  hooks.forEach(function (hook) {
-    footer_items.push({template: Template[hook.template]()});
-  });
-  return footer_items;
-});
+  return hooks;
+};
+
+Template.ticketheader.ticketfooter_items_template = function () {
+  return Template[this.template];
+};
 
 Template.ticketreplybox.unposted_reply = function () {
   var user = Meteor.users.findOne({_id: Meteor.userId()});
@@ -63,55 +63,82 @@ Template.ticketreplybox.ticket_reply_button = function () {
 };
 
 Template.ticket.sidebaritems = function() {
-  var sidebar_items = [];
   var hooks = Hooks.find({hook:'ticket_sidebar'});
-  hooks.forEach(function (hook) {
-    sidebar_items.push({template: Template[hook.template]()});
-  });
-  return sidebar_items;
+  return hooks;
 };
 
-Handlebars.registerHelper('tickettopright', function(ticketId) {
+Template.ticket.sidebaritems_template = function () {
+  return Template[this.template];
+};
+
+Template.ticketheader.tickettopright = function(ticketId) {
   var items = [];
   var hooks = Hooks.find({hook:'tickettopright'});
   hooks.forEach(function (hook) {
-    items.push({template: Template[hook.template]({ticketId:ticketId})});
+    hook.ticketId = ticketId;
+    items.push(hook);
   });
   return items;
-});
+};
 
-Handlebars.registerHelper('reply_header_items', function(replyId) {
+Template.ticketheader.tickettopright_template = function () {
+  return Template[this.template];
+};
+
+Template.ticketheader.tickettopright_data = function () {
+  return {ticketId: this.ticketId, template: this.template};
+};
+
+UI.registerHelper('reply_header_items', function(replyId) {
   var header_items = [];
   var hooks = Hooks.find({hook:'reply_header'});
   hooks.forEach(function (hook) {
-    header_items.push({template: Template[hook.template]({replyId:replyId})});
+    hook.replyId = replyId;
+    header_items.push(hook);
   });
   return header_items;
 });
 
-Handlebars.registerHelper('footer_items', function(replyId) {
+UI.registerHelper('reply_header_items_template', function() {
+  return Template[this.template];
+});
+
+UI.registerHelper('reply_header_items_data', function() {
+  return this;
+});
+
+UI.registerHelper('footer_items', function(replyId) {
   var footer_items = [];
   var hooks = Hooks.find({hook:'reply_footer'}, {reactive: false});
   hooks.forEach(function (hook) {
-    footer_items.push({template: Template[hook.template]({replyId:replyId})});
+    hook.replyId = replyId;
+    footer_items.push(hook);
   });
   return footer_items;
 });
 
-Handlebars.registerHelper('ticket', function() {
+UI.registerHelper('footer_items_template', function() {
+  return Template[this.template];
+});
+
+UI.registerHelper('footer_items_data', function() {
+  return this;
+});
+
+UI.registerHelper('ticket', function() {
   var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {fields: {unpostedstaffreply: 0, unpostedrequesterreply: 0}});
   if (ticket === undefined && Session.get('viewticketId') !== null) {
     Meteor.call('getTicket', Session.get('viewticketId'), function(error, ticket) {
       if (ticket !== undefined) {
         Session.set('viewticketId', ticket._id);
-        Meteor.Router.to('/ticket/'+ticket._id);
+        Router.go('ticket', {_id: ticket._id});
       }
     });
   }
   return ticket;
 });
 
-Handlebars.registerHelper('getGroups', function() {
+UI.registerHelper('getGroups', function() {
   var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {fields: {unpostedstaffreply: 0, unpostedrequesterreply: 0}});
   var groups = [];
   if (ticket.group !== null) {
@@ -123,26 +150,14 @@ Handlebars.registerHelper('getGroups', function() {
   return '';
 });
 
-Handlebars.registerHelper('displayreply', function(replytype) {
-  var user = Meteor.users.findOne({_id: Meteor.userId()});
-  if(user.profile.isStaff) {
-    return true;
-  } else {
-    if (replytype == 'reply' || replytype == 'event') {
-      return true;
-    }
-  }
-  return false;
-});
-
-Handlebars.registerHelper('displayname', function(replytype) {
+UI.registerHelper('displayname', function(replytype) {
   if (replytype != 'event') {
     return true;
   }
   return false;
 });
 
-Handlebars.registerHelper('isMuted', function(replytype) {
+UI.registerHelper('isMuted', function(replytype) {
   if (replytype == 'event') {
     return 'muted';
   }
@@ -150,16 +165,22 @@ Handlebars.registerHelper('isMuted', function(replytype) {
 
 Template.ticketreplybox.replyentryformfields = function(replyId) {
   var extraformfields = [];
+  var ticketId = Session.get('viewticketId');
   var hooks = Hooks.find({hook:'ticket_reply_form_field'});
   hooks.forEach(function (hook) {
-    extraformfields.push({
-      template: Template[hook.template]({
-        ticketId: Session.get('viewticketId'),
-        replyId:replyId
-      })
-    });
+    hook.ticketId = ticketId;
+    hook.replyId = replyId;
+    extraformfields.push(hook);
   });
   return extraformfields;
+};
+
+Template.ticketreplybox.replyentryformfields_template = function () {
+  return Template[this.data.template];
+};
+
+Template.ticketreplybox.replyentryformfields_data = function () {
+  return {data: this};
 };
 
 Template.ticketreplybox.replyentryfooter_items = function(replyId) {
@@ -169,30 +190,46 @@ Template.ticketreplybox.replyentryfooter_items = function(replyId) {
   if (ticket !== undefined) {
     var hooks = Hooks.find({hook:'replyentry_footer'});
     hooks.forEach(function (hook) {
-      replyentryfooter_items.push({
-        template: Template[hook.template]({
-          ticketId: Session.get('viewticketId'),
-          replyId:replyId,
-          groups:ticket.group,
-          requester:Meteor.userId()
-        })
-      });
+      hook.ticketId = Session.get('viewticketId');
+      hook.replyId = replyId;
+      hook.groups = ticket.group;
+      hook.requester = Meteor.userId();
+      replyentryfooter_items.push(hook);
     });
   }
   return replyentryfooter_items;
 };
 
+Template.ticketreplybox.replyentryfooter_items_template = function () {
+  return Template[this.template];
+};
+
+Template.ticketreplybox.replyentryfooter_items_data = function () {
+  return this;
+};
+
+var displayreply = function(replytype) {
+  var user = Meteor.users.findOne({_id: Meteor.userId()});
+  if(user.profile.isStaff) {
+    return true;
+  } else {
+    if (replytype == 'reply' || replytype == 'event') {
+      return true;
+    }
+  }
+  return false;
+};
+
 Template.ticketreplies.posted_replies = function () {
   var user = Meteor.users.findOne({_id: Meteor.userId()});
   var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {fields: {unpostedstaffreply: 0, unpostedrequesterreply: 0}});
-
   if (ticket !== undefined) {
     var replies = [];
     ticket.replies.forEach(function(reply){
       if(reply !== undefined) {
         if(reply.status == 'posted') {
           reply.body = marked(reply.body);
-          reply.template = Template["ticketreply-"+reply.type]({reply:reply});
+          reply.ticketId = ticket._id;
           replies.push(reply);
         }
       }
@@ -204,7 +241,7 @@ Template.ticketreplies.posted_replies = function () {
       var ticketreplies = window[hook.data]({ticketId: Session.get('viewticketId')});
       ticketreplies.forEach(function(ticketreply) {
         ticketreply.body = marked(ticketreply.body);
-        ticketreply.template = Template["ticketreply-"+ticketreply.type]({reply:ticketreply});
+        ticketreply.ticketId = ticket._id;
         replies.push(ticketreply);
       });
     });
@@ -213,6 +250,14 @@ Template.ticketreplies.posted_replies = function () {
     replies.sort(sortByDate);
     return replies;
   }
+};
+
+Template.ticketreplies.posted_reply_template = function () {
+  return Template['ticketreply-'+this.reply.type];
+};
+
+Template.ticketreplies.posted_reply_data = function () {
+  return {reply: this};
 };
 
 Template.ticketheader.ticketcreated = function () {
@@ -406,9 +451,16 @@ var promote_ticket_reply = function(options) {
     if (!is_staff_by_id(options.userId)) {
       var addToRequesters = true;
       ticket.requesters.forEach(function(requester) {
-        if (requester == options.userId) {
-          addToRequesters = false;
+        if (requester.id !== undefined) {
+          if (requester.id == options.userId) {
+            addToRequesters = false;
+          }
+        } else {
+          if (requester == options.userId) {
+            addToRequesters = false;
+          }
         }
+        
       });
       if (addToRequesters === true) {
         add_ticket_requesters(options.ticketId, options.userId);
@@ -548,14 +600,12 @@ Template.editTicketDialog.helpers({
 });
 
 Template.editTicketDialog.ticketeditformfields = function() {
-  var extraformfields = [];
   var hooks = Hooks.find({hook:'ticket_edit_form_field'});
-  hooks.forEach(function (hook) {
-    extraformfields.push({
-      template: Template[hook.template]
-    });
-  });
-  return extraformfields;
+  return hooks;
+};
+
+Template.editTicketDialog.ticketeditformfields_template = function () {
+  return Template[this.template];
 };
 
 Template.editTicketDialog.events({

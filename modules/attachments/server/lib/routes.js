@@ -20,23 +20,28 @@
  *
 */
 fs = Npm.require('fs');
-Meteor.Router.add({
-  '/filedownload/:id': function(id) {
-    var request = this.request;
-    var response = this.response;
-    var attachment = Attachments.files.findOne({_id: id});
 
-    if (attachment.metadata.ondisk === undefined) {
-  		response.setHeader('Content-disposition', 'attachment; filename=' + attachment.filename);
-   		response.setHeader('Content-type', attachment.contentType);
-    	var file = Attachments.retrieveBuffer(id);
-    	response.write(file);
-    } else {
-    	return [200,
-    	{
-       		'Content-type': attachment.contentType,
-       		'Content-Disposition': "attachment; filename=" + attachment.filename
-    	}, fs.readFileSync(attachment.metadata.ondisk)];
+Router.map(function() {
+  this.route('filebownload', {
+    path: '/filedownload/:_id',
+    where: 'server',
+    action: function() {
+      var request = this.request;
+      var response = this.response;
+      var attachment = Attachments.files.findOne({_id: this.params._id});
+
+      if (attachment.metadata.ondisk === undefined) {
+        response.setHeader('Content-disposition', 'attachment; filename=' + attachment.filename);
+        response.setHeader('Content-type', attachment.contentType);
+        var file = Attachments.retrieveBuffer(this.params._id);
+        response.write(file);
+      } else {
+        return [200,
+        {
+            'Content-type': attachment.contentType,
+            'Content-Disposition': "attachment; filename=" + attachment.filename
+        }, fs.readFileSync(attachment.metadata.ondisk)];
+      }
     }
-  }
+  });
 });

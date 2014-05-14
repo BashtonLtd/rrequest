@@ -19,7 +19,10 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-Template.gridster.rendered = function () {
+
+var gridster;
+
+init_gridster = function () {
   $(".gridster ul").gridster({
     widget_margins: [6, 6],
     widget_base_dimensions: [80, 82],
@@ -38,7 +41,7 @@ Template.gridster.rendered = function () {
     }
   });
 
-  var gridster = $(".gridster ul").gridster().data('gridster');
+  gridster = $(".gridster ul").gridster().data('gridster');
 };
 
 Template.dashboard.showSelectWidgetDialog = function() {
@@ -68,6 +71,14 @@ Template.gridster.events({
 
 Template.gridster.helpers({
   widgets: function() {
+    var tstatus = TicketStatus.find({});
+    tstatus.forEach(function(status) {
+      var name = status.name;
+      Meteor.subscribe("counts-by-ticketstate", name, function() {
+        Session.set(name + 'ticketcountready', name);
+      });
+    });
+
     var widgets = UserDashboard.find({}, {sort: {row: 1}});
     var display_widgets = [];
     widgets.forEach(function(widget) {
@@ -78,14 +89,21 @@ Template.gridster.helpers({
         sizex: widget.sizex,
         sizey: widget.sizey,
         template_name: widget.template,
-        template: Template[widget.template]({widgetId: widget._id})});
+      });
     });
     return display_widgets;
   }
 });
 
+Template.widget.widget_template = function () {
+  return Template[this.template_name];
+};
+
+Template.widget.widget_data = function () {
+  return this;
+};
+
 store_positions = function(data) {
-  console.log('store positions');
   data.forEach(function(widget) {
     //Meteor.call('updateUserDashboard', {
     //  id: widget.id,
@@ -106,7 +124,8 @@ Template.selectWidgetDialog.events({
   },
 
   'change .widgetlist': function(event, template) {
-    Session.set('selected_widget', event.srcElement[event.srcElement.selectedIndex].value);
+    console.log(event);
+    Session.set('selected_widget', event.target[event.target.selectedIndex].value);
   },
 
   'click .save': function(event, template) {
@@ -132,7 +151,8 @@ Template.selectWidgetDialog.helpers({
 
   widget_config: function() {
     if (Session.get('selected_widget') !== undefined && Session.get('selected_widget') != '' && Session.get('selected_widget') !== null) {
-      return Template[Session.get('selected_widget')]();
+      return Template[Session.get('selected_widget')];
     }
+    return null;
   }
 });

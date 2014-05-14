@@ -20,38 +20,40 @@
  * 
 */
 ticketunmerge = function(ticketList) {
-  if ($('.ticketunmergecontainer').length == 0) {
-  	var dialog = Meteor.render(Template['ticketunmerge']);
-  	$(".container").append(dialog);
+  if ($('.ticketunmergecontainer').length === 0) {
+    UI.insert(UI.render
+      (Template['ticketunmerge']),
+      $('.container').get(0)
+    );
   } else {
-  	Session.set("showUnmergeDialog", true);
+    Session.set("showUnmergeDialog", true);
   }
   Session.set('unmergeticketslist', ticketList);
 };
 
 Template.ticketunmerge.created = function() {
-	Session.set("showUnmergeDialog", true);
-	Session.set('unmergeticketslist', []);
+  Session.set("showUnmergeDialog", true);
+  Session.set('unmergeticketslist', []);
 };
 
 Template.ticketunmerge.showUnmergeDialog = function() {
-	return Session.get("showUnmergeDialog");
+  return Session.get("showUnmergeDialog");
 };
 
 Template.ticketunmergedialog.events({
   'click .cancel': function (event, template) {
-  	event.preventDefault();
-  	Session.set("showUnmergeDialog", false);
+    event.preventDefault();
+    Session.set("showUnmergeDialog", false);
   },
 
   'click .unmerge': function (event, template) {
-  	event.preventDefault();
-  	Meteor.call('unmergeTickets', Meteor.userId(), Session.get('unmergeticketslist'), function (error) {
-  		if (!error) {
+    event.preventDefault();
+    Meteor.call('unmergeTickets', Meteor.userId(), Session.get('unmergeticketslist'), function (error) {
+      if (!error) {
 
-  		}
-  	});
+      }
+    });
 
-  	Session.set("showUnmergeDialog", false);
+    Session.set("showUnmergeDialog", false);
   }
 });

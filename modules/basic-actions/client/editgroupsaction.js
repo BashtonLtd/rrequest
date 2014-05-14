@@ -21,8 +21,10 @@
 */
 action_editgroups = function(ticketList) {
     if ($('.editgroupscontainer').length == 0) {
-        var dialog = Meteor.render(Template['action_editgroups']);
-        $(".container").append(dialog);
+      UI.insert(UI.render
+        (Template['action_editgroups']),
+        $('.container').get(0)
+      );
     } else {
         Session.set("showEditgroupDialog", true);
     }
@@ -39,13 +41,13 @@ Template.action_editgroups.showEditgroupDialog = function() {
 };
 
 Template.editgroupdialog.rendered = function () {
-    $(".ticketgroup").select2({
-        placeholder: 'Select groups',
-        data: get_groups,
-        multiple: true
-    });
-    var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
-    $(".ticketgroup").val(ticket.group, 'id').trigger('change');
+  $(".ticketgroup").select2({
+    placeholder: 'Select groups',
+    data: get_groups,
+    multiple: true
+  });
+  var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
+  $(".ticketgroup").val(ticket.group, 'id').trigger('change');
 
 };
 
@@ -58,6 +60,9 @@ var get_groups = function (query_opts) {
   });
 
   var grouplist = Groups.find({members: {$in: requesters}});
+  if (grouplist.count() < 1 && is_staff(user)) {
+    grouplist = Groups.find({}, {sort: {'name': 1}});
+  }
   var groups = [];
   grouplist.forEach(function (group) {
     groups.push({id:group._id, text:group.name});

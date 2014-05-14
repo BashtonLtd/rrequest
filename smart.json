@@ -1,6 +1,5 @@
 {
   "packages": {
-    "router": {},
     "moment": {},
     "marked": {},
     "collection-api": {},
@@ -18,6 +17,7 @@
     "spin": {},
     "paginated-subscription": {},
     "event-horizon": {},
-    "apm": {}
+    "apm": {},
+    "iron-router": {}
   }
 }

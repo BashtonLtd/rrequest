@@ -39,7 +39,7 @@
   data-col="{{col}}"
   data-sizex="{{sizex}}" data-sizey="{{sizey}}">
     <button type="button" class="close widgetremove">&times;</button><br/>
-    {{{template}}}
+    {{> widget_template widget_data}}
   </li>
 </template>
 
@@ -64,7 +64,7 @@
         {{/each}}
       </select>
       <div class="widget_config">
-        {{{widget_config}}}
+        {{> widget_config}}
       </div>
     </div>
 

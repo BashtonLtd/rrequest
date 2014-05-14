@@ -28,8 +28,10 @@ Template.settings.created = function () {
 
 Template.settings.pagecontent = function() {
   var page = Session.get('activeSettingsPage');
-  if(page !== "") {
-    return Template[Session.get('activeSettingsPage')]();
+  if(page !== "" && page !== undefined) {
+    return Template[page];
+  } else {
+    return null;
   }
 };
 

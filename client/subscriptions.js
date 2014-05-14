@@ -32,15 +32,7 @@ Meteor.autorun(function() {
   });
 });
 
-Meteor.subscribe('ticketstatus', function() {
-  var tstatus = TicketStatus.find({});
-  tstatus.forEach(function(status) {
-    var name = status.name;
-    Meteor.subscribe("counts-by-ticketstate", name, function() {
-      Session.set(name + 'ticketcountready', name);
-    });
-  });
-});
+Meteor.subscribe('ticketstatus');
 
 Meteor.subscribe('modules', function() {
   EventHorizon.fire('modulescollectionready');

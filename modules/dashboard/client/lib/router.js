@@ -19,7 +19,16 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-Meteor.Router.add({
-  '/dashboard': 'dashboard'
+Router.map(function() {
+  this.route('dashboard', {
+    path: '/dashboard',
+    onAfterAction: function() {
+      var site_name = get_sitename();
+      if (site_name !== undefined) {
+        document.title = site_name + ': ' + this.route.name;
+      } else {
+        document.title = this.route.name;
+      }
+    }
+  });
 });
-

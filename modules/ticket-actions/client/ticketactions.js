@@ -19,7 +19,7 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  * 
 */
-Handlebars.registerHelper('ticketlistactions', function() {
+UI.registerHelper('ticketlistactions', function() {
   var ticketactions = [];
   var user = Meteor.users.findOne({_id: Meteor.userId()});
   if(user.profile.isStaff) {
@@ -58,7 +58,7 @@ Template.ticketlistactionlist.events({
   }
 });
 
-Handlebars.registerHelper('ticketactions', function() {
+UI.registerHelper('ticketactions', function() {
   var ticketactions = [];
   var user = Meteor.users.findOne({_id: Meteor.userId()});
   if(user.profile.isStaff) {

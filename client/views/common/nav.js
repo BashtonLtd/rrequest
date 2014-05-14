@@ -33,7 +33,9 @@ Template.nav.helpers({
   },
 
   is_active: function(page) {
-    return Meteor.Router.page() == page;
+    if (Router.current() !== null) {
+      return Router.current().route.name == page;
+    }
   },
 
   user_visible: function(user_level) {

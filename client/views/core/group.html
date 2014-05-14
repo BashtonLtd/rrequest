@@ -21,20 +21,7 @@
     </div>
   </div>
   
-  {{collectionList 
-    listLabel="Group's Tickets"
-    name='groupsTickets'
-    collection=Tickets
-    collectionFilterKey='group'
-    collectionFilterValue='viewgroupId'
-    publication='sortedTickets'
-    rowtemplate='ticketrow'
-    perpage=5
-    searchfields='_id,subject,requesters.email'
-    sorttemplate='groupsTicketsSortFields'
-    filterrow='status'
-    filtertemplate='groupsTicketsFilterChoices'
-  }}
+  {{> collectionList grouptickets_data}}
 
 </template>
 
@@ -49,19 +36,19 @@
     <div class="modal-body">
       <input type="hidden" id="sortfieldvarname" value="sortfield-groupsTickets">
       <input type="hidden" id="sortordervarname" value="sortorder-groupsTickets">
-      <table>
-        <tr id="sortoldest" class="{{sort_selected 'modified' '1'}} sortrow">
-          <td id="sortoldest"><span class="ticket-item-icon"><i class="icon-arrow-up" id="sortoldest"></td>
-          <td id="sortoldest">Oldest First</td>
-        </tr>
-        <tr id="sortnewest" class="{{sort_selected 'modified' '-1'}} sortrow">
-          <td id="sortnewest"><span class="ticket-item-icon"><i class="icon-arrow-down" id="sortnewest"></td>
-          <td id="sortnewest">Newest First</td>
-        </tr>
+      <div id="sortoldest" class="{{sort_selected 'modified' '1'}} sortrow">
+        <span id="sortoldest" class="ticket-item-icon"><i class="icon-arrow-up" id="sortoldest"></i> Oldest First</span>
+      </div>
+      <div class="clearfix"></div>
+      <div id="sortnewest" class="{{sort_selected 'modified' '-1'}} sortrow">
+        <span id="sortnewest" class="ticket-item-icon"><i class="icon-arrow-down" id="sortnewest"></i> Newest First</span>
+      </div>
+      <div class="clearfix"></div>
+      <span id="ticketlist_sort_filter">
         {{#each ticketlist_sort_filter}}
-          {{{template}}}
+          {{> ticketlist_sort_filter_template}}
         {{/each}}
-      </table>
+      </span>
     </div>
   
     <div class="modal-footer">
@@ -81,7 +68,7 @@
     <div class="modal-body">
       <table>
       {{#each states}}
-      <tr id="{{_id}}" class="{{filter_selected}} filterrow">
+      <tr id="{{_id}}" class="{{selected}} filterrow">
         <td id="{{_id}}">
           <span id="{{_id}}" class="ticket-item-icon"><i id="{{_id}}" class="{{icon}}" style="color:#{{colour}}"></i></span>
         </td>
@@ -129,7 +116,7 @@
   </div>
 
   {{#each boxes}}
-    {{{template}}}
+    {{> boxes_template boxes_data}}
   {{/each}}
   <div class="clearfix"></div>
 </template>
@@ -143,13 +130,13 @@
 
 
 
-<template name="_collectionList">
+<template name="_collectionList">  
   {{#if showSortOrderDialog}}
-    {{{sortTemplate}}}
+    {{> sortTemplate sortTemplate_data}}
   {{/if}}
 
   {{#if showFilterDialog}}
-    {{{filterTemplate}}}
+    {{> filterTemplate filterTemplate_data}}
   {{/if}}
 
   <div class="row">
@@ -168,13 +155,18 @@
         </div>
         <div class="box-body">
           {{#each collection}}
-            {{{rowTemplate}}}
+            {{> rowTemplate rowTemplate_data}}
           {{/each}}
-          <button class="btn pull-right load-more">
-            {{#if collectionReady}}Load More
-            {{else}}<div class="loading">&nbsp;</div>
-            {{/if}}
-          </button>
+          <div id="ticketlistfooter_items" class="btn-group pull-right">
+            {{#each ticketlistfooter_items}}
+                {{> ticketlistfooter_template}}
+              {{/each}}
+            <button class="btn pull-right load-more">
+              {{#if collectionReady}}Load More
+              {{else}}<div class="loading">&nbsp;</div>
+              {{/if}}
+            </button>
+          </div>
           <div class="clearfix"></div>
         </div>
       </div>

@@ -21,8 +21,10 @@
 */
 ticketmerge = function(ticketList) {
   if ($('.ticketmergecontainer').length == 0) {
-  	var dialog = Meteor.render(Template['ticketmerge']);
-  	$(".container").append(dialog);
+    UI.insert(UI.render
+      (Template['ticketmerge']),
+      $('.container').get(0)
+    );
   } else {
   	Session.set("showMergeDialog", true);
   }

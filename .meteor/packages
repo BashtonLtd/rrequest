@@ -9,11 +9,9 @@ accounts-password
 accounts-ui
 bootstrap
 coffeescript
-router
 jquery
 moment
 random
-preserve-inputs
 marked
 underscore
 email
@@ -34,3 +32,4 @@ HTML5-History-API
 event-horizon
 meteor-apm-client
 facts
+iron-router

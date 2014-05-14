@@ -21,6 +21,10 @@
 */
 var widgetData = [];
 
+Template.widget_ticket_list.rendered = function () {
+  init_gridster();
+};
+
 var getFilter = function(id, filter) {
   var searchfilter = Session.get('ticketsSearchfilter-'+id);
   if (searchfilter === '' || searchfilter === undefined || searchfilter.length < 3) {

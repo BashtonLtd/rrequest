@@ -19,7 +19,7 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  * 
 */
-Handlebars.registerHelper('refreshEvery', function(seconds) {
+UI.registerHelper('refreshEvery', function(seconds) {
   if (!Deps.active)
     return;
     
@@ -29,18 +29,18 @@ Handlebars.registerHelper('refreshEvery', function(seconds) {
   }, parseInt(seconds) * 1000);
 });
 
-Handlebars.registerHelper('age', function(time) {
+UI.registerHelper('age', function(time) {
   return moment(time).fromNow();
 });
 
-Handlebars.registerHelper('ticketstatus', function() {
+UI.registerHelper('ticketstatus', function() {
   var ticket = Tickets.findOne({_id:this._id});
   if (ticket !== undefined) {
     return TicketStatus.findOne({name: ticket.status});
   }
 });
 
-Handlebars.registerHelper('lastModifiedBy', function() {
+UI.registerHelper('lastModifiedBy', function() {
   var ticket = Tickets.findOne({_id:this._id});
   var latest = undefined;
   if (ticket !== undefined) {
@@ -58,7 +58,7 @@ Handlebars.registerHelper('lastModifiedBy', function() {
   }
 });
 
-Handlebars.registerHelper('getGroupOrRequester', function() {
+UI.registerHelper('getGroupOrRequester', function() {
   var ticket = Tickets.findOne({_id:this._id});
   var output = '';
   if (ticket !== undefined) {
@@ -81,12 +81,12 @@ Handlebars.registerHelper('getGroupOrRequester', function() {
   return output;
 });
 
-Handlebars.registerHelper('getUserEmail', function(userId) {
+UI.registerHelper('getUserEmail', function(userId) {
   var email = useremail(userId);
   return email;
 });
 
-Handlebars.registerHelper('getRequesters', function(ticketId, verbose) {
+UI.registerHelper('getRequesters', function(ticketId, verbose) {
   var ticket = Tickets.findOne(ticketId);
   var requesters = [];
   ticket.requesters.forEach(function (requester) {
@@ -106,7 +106,7 @@ Handlebars.registerHelper('getRequesters', function(ticketId, verbose) {
   }
 });
 
-Handlebars.registerHelper('isNotGrouped', function(ticketId) {
+UI.registerHelper('isNotGrouped', function(ticketId) {
   var ticket = Tickets.findOne({_id: ticketId});
   if (ticket !== undefined) {
     if (ticket.group === null || ticket.group === undefined || ticket.group.length === 0) {

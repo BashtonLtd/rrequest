@@ -19,34 +19,44 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  * 
 */
-Handlebars.registerHelper('ticketlistfooter_items', function() {
-  var footer_items = [];
+UI.registerHelper('ticketlistfooter_items', function() {
   var hooks = Hooks.find({hook:'ticketlistfooter_items'});
-  hooks.forEach(function (hook) {
-    footer_items.push({template: Template[hook.template]()});
-  });
-  return footer_items;
+  return hooks;
 });
 
-Handlebars.registerHelper('ticketlistitemfooter_items', function(ticketId) {
-  var footer_items = [];
+UI.registerHelper('ticketlistfooter_template', function () {
+  return Template[this.template];
+});
+
+Template.ticketrow.ticketlistitemfooter_items = function () {
+  var ticketId = this._id;
+  var footerhooks = [];
   var hooks = Hooks.find({hook:'ticketlistitemfooter_items'});
-  hooks.forEach(function (hook) {
-    footer_items.push({template: Template[hook.template]({ticketId: ticketId})});
+  hooks.forEach(function(hook) {
+    hook.ticketId = ticketId;
+    footerhooks.push(hook);
   });
-  return footer_items;
-});
+  return footerhooks;
+};
 
-Handlebars.registerHelper('ticketlist_sort_filter', function() {
-  var sort_filters = [];
+Template.ticketrow.ticketlistitemfooter_template = function () {
+  return Template[this.template];
+};
+
+Template.ticketrow.ticketlistitemfooter_data = function () {
+  return {ticketId: this.ticketId, template: this.template};
+};
+
+UI.registerHelper('ticketlist_sort_filter', function () {
   var hooks = Hooks.find({hook:'ticketlist_sort_filter'});
-  hooks.forEach(function (hook) {
-    sort_filters.push({template: Template[hook.template]()});
-  });
-  return sort_filters;
+  return hooks;
 });
 
-Handlebars.registerHelper('ticketlist_sort_selected', function(field, order) {
+UI.registerHelper('ticketlist_sort_filter_template', function () {
+  return Template[this.template];
+});
+
+UI.registerHelper('ticketlist_sort_selected', function(field, order) {
   if (order == Session.get('selected_sort_order') && field == Session.get('selected_sort_field')) {
     return 'sortselected';
   } else {
@@ -225,18 +235,15 @@ Template.createTicketDialog.created = function () {
   Session.set('ticketRequesterSearchTerm', "");
 };
 
-Template.createTicketDialog.ticketcreateformfields = function() {
-  var extraformfields = [];
+Template.createTicketDialog.rendered = function () {
   var hooks = Hooks.find({hook:'ticket_create_form_field'});
   hooks.forEach(function (hook) {
-    extraformfields.push({
-      template: Template[hook.template]
-    });
+    UI.insert(UI.render
+      (Template[hook.template]),
+      $('#ticketcreateextrafields').get(0)
+    );
   });
-  return extraformfields;
-};
 
-Template.createTicketDialog.rendered = function () {
   Session.set('selectedRequesters', []);
   var user = Meteor.users.findOne({_id:Meteor.userId()});
   $(".ticketrequester").select2({
@@ -316,7 +323,18 @@ Template.createTicketDialog.events({
     var currentuser = Meteor.users.findOne({_id:Meteor.userId()});
     var subject = template.find(".subject").value;
     var requesters = $(".ticketrequester").select2('val');
-    var groups = $(".ticketgroup").select2('val');
+
+    var groups = [];
+    if (currentuser.profile.isStaff) {
+      groups = $(".ticketgroup").select2('val');
+    } else {
+      var grouplist = Groups.find({members: {$in: [currentuser._id]}}, {sort: {'name': 1}});
+      if (grouplist.count() == 1) {
+        grouplist.forEach(function(group) {
+          groups.push(group._id);
+        });
+      }
+    }
     
     var existing_users = [];
     var new_users = [];
@@ -366,7 +384,7 @@ Template.createTicketDialog.events({
           });
         });
 
-        Meteor.Router.to('/ticket/'+ticketId);
+        Router.go('ticket', {_id: ticketId});
       } else {
         console.log('CreateTicket Error: ' + error);
       }

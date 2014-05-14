@@ -19,6 +19,16 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-Meteor.Router.add({
-  '/eventlog': 'eventlog'
+Router.map(function() {
+  this.route('eventlog', {
+    path: '/eventlog',
+    onAfterAction: function() {
+      var site_name = get_sitename();
+      if (site_name !== undefined) {
+        document.title = site_name + ': ' + this.route.name;
+      } else {
+        document.title = this.route.name;
+      }
+    }
+  });
 });

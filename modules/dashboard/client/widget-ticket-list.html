@@ -1,5 +1,5 @@
 <template name="widget_ticket_list">
-  {{#with widget widgetId}}
+  {{#with widget _id}}
 
     <div class="box-header">
       <div class="pagetitle">{{label}}</div>
@@ -20,7 +20,7 @@
       <div class="btn-group pull-right">
         {{#if currentUser.profile.isStaff}}
         {{#each ticketlistfooter_items}}
-          {{{template}}}
+          {{> ticketlistfooter_template}}
         {{/each}}
         {{/if}}
         <button id="{{id}}" class="btn load-more">Load More</button>

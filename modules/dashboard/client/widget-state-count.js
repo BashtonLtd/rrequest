@@ -19,6 +19,11 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
+
+Template.widget_state_count.rendered = function () {
+  init_gridster();
+};
+
 widget_state_count_save = function(event, template) {
   var widgetlabel = template.find(".widgetlabel").value;
   var width = template.find(".widgetwidth").value;
@@ -58,7 +63,6 @@ Template.widget_state_count.helpers({
   widget: function(id) {
     var widget = UserDashboard.findOne({_id: id});
     var states = widget.extradata.filter;
-    console.log(states);
     var totalcount = 0;
 
     states.forEach(function(state) {

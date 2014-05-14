@@ -19,86 +19,162 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-Meteor.Router.add({
-  '/': 'home',
 
-  '/tickets': 'tickets',
-  '/ticket/:id': function(id) {
-    Session.set('viewticketId', id);
-    return 'ticket';
+BeforeHooks = {
+  resetScroll: function () {
+    Session.set('currentScroll', null);
   },
-
-  '/groups': 'groups',
-  '/group/:id': function(id) {
-    Session.set('viewgroupId', id);
-    return 'group';
+  requireAdmin: function(pause) {
+    if (Meteor.user()) {
+      if (is_admin(Meteor.user())) {
+        this.render(this.route.name);
+      } else {
+        this.render('not_allowed');
+        pause();
+      }
+    } else if (Meteor.loggingIn()) {
+      this.render('loading');
+      pause();
+    } else {
+      this.render('not_allowed');
+      pause();
+    }
   },
-
-  '/users': 'users',
-  'user/:id': function(id) {
-    Session.set('viewuserId', id);
-    return 'user';
+  requireStaff: function(pause) {
+    if (Meteor.user()) {
+      if (is_staff(Meteor.user())) {
+        this.render(this.route.name);
+      } else {
+        this.render('not_allowed');
+        pause();
+      }
+    } else if (Meteor.loggingIn()) {
+      this.render('loading');
+      pause();
+    } else {
+      this.render('not_allowed');
+      pause();
+    }
   },
-
-  '/settings': 'settings'
-
-});
-
-Meteor.Router.filters({
-  requireAdmin: function(page) {
-    if (Meteor.user())
-      return is_admin(Meteor.user()) ? page : 'not_allowed';
-    else if (Meteor.loggingIn())
-      return 'loading';
-    else
-      return 'not_allowed';
-  },
-  requireStaff: function(page) {
-    if (Meteor.user())
-      return is_staff(Meteor.user()) ? page : "not_allowed";
-    else if (Meteor.loggingIn())
-      return 'loading';
-    else
-      return 'not_allowed';
-  },
-  redirectToTickets: function(page) {
-    if (Meteor.user())
-      return is_staff(Meteor.user()) ? page : "tickets";
-    else if (Meteor.loggingIn())
-      return 'loading';
-    else
-      return 'home';
+  redirectToTickets: function(pause) {
+    if (Meteor.user()) {
+      if (is_staff(Meteor.user())) {
+        this.render(this.route.name);
+      } else {
+        this.render('tickets');
+      }
+    } else if (Meteor.loggingIn()) {
+      this.render('loading');
+      pause();
+    } else {
+      this.render('home');
+    }
   }
+};
 
+Router.configure({
+  layoutTemplate: 'base',
+  notFoundTemplate: 'not_found',
+  loadingTemplate: 'loading'
 });
 
-Meteor.Router.filter('requireAdmin', {only: ['users', 'settings']});
-Meteor.Router.filter('requireStaff', {only: ['groups', 'group']});
-Meteor.Router.filter('redirectToTickets', {only: ['home']});
+Router.onBeforeAction(BeforeHooks.resetScroll);
 
-Meteor.startup(function() {
-  Meteor.autorun(function() {
-    site_name_setting = Settings.findOne({name: 'site_name'});
-    var site_name = 'rrequest';
-    if (site_name_setting !== undefined) {
-      site_name = site_name_setting.value;
-    }
-    // grab the current page from the router, so this re-runs every time it changes
-    Meteor.Router.page();
-    if(Meteor.Router.page() !== "loading"){
-    }
+Router.onBeforeAction(BeforeHooks.requireAdmin, {only: ['users', 'settings']});
+Router.onBeforeAction(BeforeHooks.requireStaff, {only: ['groups']});
+Router.onBeforeAction(BeforeHooks.redirectToTickets, {only: ['home']});
 
-    if (Meteor.Router.page() == 'ticket') {
+get_sitename = function () {
+  site_name_setting = Settings.findOne({name: 'site_name'});
+  var site_name;
+  if (site_name_setting !== undefined) {
+    site_name = site_name_setting.value;
+  }
+  return site_name;
+};
+
+Router.map(function() {
+  this.route('home', {path: '/'});
+
+  this.route('tickets', {
+    path: '/tickets',
+    onAfterAction: function() {
+      var site_name = get_sitename();
+      if (site_name !== undefined) {
+        document.title = site_name + ': ' + this.route.name;
+      } else {
+        document.title = this.route.name;
+      }
+    }
+  });
+
+  this.route('ticket', {
+    path: '/ticket/:_id',
+    onRun: function () {
+      Session.set('viewticketId', this.params._id);
+    },
+    onBeforeAction: 'loading',
+    onAfterAction: function() {
+      var site_name = get_sitename();
       var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {reactive: false});
       if (ticket !== undefined) {
         document.title = ticket._id + ' - ' + ticket.subject;
       } else {
-        document.title = site_name + ': ' + Meteor.Router.page();
+        document.title = site_name + ': ' + this.route.name;
       }
-    } else {
-      document.title = site_name + ': ' + Meteor.Router.page();
     }
+  });
 
-    Session.set('currentScroll', null);
+  this.route('groups', {
+    path: '/groups',
+    onAfterAction: function() {
+      var site_name = get_sitename();
+      if (site_name !== undefined) {
+        document.title = site_name + ': ' + this.route.name;
+      } else {
+        document.title = this.route.name;
+      }
+    }
+  });
+
+  this.route('group', {
+    path: '/group/:_id',
+    onRun: function () {
+      Session.set('viewgroupId', this.params._id);
+    },
+    onBeforeAction: 'loading',
+    onAfterAction: function() {
+      var site_name = get_sitename();
+      var group = Groups.findOne({_id: Session.get('viewgroupId')}, {reactive: false});
+      if (group !== undefined) {
+        document.title = group.name;
+      } else {
+        document.title = site_name + ': ' + this.route.name;
+      }
+    }
+  });
+
+  this.route('users', {
+    path: '/users',
+    onAfterAction: function() {
+      var site_name = get_sitename();
+      if (site_name !== undefined) {
+        document.title = site_name + ': ' + this.route.name;
+      } else {
+        document.title = this.route.name;
+      }
+    }
+  });
+
+  this.route('settings', {
+    path: '/settings',
+    onAfterAction: function() {
+      var site_name = get_sitename();
+      if (site_name !== undefined) {
+        document.title = site_name + ': ' + this.route.name;
+      } else {
+        document.title = this.route.name;
+      }
+    }
   });
 });

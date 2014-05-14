@@ -5,7 +5,7 @@
       <div class="reply-header">
         <strong>{{getUserEmail posted_by}}</strong>
         {{#each reply_header_items _id}}
-          {{{template}}}
+          {{> reply_header_items_template reply_header_items_data}}
         {{/each}}
       </div>
       <div class="box-topright" title="{{created}}">{{#with created}}{{>age}}{{/with}}</div>
@@ -16,7 +16,7 @@
     </div>
     <div class="box-footer {{type}}">
       {{#each footer_items _id}}
-        {{{template}}}
+        {{> footer_items_template footer_items_data}}
       {{/each}}
     </div>
   </div>

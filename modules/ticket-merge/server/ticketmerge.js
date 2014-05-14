@@ -218,7 +218,7 @@ unmerge_tickets = function (userId, target) {
   Tickets.update(
     {_id: target},
     {
-      $set: {replies: replies, requesters: target_ticket.original_requesters, group: target_ticket.original_group}
+      $set: {replies: replies, requesters: target_ticket.original_requester, group: target_ticket.original_group}
     }
   );
 

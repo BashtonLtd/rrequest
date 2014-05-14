@@ -30,9 +30,18 @@ Template.groupstatboxes.boxes = function (groupId) {
   var statboxes = [];
   var hooks = Hooks.find({hook:'groupstatboxes'});
   hooks.forEach(function (hook) {
-    statboxes.push({template: Template[hook.template]({groupId:groupId})});
+    hook.groupId = groupId;
+    statboxes.push(hook);
   });
   return statboxes;
+};
+
+Template.groupstatboxes.boxes_template = function () {
+  return Template[this.template];
+};
+
+Template.groupstatboxes.boxes_data = function () {
+  return this;
 };
 
 Template.groupstatboxes.ticketscreated = function (days) {
@@ -75,6 +84,23 @@ Template.group.rendered = function () {
   //   ]);
 };
 
+Template.group.grouptickets_data = function () {
+  return {
+    listLabel: "Group's Tickets",
+    name: 'groupsTickets',
+    collection: Tickets,
+    collectionFilterKey: 'group',
+    collectionFilterValue: 'viewgroupId',
+    publication: 'sortedTickets',
+    rowtemplate: 'ticketrow',
+    perpage: 5,
+    searchfields: '_id,subject,requesters.email',
+    sorttemplate: 'groupsTicketsSortFields',
+    filterrow: 'status',
+    filtertemplate: 'groupsTicketsFilterChoices'
+  };
+};
+
 Template.groupsTicketsSortFields.events({
   'click .cancel': function () {
     Session.set('showSortOrderDialog', false);
@@ -108,7 +134,7 @@ Template.groupsTicketsFilterChoices.events({
   }
 });
 
-Handlebars.registerHelper('sort_selected', function (field, order) {
+UI.registerHelper('sort_selected', function (field, order) {
   if (order == Session.get('sortorder-groupsTickets') && field == Session.get('sortfield-groupsTickets')) {
     return 'sortselected';
   } else {
@@ -145,8 +171,8 @@ Template.groupsTicketsFilterChoices.events({
 
 
 
-Handlebars.registerHelper('collectionList', function(args) {
-  return new Handlebars.SafeString(Template._collectionList(args.hash));
+UI.registerHelper('collectionList', function(args) {
+  return Template._collectionList;
 });
 
 Template._collectionList.created = function() {
@@ -161,11 +187,6 @@ Template._collectionList.created = function() {
   Session.set('value-' + this.data.name, this.data.collectionFilterValue);
   Session.set('publication-' + this.data.name, this.data.publication);
   Session.set('searchfields-' + this.data.name, this.data.searchfields);
-  // Session.set('sortfields-' + this.data.name, this.data.sortfields);
-
-  // Session.set('sortfield-' + this.data.name, '');
-  // Session.set('sortorder-' + this.data.name, '');
-  
   Session.set('filterrow-' + this.data.name, this.data.filterrow);
   Session.set('filterchoices-' + this.data.name, this.data.filterchoices);
 
@@ -243,14 +264,20 @@ Template._collectionList.collection = function () {
   if (Session.get('sortfield-' + this.name) !== '' && Session.get('sortfield-' + this.name) !== undefined) {
     sort[Session.get('sortfield-' + this.name)] = Session.get('sortorder-' + this.name);
   }
-  var results = this.collection.find(collectionFilter, sort);
+  var results = this.collection.find(collectionFilter, {sort: sort});
   if (results.count() > 0) {
     return results;
   }
 };
 
 Template._collectionList.rowTemplate = function () {
-  return Template[rowTemplate](this);
+  if (this._id !== undefined) {
+    return Template[rowTemplate];
+  }
+};
+
+Template._collectionList.rowTemplate_data = function () {
+  return this;
 };
 
 Template._collectionList.showSortOrderDialog = function () {
@@ -258,7 +285,11 @@ Template._collectionList.showSortOrderDialog = function () {
 };
 
 Template._collectionList.sortTemplate = function () {
-  return Template[sortTemplate](this);
+  return Template[sortTemplate];
+};
+
+Template._collectionList.sortTemplate_data = function () {
+  return this;
 };
 
 Template._collectionList.showFilterDialog = function () {
@@ -266,7 +297,11 @@ Template._collectionList.showFilterDialog = function () {
 };
 
 Template._collectionList.filterTemplate = function () {
-  return Template[filterTemplate](this);
+  return Template[filterTemplate];
+};
+
+Template._collectionList.filterTemplate_data = function () {
+  return this;
 };
 
 Template._collectionList.collectionReady = function() {
