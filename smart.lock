@@ -19,8 +19,8 @@
       "spin": {},
       "paginated-subscription": {},
       "event-horizon": {},
-      "apm": {},
-      "iron-router": {}
+      "iron-router": {},
+      "kadira": {}
     },
     "packages": {
       "moment": {
@@ -78,15 +78,15 @@
         "tag": "v0.1.1",
         "commit": "f7d19e16bf7527c34d853a9bc9002e9be53bdb9b"
       },
-      "apm": {
-        "git": "https://github.com/arunoda/meteor-apm-client.git",
-        "tag": "v1.3.1",
-        "commit": "0ed9f0d89a31ff186f45130cb0ae508b56f268db"
-      },
       "iron-router": {
         "git": "https://github.com/EventedMind/iron-router.git",
         "tag": "v0.7.1",
         "commit": "d1ffb3f06ea4c112132b030f2eb1a70b81675ecb"
+      },
+      "kadira": {
+        "git": "https://github.com/meteorhacks/kadira.git",
+        "tag": "v2.1.2",
+        "commit": "4733bb865d2bea239af4e464dddbca27f5f80ea6"
       },
       "blaze-layout": {
         "git": "https://github.com/EventedMind/blaze-layout.git",

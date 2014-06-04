@@ -26,10 +26,8 @@ paginated-subscription
 standard-app-packages
 kue
 html2markdown
-page-js-ie-support
 meteor
-HTML5-History-API
 event-horizon
-meteor-apm-client
 facts
 iron-router
+kadira

@@ -17,7 +17,7 @@
     "spin": {},
     "paginated-subscription": {},
     "event-horizon": {},
-    "apm": {},
-    "iron-router": {}
+    "iron-router": {},
+    "kadira": {}
   }
 }
