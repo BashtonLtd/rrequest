@@ -69,21 +69,6 @@ Template.group.created = function () {
   }
 };
 
-Template.group.rendered = function () {
-  // var statelist = [];
-  // states = TicketStatus.find({}, {sort: {'name': 1}});
-  // states.forEach(function(state) {
-  //   statelist.push(state);
-  // });
-  
-  // Session.set('groupsTicketsFilterChoices', statelist);
-  // Session.set('groupsTicketsSortFields', [
-  //   {field: 'modified', direction: -1, name: 'Newest First'},
-  //   {field: 'modified', direction: 1, name: 'Oldest First'},
-  //   {field: 'priority', direction: 1, name: 'Priority'}
-  //   ]);
-};
-
 Template.group.grouptickets_data = function () {
   return {
     listLabel: "Group's Tickets",

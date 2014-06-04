@@ -236,8 +236,6 @@ Meteor.startup(function(){
   });
 });
 
-
-//TODO: set publish and permissions for groups
 Meteor.publish('groups', function() {
   return Groups.find();
 });
@@ -256,7 +254,6 @@ Meteor.startup(function(){
   });
 });
 
-//TODO: set publish and permissions for hooks
 Meteor.publish('hooks', function() {
   return Hooks.find();
 });
@@ -275,7 +272,6 @@ Meteor.startup(function(){
   });
 });
 
-//TODO: set publish and permissions for modules
 Meteor.publish('modules', function() {
   return Modules.find();
 });
