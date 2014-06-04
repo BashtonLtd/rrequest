@@ -94,7 +94,17 @@ get_sitename = function () {
 };
 
 Router.map(function() {
-  this.route('home', {path: '/'});
+  this.route('home', {
+    path: '/',
+    onAfterAction: function() {
+      var site_name = get_sitename();
+      if (site_name !== undefined) {
+        document.title = site_name;
+      } else {
+        document.title = this.route.name;
+      }
+    }
+  });
 
   this.route('tickets', {
     path: '/tickets',
