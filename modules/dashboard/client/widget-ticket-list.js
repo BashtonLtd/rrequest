@@ -100,12 +100,12 @@ Template.widget_ticket_list.events({
       });
       widgetEntry.sub.loadNextPage();
     } else {
-      var widgetEntry = {id: widgetId}
+      var widgetEntry = {id: widgetId};
     }
   },
 
   'input .searchfilter': function (event, template) {
-    var id = event.srcElement.id;
+    var id = event.target.id;
     var searchterm = template.find("#"+id).value;
 
     var idarray = id.split('-');
