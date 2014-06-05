@@ -151,8 +151,9 @@ Router.map(function() {
     path: '/group/:_id',
     onRun: function () {
       Session.set('viewgroupId', this.params._id);
-      // this should be in a var so that onstop can cancel the sub
-      Meteor.subscribe("counts-by-group", this.params._id);
+    },
+    waitOn: function () {
+      return Meteor.subscribe("counts-by-group", this.params._id);
     },
     onBeforeAction: 'loading',
     onAfterAction: function() {
