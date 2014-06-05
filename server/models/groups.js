@@ -49,16 +49,5 @@ Meteor.methods({
     return Groups.update({_id:options._id},
       {$pullAll: {members: options.members}}
     );
-  },
-
-  getGroupTicketCount: function(options) {
-    options = options || {};
-    var start = new Date();
-    start.setDate(start.getDate() - options.days);
-    return Tickets.find({
-      group: options.group,
-      created: {$gte: start}
-    }).count();
   }
-
 });
