@@ -45,18 +45,9 @@ Template.groupstatboxes.boxes_data = function () {
 };
 
 Template.groupstatboxes.ticketscreated = function (days) {
-  var sessionvar = Session.get('viewgroupId') + days;
-  var count = Session.get(sessionvar);
-
-  if (count !== undefined) {
-    return count;
-  } else {
-    Meteor.call('getGroupTicketCount',
-      {group: Session.get('viewgroupId'), days: days},
-      function (error, ticketcount) {
-        Session.set(sessionvar, ticketcount);
-      }
-    );
+  var counts = TicketGroupCounts.findOne();
+  if (counts !== undefined) {
+    return counts[days];
   }
 };
 

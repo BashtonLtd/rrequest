@@ -177,7 +177,69 @@ Meteor.publish("counts-by-ticketstate", function (state) {
 });
 
 
-//TODO: set permissions for tickets
+Meteor.publish("counts-by-group", function(group) {
+  var self = this;
+  var count1 = 0;
+  var count7 = 0;
+  var count28 = 0;
+  var initializing = true;
+
+  var date28 = new Date();
+  date28.setDate(date28.getDate() - 28);
+
+  var handle28 = Tickets.find({group: group, created: {$gte: date28}, isVisible: {$ne: false}}).observeChanges({
+      added: function (id, fields) {
+        count28++;
+        if (!initializing)
+          self.changed("groupcount", group, {1: count1, 7: count7, 28: count28});
+      },
+      removed: function (id) {
+        count28--;
+        self.changed("groupcount", group, {1: count1, 7: count7, 28: count28});
+      }
+  });
+
+  var date7 = new Date();
+  date7.setDate(date7.getDate() - 7);
+
+  var handle7 = Tickets.find({group: group, created: {$gte: date7}, isVisible: {$ne: false}}).observeChanges({
+      added: function (id, fields) {
+        count7++;
+        if (!initializing)
+          self.changed("groupcount", group, {1: count1, 7: count7, 28: count28});
+      },
+      removed: function (id) {
+        count7--;
+        self.changed("groupcount", group, {1: count1, 7: count7, 28: count28});
+      }
+  });
+
+  var date1 = new Date();
+  date1.setDate(date1.getDate() - 1);
+
+  var handle1 = Tickets.find({group: group, created: {$gte: date1}, isVisible: {$ne: false}}).observeChanges({
+      added: function (id, fields) {
+        count1++;
+        if (!initializing)
+          self.changed("groupcount", group, {1: count1, 7: count7, 28: count28});
+      },
+      removed: function (id) {
+        count1--;
+        self.changed("groupcount", group, {1: count1, 7: count7, 28: count28});
+      }
+  });
+
+  initializing = false;
+  self.added("groupcount", group, {1: count1, 7:count7, 28: count28});
+  self.ready();
+
+  self.onStop(function () {
+    handle28.stop();
+    handle7.stop();
+    handle1.stop();
+  });
+});
+
 Meteor.startup(function(){
   Tickets.allow({
     insert: function(userId, doc) {
