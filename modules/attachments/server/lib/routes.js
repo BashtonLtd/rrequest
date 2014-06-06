@@ -29,18 +29,18 @@ Router.map(function() {
       var request = this.request;
       var response = this.response;
       var attachment = Attachments.files.findOne({_id: this.params._id});
+      var headers = {
+        'Content-type': attachment.contentType,
+        'Content-Disposition': "attachment; filename=" + attachment.filename
+      };
+      this.response.writeHead(200, headers);
 
       if (attachment.metadata.ondisk === undefined) {
-        response.setHeader('Content-disposition', 'attachment; filename=' + attachment.filename);
-        response.setHeader('Content-type', attachment.contentType);
         var file = Attachments.retrieveBuffer(this.params._id);
-        response.write(file);
+        return this.response.end(file);
       } else {
-        return [200,
-        {
-            'Content-type': attachment.contentType,
-            'Content-Disposition': "attachment; filename=" + attachment.filename
-        }, fs.readFileSync(attachment.metadata.ondisk)];
+        var file = fs.readFileSync(attachment.metadata.ondisk);
+        return this.response.end(file);
       }
     }
   });
