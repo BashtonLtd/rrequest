@@ -121,6 +121,10 @@ Template.timeworked_groupstatbox.events({
 Template.timeworked_groupstatbox.getDateRange = function () {
   if (Session.get('timeworkedstart') === undefined) {
     var to = new Date();
+    to = new Date(to.getFullYear(),
+      to.getMonth(),
+      to.getDate(),
+      23,59,59);
     var from = new Date(to.getTime() - 1000 * 60 * 60 * 24 * 28);
     Session.set('timeworkedstart', from);
     Session.set('timeworkedend', to);
@@ -139,19 +143,14 @@ Template.timeworked_groupstatbox.dateclass = function () {
 };
 
 Template.timeworked_groupstatbox.getTimeworked = function () {
-  Meteor.call('getTotalTimeworked',
-    {start: Session.get('timeworkedstart'), end: Session.get('timeworkedend'), groupId: Session.get('viewgroupId')},
-    function (error, timeworked) {
-      Session.set('timeworked', timeworked);
-    }
-  );
-  var time = Session.get('timeworked');
-  if (time !== undefined) {
-    var hours = parseInt(time/60, 10);
+  var timeworked = GroupTimeworked.findOne();
+
+  if (timeworked !== undefined) {
+    var hours = parseInt(timeworked.timeworked/60, 10);
     if (hours < 10) {
       hours = '0' + hours;
     }
-    var minutes = time - (hours * 60);
+    var minutes = timeworked.timeworked - (hours * 60);
     if (minutes < 10) {
       minutes = '0' + minutes;
     }

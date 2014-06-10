@@ -72,37 +72,41 @@ Meteor.methods({
   },
 
   getTotalTimeworked: function (args) {
-    var start = moment(args.start).unix();
-    var end = args.end;
-    if (end === null || end === undefined) {
-      end = moment(new Date()).unix();
-    } else {
-      end = moment(args.end).unix();
-    }
-    var group = Groups.findOne({_id: args.groupId});
-    var tickets = Tickets.find({group: {$in: [group._id]}});
-    var ticketIds = [];
-    var total = 0;
-    tickets.forEach(function(ticket) {
-      ticketIds.push(ticket._id);
-      ticket.replies.forEach(function(reply) {
-        if (reply.timeworked !== undefined) {
-          if (moment(reply.created).unix() > start && moment(reply.created).unix() < end) {
-            total = +total + +reply.timeworked;
-          }
-        }
-      });
-    });
+    return get_total_timeworked(args);
+  }
+});
 
-    // also get timeworked from comments
-    var comments = Comments.find({ticketId: {$in: ticketIds}});
-    comments.forEach(function(comment) {
-      if (comment.timeworked !== undefined) {
-        if (moment(comment.created).unix() > start && moment(comment.created).unix() < end) {
-          total = +total + +comment.timeworked;
+get_total_timeworked = function(args) {
+  var start = moment(args.start).unix();
+  var end = args.end;
+  if (end === null || end === undefined) {
+    end = moment(new Date()).unix();
+  } else {
+    end = moment(args.end).unix();
+  }
+  var group = Groups.findOne({_id: args.groupId});
+  var tickets = Tickets.find({group: {$in: [group._id]}});
+  var ticketIds = [];
+  var total = 0;
+  tickets.forEach(function(ticket) {
+    ticketIds.push(ticket._id);
+    ticket.replies.forEach(function(reply) {
+      if (reply.timeworked !== undefined) {
+        if (moment(reply.created).unix() > start && moment(reply.created).unix() < end) {
+          total = +total + +reply.timeworked;
         }
       }
     });
-    return total;
-  }
-});
+  });
+
+  // also get timeworked from comments
+  var comments = Comments.find({ticketId: {$in: ticketIds}});
+  comments.forEach(function(comment) {
+    if (comment.timeworked !== undefined) {
+      if (moment(comment.created).unix() > start && moment(comment.created).unix() < end) {
+        total = +total + +comment.timeworked;
+      }
+    }
+  });
+  return total;
+};

@@ -39,13 +39,14 @@ Template.ticket.events({
         }
       });
       
+      var created = new Date();
       var args = {
         status: 'posted',
         body: body,
         ticketId: ticket._id,
         type: 'comment',
         posted_by: Meteor.userId(),
-        created: new Date()
+        created: created
       }
 
       args = _.extend(args, extrafields);
@@ -54,6 +55,7 @@ Template.ticket.events({
 
       var replyId = template.find(".ticketreplyId").value;
       UnpostedReplies.remove({_id: replyId});
+      Tickets.update({_id: ticket._id}, {$set: {commentmodified: created}})
       template.find(".ticketreplybody").value = "";
     }
   }
