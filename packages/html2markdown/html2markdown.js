@@ -22,7 +22,6 @@ tags = {
 };
 
 text2markdown = function(sourcetext) {
-  console.log('text2markdown start: ' + new Date().toISOString());
   var outputtext = '';
   if (sourcetext !== undefined) {
     var lines = sourcetext.split('\n');
@@ -42,12 +41,10 @@ text2markdown = function(sourcetext) {
       outputtext = outputtext + '\n' + line;
     });
   }
-  console.log('text2markdown end: ' + new Date().toISOString());
   return outputtext;
 };
 
 html2markdown = function (sourcehtml) {
-  console.log('html2markdown start: ' + new Date().toISOString());
   var handler = new htmlparser.DefaultHandler(
     function (error, dom) {
       if (error) {
@@ -67,7 +64,6 @@ html2markdown = function (sourcehtml) {
     output = output + process(item, '', '');
   });
   output = cleanUp(output);
-  console.log('html2markdown end: ' + new Date().toISOString());
   return output;
 };
 
