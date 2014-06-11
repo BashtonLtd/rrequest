@@ -24,8 +24,8 @@ Template.ticket.events({
     var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
     var body = template.find(".ticketreplybody").value;
 
-    if (body.trim() != '') {
-      var extras = $('#ticketreplyextrafields').serializeArray()
+    if (body.trim() !== '') {
+      var extras = $('#ticketreplyextrafields').serializeArray();
       var extrafields = {};
       
       $.each(extras, function() {
@@ -47,7 +47,7 @@ Template.ticket.events({
         type: 'comment',
         posted_by: Meteor.userId(),
         created: created
-      }
+      };
 
       args = _.extend(args, extrafields);
 
@@ -55,7 +55,7 @@ Template.ticket.events({
 
       var replyId = template.find(".ticketreplyId").value;
       UnpostedReplies.remove({_id: replyId});
-      Tickets.update({_id: ticket._id}, {$set: {commentmodified: created}})
+      Tickets.update({_id: ticket._id}, {$set: {commentmodified: created}});
       template.find(".ticketreplybody").value = "";
     }
   }
