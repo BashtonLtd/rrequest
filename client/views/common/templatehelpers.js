@@ -106,6 +106,10 @@ UI.registerHelper('getRequesters', function(ticketId, verbose) {
   }
 });
 
+UI.registerHelper('isRequesterInMultipleGroups', function() {
+  return in_multiple_groups(Meteor.user());
+});
+
 UI.registerHelper('isNotGrouped', function(ticketId) {
   var ticket = Tickets.findOne({_id: ticketId});
   if (ticket !== undefined) {

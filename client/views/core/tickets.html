@@ -12,6 +12,18 @@
             <button class="btn new-ticket">
               <i class="icon-plus"></i> Create Ticket
             </button>
+            {{#if isRequesterInMultipleGroups}}
+            <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Select Group
+              <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu dropdown-under">
+                {{#each requesterGroups}}
+                  <li><a class="groupselector" id="{{_id}}" href="#">{{name}}</a></li>
+                {{/each}}
+              </ul>
+            </div>
+            {{/if}}
           </div>
           <div class="clearfix"></div>
         </div>

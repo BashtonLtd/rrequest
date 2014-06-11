@@ -61,7 +61,18 @@ BeforeHooks = {
       if (is_staff(Meteor.user())) {
         this.render(this.route.name);
       } else {
-        this.render('tickets');
+        var multiple_groups = in_multiple_groups(Meteor.user());
+        if (multiple_groups) {
+          Router.go('tickets');
+        } else {
+          var group = get_user_group(Meteor.user());
+          if (group === null) {
+            this.render('tickets');
+          } else {
+            Session.set('viewgroupId', this.params._id);
+            Router.go('group', {_id: group});
+          }
+        }
       }
     } else if (Meteor.loggingIn()) {
       this.render('loading');

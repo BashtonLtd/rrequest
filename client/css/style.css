@@ -303,6 +303,10 @@ a {
   top: -40px !important;
 }
 
+.dropdown-under {
+  top: -3px !important;
+}
+
 .filterselected {
   color: #000000;
   cursor: pointer;

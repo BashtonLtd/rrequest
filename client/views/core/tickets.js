@@ -131,6 +131,10 @@ Template.tickets.created = function() {
     10);
 };
 
+Template.tickets.requesterGroups = function() {
+  return Groups.find({members: {$in: [Meteor.userId()]}});
+};
+
 var getModified = function() {
   var filter_field = {};
   filter_field[Session.get('selected_sort_field')] = Session.get('selected_sort_order');
@@ -223,6 +227,12 @@ Template.tickets.events({
   'input .searchfilter': function (event, template) {
     var searchterm = template.find(".searchfilter").value;
     Session.set('ticketsSearchfilter', searchterm);
+  },
+
+  'click .groupselector': function (event, template) {
+    event.preventDefault();
+    var group_id = $(event.target).context.id;
+    Router.go('group', {_id: group_id});
   }
 });
 
