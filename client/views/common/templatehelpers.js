@@ -20,17 +20,13 @@
  * 
 */
 UI.registerHelper('refreshEvery', function(seconds) {
-  if (!Deps.active)
-    return;
-    
-  var computation = Deps.currentComputation;
-  Meteor.setTimeout(function() {
-    computation.invalidate();
-  }, parseInt(seconds) * 1000);
+  Meteor.setInterval(function() {
+    Session.set('synctime', TimeSync.serverTime());
+  }, parseInt(seconds, 10) * 1000);
 });
 
 UI.registerHelper('age', function(time) {
-  return moment(time).fromNow();
+  return moment(time).from(Session.get('synctime'));
 });
 
 UI.registerHelper('ticketstatus', function() {

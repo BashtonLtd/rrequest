@@ -20,7 +20,8 @@
       "paginated-subscription": {},
       "event-horizon": {},
       "iron-router": {},
-      "kadira": {}
+      "kadira": {},
+      "timesync": {}
     },
     "packages": {
       "moment": {
@@ -85,8 +86,13 @@
       },
       "kadira": {
         "git": "https://github.com/meteorhacks/kadira.git",
-        "tag": "v2.1.2",
-        "commit": "4733bb865d2bea239af4e464dddbca27f5f80ea6"
+        "tag": "v2.4.5",
+        "commit": "fa9a6446f6efb576953f99c01c03474f56f3852e"
+      },
+      "timesync": {
+        "git": "https://github.com/mizzao/meteor-timesync.git",
+        "tag": "v0.1.6",
+        "commit": "83067433f511bc13a11ae8c87e9a4d331256915e"
       },
       "blaze-layout": {
         "git": "https://github.com/EventedMind/blaze-layout.git",

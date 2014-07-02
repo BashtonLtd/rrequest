@@ -18,6 +18,7 @@
     "paginated-subscription": {},
     "event-horizon": {},
     "iron-router": {},
-    "kadira": {}
+    "kadira": {},
+    "timesync": {}
   }
 }
