@@ -74,11 +74,21 @@
     </div>
     <div class="box-body">
       <div class="ticket-list">
+        {{> selectall}}
         {{#each tickets}}
           {{> ticketrow}}
         {{/each}}
+        {{> selectall}}
       </div>
     </div>
+  </div>
+</template>
+
+<template name="selectall">
+  <div class="ticket-item">
+    <label class="checkbox selectall-label">
+      <input type="checkbox" class="selectall-check"> Select all
+    </label>
   </div>
 </template>
 

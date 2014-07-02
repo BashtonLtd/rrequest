@@ -11,9 +11,11 @@
     <div class="clearfix"></div>
     <div class="box-body" style="height:{{body_height id}}px; overflow:auto;">
       <div class="ticket-list">
+      {{> selectall}}
       {{#each tickets}}
         {{> ticketrow}}
       {{/each}}
+      {{> selectall}}
       </div>
     </div>
     <div class="box-footer">

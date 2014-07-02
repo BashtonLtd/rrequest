@@ -204,6 +204,26 @@ Template.ticketsortorder.events({
   }
 });
 
+Template.selectall.events({
+  'click .selectall-check': function (event, template) {
+    var toggle = false;
+    if ($(event.target).prop('checked')) {
+      toggle = true;
+    }
+
+    var selected_tickets = $(event.target).parents(".ticket-list").find('.ticket-item-check');
+    selected_tickets.each(function (){
+      $(this).prop("checked", toggle);
+    });
+
+    var selectall = $(event.target).parents(".ticket-list").find('.selectall-check');
+    selectall.each(function (){
+      $(this).prop("checked", toggle);
+    });
+
+  }
+});
+
 Template.tickets.showCreateTicketDialog = function () {
   return Session.get("showCreateTicketDialog");
 };

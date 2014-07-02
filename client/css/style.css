@@ -412,3 +412,15 @@ a {
 .btn-fix {
   top: -5px;
 }
+
+.selectall-check {
+  position: absolute;
+  left: 12px;
+  box-sizing: border-box;
+  padding: 0;
+  margin-left: 0 !important;
+}
+
+.selectall-label {
+  padding-left: 0 !important;
+}
