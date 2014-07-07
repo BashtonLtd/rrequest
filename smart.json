@@ -4,7 +4,7 @@
     "marked": {},
     "collection-api": {},
     "collectionFS": {
-      "git": "https://github.com/aldeed/Meteor-CollectionFS.git",
+      "git": "https://github.com/BashtonLtd/Meteor-CollectionFS.git",
       "branch": "master"
     },
     "meteor-mailparser": {},

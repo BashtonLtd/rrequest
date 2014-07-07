@@ -3,7 +3,7 @@ Package.describe({
 });
 
 Npm.depends({
-  "kue": "0.6.2"
+  "kue": "0.8.1"
 });
 
 Package.on_use(function (api, where) {

@@ -19,6 +19,15 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  * 
 */
-kue.app.listen(8000);
-tasks = kue.createQueue();
+if (process.env.REDIS_HOST === undefined) {
+  REDIS_HOST = '127.0.0.1';
+} else {
+  REDIS_HOST = process.env.REDIS_HOST;
+}
+
+tasks = kue.createQueue({
+  redis: {
+    host: REDIS_HOST
+  }
+});
 tasks.promote(11000);

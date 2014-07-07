@@ -37,7 +37,12 @@ Meteor.startup(function (){
 
   var module = Modules.findOne({name: 'eventlog'});
   if (module !== undefined && module.enabled) {
-    Meteor.call('add_navbar_item', {}, function(error, module_id) {
+    Meteor.call('add_navbar_item', {
+      name: 'eventlog',
+      title: 'Eventlog',
+      url: 'eventlog',
+      user_level: 'staff'
+    }, function(error, module_id) {
       if (!error) {}
     });
   }

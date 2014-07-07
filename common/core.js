@@ -85,5 +85,19 @@ Meteor.methods({
         }
       });
     }
+  },
+
+  add_navbar_item: function(args) {
+    if (this.isSimulation) {
+      var nav = Session.get('navbar');
+      nav = _.extend([], nav);
+      nav.push({
+        name: args.name,
+        pageurl: '/' + args.url,
+        display_name: args.title,
+        user_level: args.user_level
+      });
+      Session.set('navbar', nav);
+    }
   }
 });
