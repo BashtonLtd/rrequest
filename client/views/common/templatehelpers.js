@@ -84,21 +84,23 @@ UI.registerHelper('getUserEmail', function(userId) {
 
 UI.registerHelper('getRequesters', function(ticketId, verbose) {
   var ticket = Tickets.findOne(ticketId);
-  var requesters = [];
-  ticket.requesters.forEach(function (requester) {
-    if (requester !== null || requester !== undefined) {
-      requesters.push(useremail(requester));
-    }
-  });
-  if (verbose === false) {
-    if (requesters.length > 1) {
-      var extras = requesters.length -1;
-      return requesters[0] + ' and ' + extras + ' more';
+  if (ticket !== undefined) {
+    var requesters = [];
+    ticket.requesters.forEach(function (requester) {
+      if (requester !== null || requester !== undefined) {
+        requesters.push(useremail(requester));
+      }
+    });
+    if (verbose === false) {
+      if (requesters.length > 1) {
+        var extras = requesters.length -1;
+        return requesters[0] + ' and ' + extras + ' more';
+      } else {
+        return requesters.join(', ');
+      }
     } else {
       return requesters.join(', ');
     }
-  } else {
-    return requesters.join(', ');
   }
 });
 
