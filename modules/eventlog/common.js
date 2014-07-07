@@ -20,20 +20,6 @@
  *
 */
 Meteor.methods({
-  add_navbar_item: function() {
-    if (this.isSimulation) {
-      var nav = Session.get('navbar');
-      nav = _.extend([], nav);
-      nav.push({
-        name: 'eventlog',
-        pageurl: '/eventlog',
-        display_name: 'Eventlog',
-        user_level: 'staff'
-      });
-      Session.set('navbar', nav);
-    }
-  },
-
   enable_eventlog_module: function(args) {
     args = args || {};
 
@@ -69,7 +55,7 @@ Meteor.methods({
       Session.set('navbar', nav);
     } else {
       Hooks.remove({
-        modue_id: args.module_id
+        module_id: args.module_id
       });
     }
 
