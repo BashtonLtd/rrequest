@@ -283,12 +283,14 @@ Template.ticket.created = function () {
 };
 
 Template.ticket.events({
-    'keyup .ticketreplybody': function (event, template) {
+    'keyup #ticketreply-editor': function (event, template) {
+        console.log(this.triggered)
         if (this.triggered === undefined) {
             EventHorizon.fire('typingticketreply',{
                 ticketId: Session.get('viewticketId'),
                 postedBy: Meteor.userId()
             });
+            this.triggered = true;
         }
     },
 
