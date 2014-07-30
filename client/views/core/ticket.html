@@ -77,12 +77,14 @@
 </template>
 
 <template name="ticketreplybox">
+    {{#if currentUser}}
     <div class="box">
       <div class="box-header">
       </div>
       <div class="box-body">
         <input type="hidden" class="ticketreplyId" value="{{unposted_reply._id}}">
         <input type="hidden" class="ticketreplylevel" value="{{unposted_reply.level}}">
+
         <div class="replybodycontainer">
           {{> sharejsText docid=documentId id="ticketreply-editor" }}
           <button class="clearreply" type="submit"><i class="icon-trash"></i> Clear</button>
@@ -108,6 +110,7 @@
         <div class="clearfix"></div>
       </div>
     </div>
+    {{/if}}
 </template>
 
 <template name="ticketreply-reply">
