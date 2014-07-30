@@ -19,6 +19,27 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
+Meteor.settings = {
+    "sharejs": {
+        "options": {
+            "db": {
+                "type": "mongo",
+                "opsCollectionPerDoc": false
+            },
+            "accounts_auth": {
+                "authenticate": {
+                    "collection": "users",
+                    "token_validations": {
+                        "_id": "is_equal"
+                    }
+                }
+            }
+        }
+    }
+}
+
+ShareJS.init();
+
 Meteor.startup(function (){
   // Setup email values
   var site_name = Settings.findOne({name: 'site_name'});

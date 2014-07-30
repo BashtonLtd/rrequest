@@ -19,6 +19,7 @@
     "event-horizon": {},
     "iron-router": {},
     "kadira": {},
-    "timesync": {}
+    "timesync": {},
+    "sharejs": {}
   }
 }

@@ -46,6 +46,11 @@ Template.ticketlistactionlist.events({
       selected_tickets = $(event.target).parents(".box-footer").prev('.box-body').find('.ticket-item-check:checked');
     }
 
+    if (selected_tickets.length == 0) {
+        // This could be the new style collection list
+        selected_tickets = $(event.target).parents('.box-body').find('.ticket-item-check:checked');
+    }
+
     selected_tickets.each(function(ticketitem) {
       ticketlist.push(selected_tickets[ticketitem].value);
     });

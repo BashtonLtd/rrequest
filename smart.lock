@@ -21,7 +21,8 @@
       "event-horizon": {},
       "iron-router": {},
       "kadira": {},
-      "timesync": {}
+      "timesync": {},
+      "sharejs": {}
     },
     "packages": {
       "moment": {
@@ -66,8 +67,8 @@
       },
       "spin": {
         "git": "https://github.com/SachaG/meteor-spin.git",
-        "tag": "v0.2.2",
-        "commit": "3f655f0016228e4195acc784c45d3e3a247dc39f"
+        "tag": "v2.0.3",
+        "commit": "23c1145472a710d5c93fa4beaca4e576caeb2f24"
       },
       "paginated-subscription": {
         "git": "https://github.com/tmeasday/meteor-paginated-subscription.git",
@@ -86,13 +87,18 @@
       },
       "kadira": {
         "git": "https://github.com/meteorhacks/kadira.git",
-        "tag": "v2.4.5",
-        "commit": "fa9a6446f6efb576953f99c01c03474f56f3852e"
+        "tag": "v2.4.9",
+        "commit": "8bb902989917522822a0897117672ae858c23427"
       },
       "timesync": {
         "git": "https://github.com/mizzao/meteor-timesync.git",
-        "tag": "v0.1.6",
-        "commit": "83067433f511bc13a11ae8c87e9a4d331256915e"
+        "tag": "v0.2.1",
+        "commit": "fa4abd511f4e32a3c5d22795ce2c1e8369428fac"
+      },
+      "sharejs": {
+        "git": "https://github.com/BashtonLtd/meteor-sharejs.git",
+        "branch": "master",
+        "commit": "a21ec11a7f51b4e2c9d56c47430bf325333f68b3"
       },
       "blaze-layout": {
         "git": "https://github.com/EventedMind/blaze-layout.git",
