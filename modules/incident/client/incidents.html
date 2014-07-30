@@ -1,0 +1,135 @@
+<template name="incidents">
+  {{#if showCreateIncidentDialog}}
+    {{> createIncidentDialog}}
+  {{/if}}
+
+  <div class="row">
+    <div class="span12">
+      <div class="box">
+        <div class="box-header">
+          <div class="pagetitle">Incidents</div>
+          <div class="btn-group pull-right">
+            {{#if currentUser.profile.isStaff}}
+              <button class="btn new-incident">
+                <i class="icon-plus"></i> Create Incident
+              </button>
+            {{/if}}
+            </div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{> collectionList incidents_data}}
+
+</template>
+
+<template name="incidentrow">
+  <div class="ticket-item">
+    <span class="ticket-item-id">{{this._id}}
+
+    </span>
+    <h4 class="ticket-item-name">
+      {{#with ticketstatus}}
+      <span title="{{name}}" class="ticket-item-icon"><i class="{{icon}}" style="color:#{{colour}}"></i></span>
+      {{/with}}
+      <a href="/incident/{{_id}}" class="js-navigation-open">{{subject}}</a>
+    </h4>
+    <div class="ticket-item-meta">
+      <div>
+        Opened {{#with created}}<span title="{{this}}">{{>age}}, </span>{{/with}}
+        {{#if isResolved _id}}
+            Resolved {{#with resolved}}<span title="{{this}}">{{>age}}.</span>{{/with}}
+            Open for <span>{{duration created resolved}}</span>.
+        {{/if}}
+      </div>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+</template>
+
+<template name="createIncidentDialog">
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close cancel">&times;</button>
+      <h3>Create Incident</h3>
+    </div>
+
+    <div class="modal-body">
+      {{#if error}}
+        <div class="alert alert-error">{{error}}</div>
+      {{/if}}
+
+      <label>Subject</label>
+      <input id="incidentsubject" type="text" class="subject span5">
+
+      <div>
+        <label>Group</label>
+        <input class="incidentgroup" style="width:100%"/>
+        <div class="help-block">All selected groups will be able to see this incident.</div>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <a href="#" class="btn cancel">Cancel</a>
+      <a href="#" class="btn btn-primary save">Create</a>
+    </div>
+  </div>
+</template>
+
+<template name="incidentFilterChoices">
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close cancel">&times;</button>
+      <h3>Set Filter</h3>
+    </div>
+
+    <div class="modal-body">
+      <table>
+      {{#each states}}
+      <tr id="{{_id}}" class="{{selected}} filterrow">
+        <td id="{{_id}}">
+          <span id="{{_id}}" class="ticket-item-icon"><i id="{{_id}}" class="{{icon}}" style="color:#{{colour}}"></i></span>
+        </td>
+        <td id="{{_id}}" class="{{selected}}">{{name}}</td>
+      </tr>
+      {{/each}}
+      </table>
+    </div>
+
+    <div class="modal-footer">
+      <a href="#" class="btn cancel">Close</a>
+    </div>
+  </div>
+</template>
+
+<template name="incidentSortFields">
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close cancel">&times;</button>
+      <h3>Set Sort Order</h3>
+    </div>
+
+    <div class="modal-body">
+      <input type="hidden" id="sortfieldvarname" value="sortfield-incidents">
+      <input type="hidden" id="sortordervarname" value="sortorder-incidents">
+      <div id="sortoldest" class="{{sort_selected 'modified' '1'}} sortrow">
+        <span id="sortoldest" class="ticket-item-icon"><i class="icon-arrow-up" id="sortoldest"></i> Oldest First</span>
+      </div>
+      <div class="clearfix"></div>
+      <div id="sortnewest" class="{{sort_selected 'modified' '-1'}} sortrow">
+        <span id="sortnewest" class="ticket-item-icon"><i class="icon-arrow-down" id="sortnewest"></i> Newest First</span>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+
+    <div class="modal-footer">
+      <a href="#" class="btn cancel">Close</a>
+    </div>
+  </div>
+</template>
