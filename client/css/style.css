@@ -81,6 +81,11 @@ label {
   float:left;
 }
 
+#ticketreply-editor {
+    width:80%;
+    height: 300px;
+}
+
 .replybodycontainer {
 
 }
