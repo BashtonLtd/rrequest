@@ -421,7 +421,7 @@ var promote_ticket_reply = function(options) {
             addToRequesters = false;
           }
         }
-        
+
       });
       if (addToRequesters === true) {
         add_ticket_requesters(options.ticketId, options.userId);
