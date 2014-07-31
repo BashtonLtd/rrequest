@@ -19,7 +19,7 @@
 * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
-var openEditTicketDialog = function () {
+openEditTicketDialog = function () {
 	Session.set('currentScroll',$(document).scrollTop());
 	Session.set("showEditTicketDialog", true);
 };
