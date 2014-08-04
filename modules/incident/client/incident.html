@@ -1,27 +1,37 @@
 <template name="incident">
-  <div class="row">
-    <div class="box">
-      <div class="box-header">
-        <div class="pagetitle">Incident</div>
-        <div class="clearfix"></div>
-      </div>
+    <div class="row">
+        <div class="box">
+            <div class="box-header">
+                <div class="pagetitle">Incident</div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div class="row">
-    <div class="box">
-      <div class="box-body">
-        <p>Stats for incident - started, resovled and total time open</p>
+    <div class="row">
+        <div class="box">
+            <div class="box-body">
+                <p>Stats for incident - started, first response time, resovled and total time open</p>
 
-        <p>Tickets involved in the incident</p>
+                <div class="btn-group pull-right">
+                    {{#if currentUser.profile.isStaff}}
+                    <button class="btn add-ticket">
+                        <i class="icon-plus"></i> Add Ticket
+                    </button>
+                    {{/if}}
+                </div>
+                <div class="clearfix"></div>
+                {{#each connectedtickets}}
+                    {{> ticketrowtiny}}
+                {{/each}}
 
-        <ul class="cbp_tmtimeline">
-            <!-- Add event for incident open -->
+                <ul class="cbp_tmtimeline">
+                    <!-- Add event for incident open -->
 
-            <!-- Add each comment, image and event -->
+                    <!-- Add each comment, image and event -->
 
-            <!-- Add event for incident resolved if a resovled date is set -->
-        </ul>
+                    <!-- Add event for incident resolved if a resovled date is set -->
+                </ul>
 
 
 
@@ -82,8 +92,7 @@
                 </div>
               </div>
               <div class="commentbox-content">
-                <p>Things do appear to be broken, but should be fixed shortly.</p>
-                <p>Now I'll add extra text. This is some text content that is much longer than the other comments. This is some text content that is much longer than the other comments. This is some text content that is much longer than the other comments. This is some text content that is much longer than the other comments. This is some text content that is much longer than the other comments. This is some text content that is much longer than the other comments. This is some text content that is much longer than the other comments. This is some text content that is much longer than the other comments.</p>
+                <p>Discovered that service x was misconfigured.</p>
               </div>
             </div>
           </li>
@@ -98,7 +107,7 @@
                 </div>
               </div>
               <div class="commentbox-content">
-                <p>Everything is fixed now, this incident is now resolved.</p>
+                <p>Fixed service x configuration.</p>
               </div>
             </div>
           </li>
@@ -120,4 +129,16 @@
   </div>
 
 
+</template>
+
+<template name="ticketrowtiny">
+    <div class="ticket-item">
+        <h4 class="ticket-item-name-tiny">
+            {{#with ticketstatus}}
+            <span title="{{name}}" class="ticket-item-icon"><i class="{{icon}}" style="color:#{{colour}}"></i></span>
+            {{/with}}
+            <a href="/ticket/{{_id}}" class="js-navigation-open">{{subject}}</a>
+            <span class="eventbox-label">Remove from incident</span>
+        </h4>
+    </div>
 </template>

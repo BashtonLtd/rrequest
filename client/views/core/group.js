@@ -73,7 +73,8 @@ Template.group.grouptickets_data = function () {
     searchfields: '_id,subject,requesters.email',
     sorttemplate: 'groupsTicketsSortFields',
     filterrow: 'status',
-    filtertemplate: 'groupsTicketsFilterChoices'
+    filtertemplate: 'groupsTicketsFilterChoices',
+    footerhooks: 'ticketlistfooter_items'
   };
 };
 
@@ -223,7 +224,9 @@ var getsort = function() {
 Template._collectionList.collection = function () {
   var searchfilter = Session.get('search-' + this.name);
   var collectionFilter = {};
-  collectionFilter[Session.get('key-'+this.name)] = Session.get(Session.get('value-'+this.name));
+  if (this.collectionFilterValue != '') {
+    collectionFilter[Session.get('key-'+this.name)] = Session.get(Session.get('value-'+this.name));
+  }
 
   collectionFilter[Session.get('filterrow-'+listname)] = {$nin: Session.get('selectedfilterchoices-' + listname)};
 
@@ -244,6 +247,15 @@ Template._collectionList.collection = function () {
   if (results.count() > 0) {
     return results;
   }
+};
+
+Template._collectionList.footerhook_items = function() {
+    var hooks = Hooks.find({hook:this.footerhooks});
+    return hooks;
+};
+
+Template._collectionList.footerhook_items_template = function() {
+    return Template[this.template];
 };
 
 Template._collectionList.rowTemplate = function () {

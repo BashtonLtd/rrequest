@@ -20,32 +20,34 @@
  *
 */
 Router.map(function() {
-  this.route('incidents', {
-    path: '/incidents',
-    onAfterAction: function() {
-      var site_name = get_sitename();
-      if (site_name !== undefined) {
-        document.title = site_name + ': ' + this.route.name;
-      } else {
-        document.title = this.route.name;
-      }
-    }
-  });
+    this.route('incidents', {
+        path: '/incidents',
+        onAfterAction: function() {
+            var site_name = get_sitename();
+            if (site_name !== undefined) {
+                document.title = site_name + ': ' + this.route.name;
+            } else {
+                document.title = this.route.name;
+            }
+        }
+    });
 
-  this.route('incident', {
-    path: '/incident/:_id',
-    onRun: function () {
-      Session.set('incidentId', this.params._id);
-    },
-    onBeforeAction: 'loading',
-    onAfterAction: function() {
-      var site_name = get_sitename();
-      var incident = Incidnets.findOne({_id: Session.get('incidentId')}, {reactive: false});
-      if (incident !== undefined) {
-        document.title = incident._id + ' - ' + incident.subject;
-      } else {
-        document.title = site_name + ': ' + this.route.name;
-      }
-    }
-  });
+    this.route('incident', {
+        path: '/incident/:_id',
+        onRun: function () {
+            Session.set('incidentId', this.params._id);
+        },
+        onBeforeAction: function () {
+            this.subscribe('singleIncident', Session.get('incidentId')).wait();
+        },
+        onAfterAction: function() {
+            var site_name = get_sitename();
+            var incident = Incidents.findOne({_id: Session.get('incidentId')}, {reactive: false});
+            if (incident !== undefined) {
+                document.title = incident._id + ' - ' + incident.subject;
+            } else {
+                document.title = site_name + ': ' + this.route.name;
+            }
+        }
+    });
 });

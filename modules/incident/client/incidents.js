@@ -27,8 +27,10 @@ Template.incidents.events({
 
 Template.incidentrow.isResolved = function(_id) {
     var incident = Incidents.findOne({_id: _id});
-    if (incident.resolved !== undefined) {
-        return true;
+    if (incident !== undefined) {
+        if (incident.resolved !== undefined) {
+            return true;
+        }
     }
     return false;
 };

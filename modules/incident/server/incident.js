@@ -44,3 +44,27 @@ Meteor.startup(function (){
     });
   }
 });
+
+Meteor.methods({
+  createIncident: function (options) {
+    return create_incident(options);
+  }
+});
+
+create_incident = function (options) {
+  options = options || {};
+  var args = {};
+  if (options._id !== undefined) {
+    args._id = options._id;
+  }
+  var now = new Date();
+  args.subject = options.subject;
+  args.created = now;
+  args.modified = now;
+  args.status = options.status;
+  args.groups = options.groups;
+  args.comments = [];
+  args.tickets = [];
+
+  return Incidents.insert(args);
+};

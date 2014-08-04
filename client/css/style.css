@@ -256,6 +256,13 @@ a {
   word-wrap: break-word;
 }
 
+.ticket-item-name-tiny {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.3;
+  word-wrap: break-word;
+}
+
 .ticket-item-name a {
   color: #333333;
 }

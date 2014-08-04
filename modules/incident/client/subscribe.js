@@ -21,3 +21,10 @@
 */
 Meteor.subscribe("incidents");
 Meteor.subscribe("incidentsettings");
+Meteor.subscribe('singleIncident', Session.get('incidentId'));
+
+Meteor.subscribe(
+    'sortedTickets',
+    {sort: {'created': -1}},
+    {_id: {$in: Session.get('incidentTickets')}}
+)

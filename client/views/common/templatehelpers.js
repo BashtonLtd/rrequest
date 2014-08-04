@@ -29,6 +29,14 @@ UI.registerHelper('age', function(time) {
   return moment(time).from(Session.get('synctime'));
 });
 
+UI.registerHelper('duration', function(start, end) {
+    if (end == null) {
+        end == moment();
+    }
+    var difference = moment(end).diff(moment(start));
+    return moment.duration(difference).humanize();
+});
+
 UI.registerHelper('ticketstatus', function() {
   var ticket = Tickets.findOne({_id:this._id});
   if (ticket !== undefined) {

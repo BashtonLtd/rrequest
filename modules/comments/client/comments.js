@@ -70,6 +70,7 @@ Template.ticket.events({
                   return
               }
               doc.del(0, body.length);
+              doc.close();
           }
       )
       template.find("#ticketreply-editor").value = '';
