@@ -293,68 +293,71 @@ Template.ticket.events({
         }
     },
 
-  'click .post-reply': function (event, template) {
-    var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
-    var original_status = ticket.status;
-    var replyId = template.find(".ticketreplyId").value;
-    var level = template.find(".ticketreplylevel").value;
-    var body = template.find("#ticketreply-editor").value;
+    'click .post-reply': function (event, template) {
+        // Check the textarea is enabled
+        if (!$("#ticketreply-editor").is(":disabled")) {
+            var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
+            var original_status = ticket.status;
+            var replyId = template.find(".ticketreplyId").value;
+            var level = template.find(".ticketreplylevel").value;
+            var body = template.find("#ticketreply-editor").value;
 
-    if (body.trim() !== '') {
-      var extras = $('#ticketreplyextrafields').serializeArray();
-      var extrafields = [];
-      $.each(extras, function() {
-        extrafields.push({name: this.name, value: this.value || ''});
-      });
+            if (body.trim() !== '') {
+                var extras = $('#ticketreplyextrafields').serializeArray();
+                var extrafields = [];
+                $.each(extras, function() {
+                    extrafields.push({name: this.name, value: this.value || ''});
+                });
 
-      var args = {
-        ticketId: Session.get('viewticketId'),
-        replyId: replyId,
-        userId: Meteor.userId(),
-        level: level,
-        replyfields: [
-          {name: 'type', value: 'reply'},
-          {name: 'body', value: body},
-          {name: 'status', value: 'posted'}
-        ]
-      };
-      args.replyfields = args.replyfields.concat(extrafields);
+                var args = {
+                    ticketId: Session.get('viewticketId'),
+                    replyId: replyId,
+                    userId: Meteor.userId(),
+                    level: level,
+                    replyfields: [
+                        {name: 'type', value: 'reply'},
+                        {name: 'body', value: body},
+                        {name: 'status', value: 'posted'}
+                    ]
+                };
+                args.replyfields = args.replyfields.concat(extrafields);
 
-      Meteor.clearTimeout(Session.get('replytimerid'));
+                Meteor.clearTimeout(Session.get('replytimerid'));
 
-      // clear document
-      var user = Meteor.users.findOne({_id: Meteor.userId()});
-      var user_level = 'requester';
-      if (user !== undefined) {
-        if(user.profile.isStaff) {
-          user_level = 'staff';
+                // clear document
+                var user = Meteor.users.findOne({_id: Meteor.userId()});
+                var user_level = 'requester';
+                if (user !== undefined) {
+                    if(user.profile.isStaff) {
+                        user_level = 'staff';
+                    }
+                }
+                sharejs.open(
+                    Session.get('viewticketId') + '-' + user_level,
+                    'text',
+                    {origin: '//' + window.location.host + '/channel', authentication: Meteor.userId()},
+                    function (error, doc) {
+                        if (error) {
+                            return
+                        }
+                        doc.del(0, body.length);
+                        doc.close();
+                    }
+                )
+
+                template.find("#ticketreply-editor").value = '';
+                promote_ticket_reply(args);
+
+                EventHorizon.fire('ticketreply',{
+                    ticketId: Session.get('viewticketId'),
+                    replyId: replyId,
+                    postedBy: Meteor.userId()
+                });
+
+                $("#ticketreplyextrafields input").not(':button, :submit, :reset, :hidden').val('');
+            }
         }
-      }
-      sharejs.open(
-          Session.get('viewticketId') + '-' + user_level,
-          'text',
-          {origin: '//' + window.location.host + '/channel', authentication: Meteor.userId()},
-          function (error, doc) {
-              if (error) {
-                  return
-              }
-              doc.del(0, body.length);
-              doc.close();
-          }
-      )
-
-      template.find("#ticketreply-editor").value = '';
-      promote_ticket_reply(args);
-
-      EventHorizon.fire('ticketreply',{
-        ticketId: Session.get('viewticketId'),
-        replyId: replyId,
-        postedBy: Meteor.userId()
-      });
-
-      $("#ticketreplyextrafields input").not(':button, :submit, :reset, :hidden').val('');
-    }
-  },
+    },
 
   'click .clearreply': function (event, template) {
       var user = Meteor.users.findOne({_id: Meteor.userId()});
