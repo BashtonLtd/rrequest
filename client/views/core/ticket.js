@@ -339,6 +339,7 @@ Template.ticket.events({
                   return
               }
               doc.del(0, body.length);
+              doc.close();
           }
       )
 
@@ -373,6 +374,7 @@ Template.ticket.events({
             return
           }
           doc.del(0, body.length);
+          doc.close();
         }
       )
 

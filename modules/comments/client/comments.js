@@ -38,7 +38,7 @@ Template.ticket.events({
           extrafields[this.name] = this.value || '';
         }
       });
-      
+
       var created = new Date();
       var args = {
         status: 'posted',
@@ -70,6 +70,7 @@ Template.ticket.events({
                   return
               }
               doc.del(0, body.length);
+              doc.close();
           }
       )
       template.find("#ticketreply-editor").value = '';
