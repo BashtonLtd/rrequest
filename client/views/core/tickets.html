@@ -111,8 +111,8 @@
     </h4>
     <div class="ticket-item-meta">
       <div>
-        Opened {{#with created}}<span title="{{this}}">{{>age}}</span>{{/with}} 
-        by 
+        Opened {{#with created}}<span title="{{this}}">{{>age}}</span>{{/with}}
+        by
         {{#if currentUser.profile.isStaff}}
           {{{getGroupOrRequester}}},
         {{else}}
@@ -147,13 +147,13 @@
     </h4>
     <div class="ticket-item-meta">
       <div>
-        Opened {{#with created}}<span title="{{this}}">{{>age}}</span>{{/with}} 
-        by 
+        Opened {{#with created}}<span title="{{this}}">{{>age}}</span>{{/with}}
+        by
         {{#if currentUser.profile.isStaff}}
           {{getGroupOrRequester}}
         {{else}}
           {{getRequesters this._id false}}
-        {{/if}}, 
+        {{/if}},
         modified {{#with modified}}<span title="{{this}}">{{>age}}</span>{{/with}}.
       </div>
     </div>
@@ -171,7 +171,7 @@
     </h4>
     <div class="ticket-item-meta">
       <div>
-        Opened {{#with created}}<span title="{{this}}">{{>age}}</span>{{/with}} 
+        Opened {{#with created}}<span title="{{this}}">{{>age}}</span>{{/with}}
       </div>
     </div>
   </div>

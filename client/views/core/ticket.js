@@ -330,6 +330,7 @@ Template.ticket.events({
           user_level = 'staff';
         }
       }
+
       sharejs.open(
           Session.get('viewticketId') + '-' + user_level,
           'text',
