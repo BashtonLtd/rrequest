@@ -20,79 +20,82 @@
  *
 */
 Template.ticket.events({
-  'click .post-ticket-comment': function (event, template) {
-    var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
-    var body = template.find("#ticketreply-editor").value;
+    'click .post-ticket-comment': function (event, template) {
+        // Check the textarea is enabled
+        if (!$("#ticketreply-editor").is(":disabled")) {
+            var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
+            var body = template.find("#ticketreply-editor").value;
 
-    if (body.trim() !== '') {
-      var extras = $('#ticketreplyextrafields').serializeArray();
-      var extrafields = {};
+            if (body.trim() !== '') {
+                var extras = $('#ticketreplyextrafields').serializeArray();
+                var extrafields = {};
 
-      $.each(extras, function() {
-        if (extrafields[this.name] !== undefined) {
-          if (!extrafields[this.name].push) {
-            extrafields[this.name] = [extrafields[this.name]];
-          }
-            extrafields[this.name].push(this.value || '');
-        } else {
-          extrafields[this.name] = this.value || '';
+                $.each(extras, function() {
+                    if (extrafields[this.name] !== undefined) {
+                        if (!extrafields[this.name].push) {
+                            extrafields[this.name] = [extrafields[this.name]];
+                        }
+                        extrafields[this.name].push(this.value || '');
+                    } else {
+                        extrafields[this.name] = this.value || '';
+                    }
+                });
+
+                var created = new Date();
+                var args = {
+                    status: 'posted',
+                    body: body,
+                    ticketId: ticket._id,
+                    type: 'comment',
+                    posted_by: Meteor.userId(),
+                    created: created
+                };
+
+                args = _.extend(args, extrafields);
+
+                Comments.insert(args);
+
+                // clear document
+                var user = Meteor.users.findOne({_id: Meteor.userId()});
+                var user_level = 'requester';
+                if (user !== undefined) {
+                    if(user.profile.isStaff) {
+                        user_level = 'staff';
+                    }
+                }
+                sharejs.open(
+                    Session.get('viewticketId') + '-' + user_level,
+                    'text',
+                    {origin: '//' + window.location.host + '/channel', authentication: Meteor.userId()},
+                    function (error, doc) {
+                        if (error) {
+                            return
+                        }
+                        doc.del(0, body.length);
+                        doc.close();
+                    }
+                )
+                template.find("#ticketreply-editor").value = '';
+                Tickets.update({_id: ticket._id}, {$set: {commentmodified: created}});
+            }
         }
-      });
-
-      var created = new Date();
-      var args = {
-        status: 'posted',
-        body: body,
-        ticketId: ticket._id,
-        type: 'comment',
-        posted_by: Meteor.userId(),
-        created: created
-      };
-
-      args = _.extend(args, extrafields);
-
-      Comments.insert(args);
-
-      // clear document
-      var user = Meteor.users.findOne({_id: Meteor.userId()});
-      var user_level = 'requester';
-      if (user !== undefined) {
-        if(user.profile.isStaff) {
-          user_level = 'staff';
-        }
-      }
-      sharejs.open(
-          Session.get('viewticketId') + '-' + user_level,
-          'text',
-          {origin: '//' + window.location.host + '/channel', authentication: Meteor.userId()},
-          function (error, doc) {
-              if (error) {
-                  return
-              }
-              doc.del(0, body.length);
-              doc.close();
-          }
-      )
-      template.find("#ticketreply-editor").value = '';
-      Tickets.update({_id: ticket._id}, {$set: {commentmodified: created}});
     }
-  }
 });
 
 comment_replies = function(args) {
-  args = args || {};
-  return Comments.find({ticketId: args.ticketId});
+    args = args || {};
+    return Comments.find({ticketId: args.ticketId});
 };
 
 ticket_comment_button = function(args) {
-  args = args || {};
-  var user = Meteor.users.findOne({_id: args.userId});
-  if(user !== undefined) {
-    if(user.profile.isStaff) {
-      return true;
-    } else {
-      return false;
+    args = args || {};
+    var user = Meteor.users.findOne({_id: args.userId});
+    if(user !== undefined) {
+        if(user.profile.isStaff) {
+            return true;
+        } else {
+            return false;
+        }
     }
-  }
-  return false;
+    return false;
 };
