@@ -15,7 +15,7 @@
 
                 <div class="btn-group pull-right">
                     {{#if currentUser.profile.isStaff}}
-                    <button class="btn add-ticket">
+                    <button class="btn btn-small add-ticket">
                         <i class="icon-plus"></i> Add Ticket
                     </button>
                     {{/if}}
@@ -138,7 +138,8 @@
             <span title="{{name}}" class="ticket-item-icon"><i class="{{icon}}" style="color:#{{colour}}"></i></span>
             {{/with}}
             <a href="/ticket/{{_id}}" class="js-navigation-open">{{subject}}</a>
-            <span class="eventbox-label">Remove from incident</span>
+            <button class="btn btn-small remove-ticket ticketlist_button"><i class="icon-trash"></i> Remove</button>
+            <div class="clearfix"></div>
         </h4>
     </div>
 </template>

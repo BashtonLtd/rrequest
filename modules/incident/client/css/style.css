@@ -201,3 +201,10 @@
   list-style: none;
   position: relative;
 }
+
+
+.ticketlist_button {
+  float: right;
+  margin: 0 0 0 10px;
+  padding: 1px 10px;
+}
