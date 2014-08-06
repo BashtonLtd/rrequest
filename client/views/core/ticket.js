@@ -19,6 +19,7 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
+Session.set('showEditor', false);
 Template.ticketheader.ticketfooter_items = function() {
   var hooks = Hooks.find({hook:'ticketfooter_items'});
   return hooks;
@@ -32,11 +33,31 @@ Template.ticketreplybox.documentId = function () {
     var user = Meteor.users.findOne({_id: Meteor.userId()});
     var user_level = 'requester';
     if (user !== undefined) {
-      if(user.profile.isStaff) {
-        user_level = 'staff';
-      }
+        if(user.profile.isStaff) {
+            user_level = 'staff';
+        }
     }
     return Session.get('viewticketId') + '-' + user_level;
+};
+
+Template.ticketreplybox.rendered = function () {
+    // Initially render the editor after a quick delay
+    Session.set('showEditor', false);
+    window.setTimeout(function() {
+        Session.set('showEditor', true);
+    }, 250);
+
+    // Continue checking every second, keep reloading until "Loading..." goes away :(
+    var interval = window.setInterval(function() {
+        if ($("#ticketreply-editor").is(":disabled")) {
+            Session.set('showEditor', false);
+            window.setTimeout(function() {
+                Session.set('showEditor', true);
+            }, 10);
+        } else {
+            window.clearInterval(interval);
+        }
+  }, 4000);
 };
 
 Template.ticketreplybox.unposted_reply = function () {
@@ -219,6 +240,10 @@ Template.ticketreplybox.replyentryfooter_items_data = function () {
   return this;
 };
 
+Template.ticketreplybox.showEditor = function () {
+    return Session.get('showEditor');
+};
+
 var displayreply = function(replytype) {
   var user = Meteor.users.findOne({_id: Meteor.userId()});
   if(user.profile.isStaff) {
@@ -380,7 +405,6 @@ Template.ticket.events({
           doc.close();
         }
       )
-
       template.find("#ticketreply-editor").value = '';
   },
 
@@ -445,7 +469,7 @@ var promote_ticket_reply = function(options) {
     message: log_email + ' replied to ' + log_subject + ' ' + log_ticket_url
   }, function(error, result){});
 
-  UnpostedReplies.remove({_id: options.replyId});
+  //UnpostedReplies.remove({_id: options.replyId});
 
   return Tickets.update(
     {_id: options.ticketId},
