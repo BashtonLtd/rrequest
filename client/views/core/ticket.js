@@ -261,15 +261,37 @@ Template.ticketreplies.posted_replies = function () {
   var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {fields: {unpostedstaffreply: 0, unpostedrequesterreply: 0}});
   if (ticket !== undefined) {
     var replies = [];
+    var existingReplies = [];
+    var existingReplyIds = [];
+    var updateReplies = false;
     ticket.replies.forEach(function(reply){
       if(reply !== undefined) {
         if(reply.status == 'posted') {
+          var workingReply = JSON.parse( JSON.stringify( reply ) );
+          if (_.contains(existingReplyIds, workingReply._id)) {
+            workingReply._id = Random.id();
+            existingReplies.push(workingReply);
+            updateReplies = true;
+          } else {
+            existingReplyIds.push(workingReply._id);
+            existingReplies.push(workingReply);
+          }
+
           reply.body = marked(reply.body);
           reply.ticketId = ticket._id;
           replies.push(reply);
         }
       }
+
     });
+    if (updateReplies == true) {
+      Tickets.update(
+        {_id:ticket._id},
+        {
+          $set: {replies: existingReplies}
+        }
+      );
+    }
 
     // Fetch replies from modules
     var hooks = Hooks.find({hook:'ticket_replies'});
@@ -469,7 +491,7 @@ var promote_ticket_reply = function(options) {
     message: log_email + ' replied to ' + log_subject + ' ' + log_ticket_url
   }, function(error, result){});
 
-  //UnpostedReplies.remove({_id: options.replyId});
+  UnpostedReplies.remove({_id: options.replyId});
 
   return Tickets.update(
     {_id: options.ticketId},
