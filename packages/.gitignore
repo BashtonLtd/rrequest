@@ -22,3 +22,6 @@ html2markdown/.gitignore
 kue/.gitignore
 /timesync
 /sharejs
+/iron-layout
+/iron-core
+/iron-dynamic-template

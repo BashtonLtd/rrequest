@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM ubuntu:12.04
 MAINTAINER David Watson <david@bashton.com>
 
 # Install required packages

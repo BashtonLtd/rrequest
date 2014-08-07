@@ -65,7 +65,7 @@ process_mail = function(mail_object) {
     requestfrom = get_or_create_user(mail_object.from[0].address.toLowerCase());
     requesters.push({id:requestfrom._id, email:mail_object.from[0].address.toLowerCase()});
   }
-  
+
   if (mail_object.to[0].address.toLowerCase() != EMAIL_FROM.toLowerCase()) {
     var requestto = get_or_create_user(mail_object.to[0].address.toLowerCase());
     requesters.push({id:requestto._id, email:mail_object.to[0].address.toLowerCase()});
@@ -108,7 +108,7 @@ process_mail = function(mail_object) {
         ticketBody = text2markdown(mail_object.text);
       }
     }).run();
-    
+
     if (Buffer.byteLength(ticketBody, 'utf8') >= 16777216) {
       bound_create_event_log({level:'ERROR', tags:['imap'], message:'Message too large ' + mail_object.headers['message-id']});
       return false;
@@ -134,11 +134,13 @@ process_mail = function(mail_object) {
             if (error) {
               console.log(error);
             } else {
-              
+
             }
           });
 
-          Attachments.storeBuffer(elem.generatedFileName, elem.content, {
+          var filename = elem.generatedFileName.replace(/,/g, '');
+
+          Attachments.storeBuffer(filename, elem.content, {
             contentType: elem.contentType,
             encoding: 'utf-8',
             metadata: {

@@ -29,9 +29,10 @@ Router.map(function() {
       var request = this.request;
       var response = this.response;
       var attachment = Attachments.files.findOne({_id: this.params._id});
+      var filename = attachment.filename.replace(/,/g, '');
       var headers = {
         'Content-type': attachment.contentType,
-        'Content-Disposition': "attachment; filename=" + attachment.filename
+        'Content-Disposition': "attachment; filename=" + filename
       };
       this.response.writeHead(200, headers);
 

@@ -51,7 +51,7 @@ Template.replyentry_attachments.events({
     var ticketId = template.find(".replyentry_ticketId").value;
     var replyId = template.find(".replyentry_replyId").value;
     var requester = template.find(".replyentry_requester").value;
-    var group = template.find(".replyentry_group").value; 
+    var group = template.find(".replyentry_group").value;
 
     var files = event.target.files;
     for (var i = 0, f; f=files[i]; i++) {
@@ -76,12 +76,12 @@ Template.replyentry_attachments.helpers({
 
   progress : function() {
     var filesProgress = Math.round(this.currentChunk / (this.countChunks - 1) * 100);
-    
+
     if (this.complete) {
       return { barstyle: 'progress-success', fileprogress: 100 };
     } else {
       return { barstyle: 'progress-info progress-striped active', fileprogress: filesProgress };
-    }    
+    }
   },
 
   niceSize: function() {

@@ -19,6 +19,7 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
+Session.set('showEditor', false);
 Template.ticketheader.ticketfooter_items = function() {
   var hooks = Hooks.find({hook:'ticketfooter_items'});
   return hooks;
@@ -32,11 +33,31 @@ Template.ticketreplybox.documentId = function () {
     var user = Meteor.users.findOne({_id: Meteor.userId()});
     var user_level = 'requester';
     if (user !== undefined) {
-      if(user.profile.isStaff) {
-        user_level = 'staff';
-      }
+        if(user.profile.isStaff) {
+            user_level = 'staff';
+        }
     }
     return Session.get('viewticketId') + '-' + user_level;
+};
+
+Template.ticketreplybox.rendered = function () {
+    // Initially render the editor after a quick delay
+    Session.set('showEditor', false);
+    window.setTimeout(function() {
+        Session.set('showEditor', true);
+    }, 250);
+
+    // Continue checking every second, keep reloading until "Loading..." goes away :(
+    var interval = window.setInterval(function() {
+        if ($("#ticketreply-editor").is(":disabled")) {
+            Session.set('showEditor', false);
+            window.setTimeout(function() {
+                Session.set('showEditor', true);
+            }, 10);
+        } else {
+            window.clearInterval(interval);
+        }
+  }, 4000);
 };
 
 Template.ticketreplybox.unposted_reply = function () {
@@ -219,6 +240,10 @@ Template.ticketreplybox.replyentryfooter_items_data = function () {
   return this;
 };
 
+Template.ticketreplybox.showEditor = function () {
+    return Session.get('showEditor');
+};
+
 var displayreply = function(replytype) {
   var user = Meteor.users.findOne({_id: Meteor.userId()});
   if(user.profile.isStaff) {
@@ -236,15 +261,37 @@ Template.ticketreplies.posted_replies = function () {
   var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {fields: {unpostedstaffreply: 0, unpostedrequesterreply: 0}});
   if (ticket !== undefined) {
     var replies = [];
+    var existingReplies = [];
+    var existingReplyIds = [];
+    var updateReplies = false;
     ticket.replies.forEach(function(reply){
       if(reply !== undefined) {
         if(reply.status == 'posted') {
+          var workingReply = JSON.parse( JSON.stringify( reply ) );
+          if (_.contains(existingReplyIds, workingReply._id)) {
+            workingReply._id = Random.id();
+            existingReplies.push(workingReply);
+            updateReplies = true;
+          } else {
+            existingReplyIds.push(workingReply._id);
+            existingReplies.push(workingReply);
+          }
+
           reply.body = marked(reply.body);
           reply.ticketId = ticket._id;
           replies.push(reply);
         }
       }
+
     });
+    if (updateReplies == true) {
+      Tickets.update(
+        {_id:ticket._id},
+        {
+          $set: {replies: existingReplies}
+        }
+      );
+    }
 
     // Fetch replies from modules
     var hooks = Hooks.find({hook:'ticket_replies'});
