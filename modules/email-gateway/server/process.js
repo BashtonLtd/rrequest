@@ -134,11 +134,13 @@ process_mail = function(mail_object) {
             if (error) {
               console.log(error);
             } else {
-              
+
             }
           });
 
-          Attachments.storeBuffer(elem.generatedFileName, elem.content, {
+          var filename = elem.generatedFileName.replace(/,/g, '');
+
+          Attachments.storeBuffer(filename, elem.content, {
             contentType: elem.contentType,
             encoding: 'utf-8',
             metadata: {
