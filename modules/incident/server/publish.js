@@ -60,21 +60,13 @@ Meteor.publish('singleIncident', function(id) {
 Meteor.startup(function(){
   Incidents.allow({
     insert: function(userId, doc) {
-      if (doc.owner == userId) {
         return true;
-      }
-      return false;
     },
     update: function(userId, doc, fieldNames, modifier) {
-      return true;
+        return true;
     },
     remove: function(userId, docs) {
-      return ! _.any(docs, function (doc) {
-        if (doc.owner == userId) {
-          return true;
-        }
-        return false;
-      });
+        return true;
     }
   });
 });

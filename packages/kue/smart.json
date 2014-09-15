@@ -1,7 +1,0 @@
-{
-  "name": "kue",
-  "description": "Meteor smart package for kue",
-  "author": "David Watson <david@bashton.com>",
-  "version": "0.6.2",
-  "packages": {}
-}

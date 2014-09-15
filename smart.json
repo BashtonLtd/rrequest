@@ -1,25 +1,4 @@
 {
   "packages": {
-    "moment": {},
-    "marked": {},
-    "collection-api": {},
-    "collectionFS": {
-      "git": "https://github.com/BashtonLtd/Meteor-CollectionFS.git",
-      "branch": "master"
-    },
-    "meteor-mailparser": {},
-    "meteor-node-imap": {
-      "git": "https://github.com/BashtonLtd/meteor-node-imap.git",
-      "tag": "v0.0.4"
-    },
-    "meteor-pagedown": {},
-    "meteor-tomarkdown": {},
-    "spin": {},
-    "paginated-subscription": {},
-    "event-horizon": {},
-    "iron-router": {},
-    "kadira": {},
-    "timesync": {},
-    "sharejs": {}
   }
 }

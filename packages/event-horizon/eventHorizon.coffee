@@ -42,14 +42,14 @@ _.extend EventHorizon,
     if not self.listeners[eventName]
       self.listeners[eventName] = []
 
-    self.listeners[eventName].push listener   
+    self.listeners[eventName].push listener
 
   fireOnChange: (eventName, func) ->
     self = this
 
     listener = Deps.autorun (computation) ->
       result = Deps.isolate func
-        
+
       if not computation.firstRun
         self.fire eventName, result: result
 

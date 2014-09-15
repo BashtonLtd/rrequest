@@ -150,9 +150,9 @@
         Opened {{#with created}}<span title="{{this}}">{{>age}}</span>{{/with}}
         by
         {{#if currentUser.profile.isStaff}}
-          {{getGroupOrRequester}}
+          {{{getGroupOrRequester}}}
         {{else}}
-          {{getRequesters this._id false}}
+          {{{getRequesters this._id false}}}
         {{/if}},
         modified {{#with modified}}<span title="{{this}}">{{>age}}</span>{{/with}}.
       </div>
