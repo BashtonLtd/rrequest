@@ -318,6 +318,11 @@ a {
 .dropdown-under {
   top: -3px !important;
 }
+/*
+.dropdown-menu{
+    z-index: 99999 !important;
+}
+*/
 
 .filterselected {
   color: #000000;

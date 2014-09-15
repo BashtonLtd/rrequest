@@ -27,7 +27,7 @@ _.extend EventHorizon,
     self = this
     if not self.handlers[eventName]
       self.handlers[eventName] = []
-    
+
     self.handlers[eventName].push func
 
   fire: (eventName, eventData) ->

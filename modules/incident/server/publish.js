@@ -21,14 +21,14 @@
 */
 Meteor.publish('incidents', function(sort, filter, limit) {
     var user = Meteor.users.findOne({_id: this.userId});
-    var usergroups = Groups.find({members: {$in: [this.userId]}});
-    var groupids = [];
-    usergroups.forEach(function(group){
-        groupids.push(group._id);
-    });
     if (user && user.profile.isStaff) {
         return Incidents.find(filter, {sort: sort, limit: limit});
     } else {
+        var usergroups = Groups.find({members: {$in: [this.userId]}});
+        var groupids = [];
+        usergroups.forEach(function(group){
+            groupids.push(group._id);
+        });
         if (filter['$or'] !== undefined) {
             var newfilter = {
                 $and: [
@@ -45,14 +45,14 @@ Meteor.publish('incidents', function(sort, filter, limit) {
 
 Meteor.publish('singleIncident', function(id) {
     var user = Meteor.users.findOne({_id: this.userId});
-    var usergroups = Groups.find({members: {$in: [this.userId]}});
-    var groupids = [];
-    usergroups.forEach(function(group){
-        groupids.push(group._id);
-    });
     if (user && user.profile.isStaff) {
         return Incidents.find({_id: id});
     } else {
+        var usergroups = Groups.find({members: {$in: [this.userId]}});
+        var groupids = [];
+        usergroups.forEach(function(group){
+            groupids.push(group._id);
+        });
         return Incidents.find({_id: id, group: {$in: groupids}});
     }
 });

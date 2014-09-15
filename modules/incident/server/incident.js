@@ -46,9 +46,21 @@ Meteor.startup(function (){
 });
 
 Meteor.methods({
-  createIncident: function (options) {
-    return create_incident(options);
-  }
+    createIncident: function (options) {
+        return create_incident(options);
+    },
+
+    addIncidentComment: function (options) {
+        return add_incident_comment(options);
+    },
+
+    removeIncidentComment: function (options) {
+        return remove_incident_comment(options);
+    },
+
+    removeIncidentTicket: function (options) {
+        return remove_incident_ticket(options);
+    }
 });
 
 create_incident = function (options) {
@@ -67,4 +79,51 @@ create_incident = function (options) {
   args.tickets = [];
 
   return Incidents.insert(args);
+};
+
+add_incident_comment = function (options) {
+    options = options || {};
+
+    return Incidents.update(
+        {_id: options.incidentId},
+        {
+            $push: {comments: options.args}
+        }
+    );
+};
+
+remove_incident_comment = function (options) {
+    options = options || {};
+
+    var incident = Incidents.findOne({_id: options.incidentId});
+    if (incident !== undefined) {
+        var comments = incident.comments;
+
+        comments = _.without(comments, _.findWhere(comments, {_id: options.commentId}));
+
+        Incidents.update(
+            {_id: options.incidentId},
+            {
+                $set: {comments: comments}
+            }
+        );
+    }
+};
+
+remove_incident_ticket = function (options) {
+    options = options || {};
+
+    var incident = Incidents.findOne({_id: options.incidentId});
+    if (incident !== undefined) {
+        var tickets = incident.tickets;
+
+        tickets = _.without(tickets, options.ticketId);
+
+        Incidents.update(
+            {_id: options.incidentId},
+            {
+                $set: {tickets: tickets}
+            }
+        );
+    }
 };

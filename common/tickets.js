@@ -43,6 +43,9 @@ update_ticket  = function (options) {
   args.requesters = options.requesters;
   args.group = options.groups;
   args.status = options.status;
+  if (args.status == 'closed') {
+      args.resolved = new Date();
+  }
 
   if (options.extrafields !== undefined && options.extrafields.length > 0) {
     options.extrafields.forEach(function(item) {
@@ -88,9 +91,15 @@ insert_event = function(options) {
 update_status = function(options) {
   options = options || {};
 
+  var args = {};
+  args.status = options.status;
+  if (args.status == 'closed') {
+      args.resolved = new Date();
+  }
+
   return Tickets.update(
     {_id: options.ticketId},
-    {$set: {status: options.status}}
+    {$set: args}
   );
 };
 
