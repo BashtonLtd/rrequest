@@ -1,0 +1,15 @@
+{
+  "meteor": {},
+  "dependencies": {
+    "basePackages": {
+      "mizzao:sharejs": {
+        "path": ".."
+      }
+    },
+    "packages": {
+      "mizzao:sharejs": {
+        "path": ".."
+      }
+    }
+  }
+}

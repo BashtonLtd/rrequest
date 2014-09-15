@@ -1,0 +1,78 @@
+<head>
+  <title>Meteor Docs!</title>
+</head>
+
+<body>
+    {{> forkme}}
+    {{> main}}
+</body>
+
+<template name="forkme">
+    <a href="https://github.com/mizzao/meteor-sharejs">
+        <img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png" alt="Fork me on GitHub">
+    </a>
+</template>
+
+<template name="main">
+    <div class="container full-height">
+        <div class="row upper">
+            <div class="col-xs-3 full-height">
+                {{> docList}}
+            </div>
+            <div class="col-xs-9 editor-container full-height">
+                {{> editor}}
+            </div>
+        </div>
+        <div class="row footer">
+            <div class="col-xs-3">{{! placeholder}}</div>
+            <div class="col-xs-9">
+                <h3>Edit from multiple browsers for maximum wow!</h3>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="docList">
+    <h3>Pick a document...</h3>
+    <ul class="nav nav-pills nav-stacked" id="list">
+    {{#each documents}}
+    {{> docItem}}
+    {{/each}}
+    </ul>
+    <h3>...or start a new one:</h3>
+    <button class="btn btn-warning">New document</button>
+</template>
+
+<template name="docItem">
+    <li class="{{#if current}}active{{/if}}">
+         <a href="#">{{title}}</a>
+    </li>
+</template>
+
+<template name="editor">
+    {{#with docid}}
+        {{> docTitle this}}
+        {{#if textarea}}
+            {{> sharejsText docid=this id="editor"}}
+        {{else}}
+            {{> sharejsAce docid=this onRender=config id="editor"}}
+        {{/if}}
+    {{/with}}
+</template>
+
+<template name="docTitle">
+    <div class="navbar navbar-default">
+        <form class="navbar-form pull-left">
+            <input class="form-control" type="text" name="title" value="{{title}}">
+            <button class="btn btn-danger btn-small">Delete this document</button>
+        </form>
+        <form class="navbar-form pull-right">
+            <label class="radio-inline">
+                <input type="radio" name="editor" value="ace" checked={{editorType "ace"}}> Ace Editor
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="editor" value="textarea" checked={{editorType "textarea"}}>Textarea
+            </label>
+        </form>
+    </div>
+</template>
