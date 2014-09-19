@@ -24,7 +24,7 @@ standard-app-packages
 meteor
 belisarius222:event-horizon@0.1.1
 iron:router
-meteorhacks:kadira@2.7.2
+meteorhacks:kadira@2.7.3
 mizzao:timesync
 dwatson:kue
 mizzao:sharejs
