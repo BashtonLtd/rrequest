@@ -50,7 +50,7 @@
 </template>
 
 <template name="createIncidentDialog">
-  <div class="mask"> </div>
+  <div id="createIncidentDialog" class="mask"> </div>
   <div class="modal">
     <div class="modal-header">
       <button type="button" class="close cancel">&times;</button>
@@ -75,7 +75,7 @@
 
     <div class="modal-footer">
       <a href="#" class="btn cancel">Cancel</a>
-      <a href="#" class="btn btn-primary save">Create</a>
+      <a href="#" id="save" class="btn btn-primary save">Create</a>
     </div>
   </div>
 </template>
@@ -118,11 +118,11 @@
     <div class="modal-body">
       <input type="hidden" id="sortfieldvarname" value="sortfield-incidents">
       <input type="hidden" id="sortordervarname" value="sortorder-incidents">
-      <div id="sortoldest" class="{{sort_selected 'modified' '1'}} sortrow">
+      <div id="sortoldest" class="{{sort_selected_incidents 'modified' '1'}} sortrow">
         <span id="sortoldest" class="ticket-item-icon"><i class="icon-arrow-up" id="sortoldest"></i> Oldest First</span>
       </div>
       <div class="clearfix"></div>
-      <div id="sortnewest" class="{{sort_selected 'modified' '-1'}} sortrow">
+      <div id="sortnewest" class="{{sort_selected_incidents 'modified' '-1'}} sortrow">
         <span id="sortnewest" class="ticket-item-icon"><i class="icon-arrow-down" id="sortnewest"></i> Newest First</span>
       </div>
       <div class="clearfix"></div>

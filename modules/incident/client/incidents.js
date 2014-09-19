@@ -19,6 +19,8 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
+Session.setDefault("showCreateIncidentDialog", false);
+
 Template.incidents.events({
   'click .new-incident': function (event) {
     openCreateIncidentDialog();
@@ -68,12 +70,10 @@ var get_groups = function (query_opts) {
 };
 
 Template.createIncidentDialog.events({
-  'click .save': function (event, template) {
+  'click #save': function (event, template) {
     var currentuser = Meteor.users.findOne({_id:Meteor.userId()});
     var subject = template.find(".subject").value;
     var groups = $(".incidentgroup").select2('val');
-    // Tickets selector here, or maybe just forward to the incident page and add tickets from there.
-
 
     var args = {
       subject: subject,
@@ -83,6 +83,7 @@ Template.createIncidentDialog.events({
 
     Meteor.call('createIncident', args, function (error, incidentId) {
       if (! error) {
+        Session.set("showCreateIncidentDialog", false);
         Router.go('incident', {_id: incidentId});
       } else {
         console.log('CreateIncident Error: ' + error);
@@ -132,6 +133,14 @@ var incident_states = function() {
     return states;
 };
 
+UI.registerHelper('sort_selected_incidents', function (field, order) {
+  if (order == Session.get('sortorder-incidents') && field == Session.get('sortfield-incidents')) {
+    return 'sortselected';
+  } else {
+    return 'sortunselected';
+  }
+});
+
 Template.incidentFilterChoices.states = function() {
   var statelist = [];
   var states = incident_states();
@@ -175,11 +184,11 @@ Template.incidentSortFields.events({
   },
 
   'click .sortrow': function (event, template) {
-    Session.set('sortfield-groupsTickets', 'modified');
+    Session.set('sortfield-incidents', 'modified');
     if ($(event.target).context.id == 'sortnewest') {
-      Session.set('sortorder-groupsTickets', -1);
+      Session.set('sortorder-incidents', -1);
     } else {
-      Session.set('sortorder-groupsTickets', 1);
+      Session.set('sortorder-incidents', 1);
     }
   }
 });

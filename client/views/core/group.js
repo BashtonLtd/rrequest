@@ -297,14 +297,14 @@ Template._collectionList.collectionReady = function() {
 };
 
 Template._collectionList.events({
-  'click .load-more': function(event) {
-    event.preventDefault();
-    collectionSub.loadNextPage();
-  },
-
   'input .searchfilter': function (event, template) {
     var searchterm = template.find(".searchfilter").value;
     Session.set('search-'+listname, searchterm);
+  },
+
+  'click .load-more': function(event, template) {
+    event.preventDefault();
+    collectionSub.loadNextPage();
   },
 
   'click .sortorder': function (event, template) {
