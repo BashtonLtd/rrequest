@@ -19,16 +19,23 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-Router.map(function() {
-  this.route('eventlog', {
-    path: '/eventlog',
-    onAfterAction: function() {
-      var site_name = get_sitename();
-      if (site_name !== undefined) {
-        document.title = site_name + ': ' + this.route.name;
-      } else {
-        document.title = this.route.name;
-      }
+var LocalBeforeHooks = {
+    subscribeEventlog: function () {
+        Meteor.subscribe("eventlog");
+        Meteor.subscribe("eventlogsettings");
     }
-  });
-});
+};
+
+var LocalAfterHooks = {
+    setPageTitle: function () {
+        var site_name = get_sitename();
+        if (site_name !== undefined) {
+            document.title = site_name + ': ' + this.route.name;
+        } else {
+            document.title = this.route.name;
+        }
+    }
+};
+
+Router.onBeforeAction(LocalBeforeHooks.subscribeEventlog, {only: ['settings', 'eventlog']});
+Router.onAfterAction(LocalAfterHooks.setPageTitle, {only: ['eventlog']})

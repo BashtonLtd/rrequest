@@ -285,7 +285,7 @@ var incidentstart = function (incident, tickets) {
 	};
 };
 
-var incidentresolved = function (tickets) {
+incidentresolved = function (tickets) {
 	var incident_resolved = true;
 	var incident_resolved_date = 0;
 	tickets.forEach(function (ticket) {

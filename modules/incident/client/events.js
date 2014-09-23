@@ -20,17 +20,21 @@
  *
 */
 EventHorizon.on('modulescollectionready', function(){
-  module_enabled = Modules.findOne({name:'incident'}).enabled;
-  if (module_enabled) {
-    var nav = Session.get('navbar');
-    nav = _.extend([], nav);
-    nav.push({
-      name: 'incident',
-      pageurl: '/incidents',
-      display_name: 'Incidents',
-      user_level: 'loggedin'
-    });
-    Session.set('navbar', nav);
-  }
+    module_enabled = Modules.findOne({name:'incident'}).enabled;
+    if (module_enabled) {
+        var nav = Session.get('navbar');
+        var exists = _.find(nav, function(item) {
+            return item.name == 'incident';
+        });
+        if (exists === undefined) {
+            nav = _.extend([], nav);
+            nav.push({
+                name: 'incident',
+                pageurl: '/incidents',
+                display_name: 'Incidents',
+                user_level: 'loggedin'
+            });
+        Session.set('navbar', nav);
+        }
+    }
 });
-

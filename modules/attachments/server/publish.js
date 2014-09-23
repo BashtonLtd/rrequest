@@ -19,7 +19,7 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-Meteor.publish('attachments', function() {
+Meteor.publish('attachments', function(ticketId) {
   var user = Meteor.users.findOne({_id: this.userId});
   var usergroups = Groups.find({members: {$in: [this.userId]}});
   var groupids = [];
@@ -30,7 +30,7 @@ Meteor.publish('attachments', function() {
   if (user && user.profile.isStaff) {
     return Attachments.find();
   } else {
-    return Attachments.find({$or: [{group: {$in: groupids}}, {requesters: {$in: [this.userId]}}]});
+    return Attachments.find({$or: [{group: {$in: groupids}}, {requesters: {$in: [this.userId]}}, {'metadata.ticketId': ticketId}]});
   }
 });
 

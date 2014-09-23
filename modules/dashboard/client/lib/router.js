@@ -20,15 +20,27 @@
  *
 */
 Router.map(function() {
-  this.route('dashboard', {
-    path: '/dashboard',
-    onAfterAction: function() {
-      var site_name = get_sitename();
-      if (site_name !== undefined) {
-        document.title = site_name + ': ' + this.route.name;
-      } else {
-        document.title = this.route.name;
-      }
-    }
-  });
+    this.route('dashboard', {
+        path: '/dashboard',
+        onAfterAction: function() {
+            var site_name = get_sitename();
+            if (site_name !== undefined) {
+                document.title = site_name + ': ' + this.route.name;
+            } else {
+                document.title = this.route.name;
+            }
+        },
+        onBeforeAction: function() {
+            Meteor.subscribe("userdashboard");
+            Meteor.subscribe('ticketstatus', function() {
+                var tstatus = TicketStatus.find({});
+                tstatus.forEach(function(status) {
+                    var name = status.name;
+                    Meteor.subscribe("counts-by-ticketstate", name, function() {
+                        Session.set(name + 'ticketcountready', name);
+                    });
+                });
+            });
+        }
+    });
 });

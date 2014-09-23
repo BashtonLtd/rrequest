@@ -71,14 +71,6 @@ Template.gridster.events({
 
 Template.gridster.helpers({
   widgets: function() {
-    var tstatus = TicketStatus.find({});
-    tstatus.forEach(function(status) {
-      var name = status.name;
-      Meteor.subscribe("counts-by-ticketstate", name, function() {
-        Session.set(name + 'ticketcountready', name);
-      });
-    });
-
     var widgets = UserDashboard.find({}, {sort: {row: 1}});
     var display_widgets = [];
     widgets.forEach(function(widget) {
@@ -105,16 +97,8 @@ Template.widget.widget_data = function () {
 
 store_positions = function(data) {
   data.forEach(function(widget) {
-    //Meteor.call('updateUserDashboard', {
-    //  id: widget.id,
-    //  col: widget.position.col,
-    //  row: widget.position.row
-    //}, function(error, widgetId) {
-    //
-    //});
     UserDashboard.update({_id: widget.id}, {$set: {col: widget.position.col, row: widget.position.row}});
   });
-  //$(".gridster ul").gridster().data('gridster');
 };
 
 Template.selectWidgetDialog.events({

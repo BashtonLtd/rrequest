@@ -97,6 +97,29 @@ Template.createIncidentDialog.events({
   }
 });
 
+Template.incidentrow.incidentstatus = function () {
+    var incident = Incidents.findOne({_id: this._id});
+    if (incident !== undefined) {
+        var status = {
+            _id: 'idopen',
+            name: 'open',
+            icon: 'icon-arrow-down',
+            colour: 'bd2c00'
+        };
+        var attached_tickets = Tickets.find({_id: {$in: incident.tickets}}, {sort: {'created': 1}});
+        var incident_data = incidentresolved(attached_tickets);
+        if (incident_data.resolved) {
+            status = {
+                _id: 'idresolved',
+                name: 'resolved',
+                icon: 'icon-ok',
+                colour: '60b044'
+            }
+        }
+        return status;
+    }
+}
+
 Template.incidents.incidents_data = function () {
   return {
     listLabel: "Incidents",

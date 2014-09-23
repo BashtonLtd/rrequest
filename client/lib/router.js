@@ -80,6 +80,19 @@ BeforeHooks = {
     } else {
       this.render('home');
     }
+  },
+  globalSubscriptions: function() {
+      Meteor.subscribe('currentUser');
+      Meteor.subscribe('allUsers');
+      Meteor.subscribe('groups');
+      Meteor.subscribe('hooks');
+      Meteor.subscribe('settings');
+      Meteor.subscribe('modules', function() {
+        EventHorizon.fire('modulescollectionready');
+      });
+  },
+  ticketsSubscriptions: function() {
+      Meteor.subscribe('ticketstatus');
   }
 };
 
@@ -94,6 +107,8 @@ Router.onBeforeAction(BeforeHooks.resetScroll);
 Router.onBeforeAction(BeforeHooks.requireAdmin, {only: ['users', 'settings']});
 Router.onBeforeAction(BeforeHooks.requireStaff, {only: ['groups']});
 Router.onBeforeAction(BeforeHooks.redirectToTickets, {only: ['home']});
+Router.onBeforeAction(BeforeHooks.globalSubscriptions, {except: []});
+Router.onBeforeAction(BeforeHooks.ticketsSubscriptions, {only: ['tickets', 'ticket', 'group']});
 
 get_sitename = function () {
   site_name_setting = Settings.findOne({name: 'site_name'});
@@ -143,6 +158,13 @@ Router.map(function() {
       } else {
         document.title = site_name + ': ' + this.route.name;
       }
+    },
+    waitOn: function () {
+        return [
+            Meteor.subscribe('singleTicket', Session.get('viewticketId')),
+            Meteor.subscribe('unpostedReply', Session.get('viewticketId')),
+            Meteor.subscribe('attachments', Session.get('viewticketId'))
+        ];
     }
   });
 

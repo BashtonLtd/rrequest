@@ -19,6 +19,18 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
+var LocalBeforeHooks = {
+    subscribeIncidentsSettings: function () {
+        Meteor.subscribe("incidentsettings");
+    },
+    subscribeIncidents: function () {
+        Meteor.subscribe("incidents");
+    }
+};
+
+Router.onBeforeAction(LocalBeforeHooks.subscribeIncidentsSettings, {only: ['settings']});
+Router.onBeforeAction(LocalBeforeHooks.subscribeIncidents, {only: ['incidnets']});
+
 Router.map(function() {
     this.route('incidents', {
         path: '/incidents',
@@ -39,6 +51,11 @@ Router.map(function() {
         },
         onBeforeAction: function () {
             this.subscribe('singleIncident', Session.get('incidentId')).wait();
+            this.subscribe(
+                'sortedTickets',
+                {sort: {'created': -1}},
+                {_id: {$in: Session.get('incidentTickets')}}
+            )
         },
         onAfterAction: function() {
             var site_name = get_sitename();

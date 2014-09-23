@@ -20,17 +20,22 @@
  *
 */
 EventHorizon.on('modulescollectionready', function(){
-  module_enabled = Modules.findOne({name:'dashboard'}).enabled;
-  if (module_enabled) {
-    var nav = Session.get('navbar');
-    nav = _.extend([], nav);
-    nav.unshift({
-      name: 'dashboard',
-      pageurl: '/dashboard',
-      display_name: 'Dashboard',
-      user_level: 'staff'
-    });
-    Session.set('navbar', nav);
-  }
-});
+    module_enabled = Modules.findOne({name:'dashboard'}).enabled;
+    if (module_enabled) {
+        var nav = Session.get('navbar');
 
+        var exists = _.find(nav, function(item) {
+            return item.name == 'dashboard';
+        });
+        if (exists === undefined) {
+            nav = _.extend([], nav);
+            nav.unshift({
+                name: 'dashboard',
+                pageurl: '/dashboard',
+                display_name: 'Dashboard',
+                user_level: 'staff'
+            });
+            Session.set('navbar', nav);
+        }
+    }
+});

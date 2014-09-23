@@ -73,12 +73,10 @@ Template.ticketreplybox.unposted_reply = function () {
     return reply;
   } else {
     var replydata = {ticket_id: Session.get('viewticketId'), level: user_level, body:'', created: new Date().getTime()};
-    if (Session.get('unpostedRepliesReady') === true) {
       var count = UnpostedReplies.find({ticket_id: Session.get('viewticketId'), level: user_level}).count();
       if (count === 0) {
         return UnpostedReplies.insert(replydata);
       }
-    }
   }
 };
 
