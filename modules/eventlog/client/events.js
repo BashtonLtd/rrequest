@@ -20,17 +20,22 @@
  *
 */
 EventHorizon.on('modulescollectionready', function(){
-  module_enabled = Modules.findOne({name:'eventlog'}).enabled;
-  if (module_enabled) {
-    var nav = Session.get('navbar');
-    nav = _.extend([], nav);
-    nav.push({
-      name: 'eventlog',
-      pageurl: '/eventlog',
-      display_name: 'Eventlog',
-      user_level: 'staff'
-    });
-    Session.set('navbar', nav);
-  }
-});
+    module_enabled = Modules.findOne({name:'eventlog'}).enabled;
+    if (module_enabled) {
+        var nav = Session.get('navbar');
 
+        var exists = _.find(nav, function(item) {
+            return item.name == 'eventlog';
+        });
+        if (exists === undefined) {
+            nav = _.extend([], nav);
+            nav.unshift({
+                name: 'eventlog',
+                pageurl: '/eventlog',
+                display_name: 'Eventlog',
+                user_level: 'staff'
+            });
+            Session.set('navbar', nav);
+        }
+    }
+});
