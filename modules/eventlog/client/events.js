@@ -29,7 +29,7 @@ EventHorizon.on('modulescollectionready', function(){
         });
         if (exists === undefined) {
             nav = _.extend([], nav);
-            nav.unshift({
+            nav.push({
                 name: 'eventlog',
                 pageurl: '/eventlog',
                 display_name: 'Eventlog',
