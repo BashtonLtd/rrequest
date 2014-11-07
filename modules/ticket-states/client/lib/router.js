@@ -22,6 +22,7 @@
 var LocalBeforeHooks = {
 	subscribeTicketStateSettings: function () {
 		Meteor.subscribe("ticketstatesettings");
+		Meteor.subscribe('ticketstatus');
 	}
 };
 

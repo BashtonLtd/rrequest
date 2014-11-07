@@ -25,17 +25,27 @@ Template.ticketpriority_ticket_create_form_field.ticketpriority = function () {
 };
 
 Template.ticketpriority_ticket_create_form_field.helpers({
-  selectedpriority: function(priority) {
-    var settings = TicketPrioritySettings.findOne();
-    if (settings.default_priority == priority) {
-      return 'selected';
-    }
-  },
+    selectedpriority: function(priority) {
+        var settings = TicketPrioritySettings.findOne();
+        if (settings.default_priority == priority) {
+            return 'selected';
+        }
+    },
 
-  defaultpriority: function() {
-    var settings = TicketPrioritySettings.findOne();
-    return settings.default_priority;
-  }
+    defaultpriority: function() {
+        var settings = TicketPrioritySettings.findOne();
+        return settings.default_priority;
+    },
+
+    P1Allowed: function() {
+        var user = Meteor.users.findOne({_id: Meteor.userId()});
+        if (user !== undefined) {
+            if (user.profile.pagerduty_blockedP1 == "true") {
+                return false;
+            }
+        }
+        return true;
+    }
 });
 
 Template.ticketpriority_ticket_edit_form_field.ticketpriority = function () {

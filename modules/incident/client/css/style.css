@@ -251,32 +251,65 @@
 
 .cbp_hztimeline > li .new {
   background: #bd2c00;
+  background: linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(189, 044, 000, 1.0) 34%,
+      rgba(189, 044, 000, 1.0) 70%,
+      rgba(108, 026, 001, 1.0) 100%) !important;
 }
 
 .cbp_hztimeline > li .open {
   left: 50% !important;
   background: #ff9933 !important;
+  background: linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(255, 153, 051, 1.0) 34%,
+      rgba(255, 153, 051, 1.0) 70%,
+      rgba(176, 103, 030, 1.0) 100%) !important;
 }
 
 .cbp_hztimeline > li .resolved {
   left: 85% !important;
   background: #60b044 !important;
+  background: linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(096, 176, 068, 1.0) 34%,
+      rgba(096, 176, 068, 1.0) 70%,
+      rgba(056, 105, 039, 1.0) 100%) !important;
 }
 
 .cbp_hztimeline > .new:before {
   background: #bd2c00;
+  background: linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(189, 044, 000, 1.0) 34%,
+      rgba(189, 044, 000, 1.0) 100%) !important;
   left: 23% !important;
   width: 26% !important;
 }
 
 .cbp_hztimeline > .open:before {
   background: #ff9933;
+  background: linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(255, 153, 051, 1.0) 34%,
+      rgba(255, 153, 051, 1.0) 100%) !important;
   left: 58% !important;
   width: 26% !important;
 }
 
 .cbp_hztimeline > .resolved:before {
   background: #60b044;
+  background: linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(096, 176, 068, 1.0) 34%,
+      rgba(096, 176, 068, 1.0) 100%) !important;
 }
 
 .cbp_hztimeline > li:last-child:before {

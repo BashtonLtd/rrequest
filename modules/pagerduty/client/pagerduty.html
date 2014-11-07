@@ -1,0 +1,36 @@
+<template name="pagerduty_group_edit_form_field">
+	<label>Pagerduty Customer Reference</label>
+	<input type="text" name="pagerduty_custref" value="{{pagerduty_custref}}" class="pagerduty_custref span5">
+</template>
+
+<template name="pagerduty_user_edit_form_field">
+	<label>Block user from creating P1 tickets</label>
+	<input type="hidden" name="pagerduty_blockedP1" value="false">
+	{{#if pagerduty_blockedP1}}
+	<input type="checkbox" name="pagerduty_blockedP1" value="true" class="pagerduty_blockedP1 span5" checked="checked">
+	{{else}}
+	<input type="checkbox" name="pagerduty_blockedP1" value="true" class="pagerduty_blockedP1 span5">
+	{{/if}}
+</template>
+
+<template name="pagerduty_ticketlistitemfooter">
+	{{#if currentUser.profile.isStaff}}
+		{{#if isOpenP1Ticket ticketId}}
+			{{refreshEvery "1"}}
+			{{#with staffresponse ticketId}}
+				<span class="pagerduty label label-{{labeltype}}">{{time}}</span>
+			{{/with}}
+		{{/if}}
+	{{/if}}
+</template>
+
+<template name="pagerduty_tickettopright">
+	{{#if currentUser.profile.isStaff}}
+		{{#if isOpenP1Ticket ticketId}}
+			{{refreshEvery "1"}}
+			{{#with staffresponse ticketId}}
+				<span class="pagerduty label label-{{labeltype}}">{{time}}</span>
+			{{/with}}
+		{{/if}}
+	{{/if}}
+</template>

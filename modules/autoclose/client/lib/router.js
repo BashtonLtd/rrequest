@@ -19,11 +19,10 @@
 * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
-Router.map(function() {
-	this.route('settings', {
-		path: '/settings',
-		onBeforeAction: function() {
-			Meteor.subscribe("autoclosesettings");
+var LocalBeforeHooks = {
+		subscribeAutocloseSettings: function () {
+				Meteor.subscribe("autoclosesettings");
 		}
-	});
-});
+};
+
+Router.onBeforeAction(LocalBeforeHooks.subscribeAutocloseSettings, {only: ['settings']});

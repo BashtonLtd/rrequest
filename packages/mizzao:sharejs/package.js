@@ -1,7 +1,7 @@
 Package.describe({
   name: "mizzao:sharejs",
   summary: "server (& client library) to allow concurrent editing of any kind of content",
-  version: "0.6.0",
+  version: "0.6.1",
   git: "https://github.com/mizzao/meteor-sharejs.git"
 });
 
@@ -9,7 +9,7 @@ Npm.depends({
   share: "0.6.3",
   /*
       Mongo version used in 0.9 - we just use MongoInternals.
-      Grabbed from https://github.com/meteor/meteor/blob/devel/packages/mongo-livedata/package.js
+      Grabbed from https://github.com/meteor/meteor/blob/devel/packages/mongo/package.js
       Update this whenever we target a new Meteor version.
       This is necessary for ShareJS to require("mongodb") and not complain.
   */
@@ -47,8 +47,13 @@ function getFilesFromFolder(packageName, folder){
   }
   // save current working directory (something like "/home/user/projects/my-project")
   var cwd = process.cwd();
+
+  var isRunningFromApp = fs.existsSync(path.resolve("packages"));
+  var packagePath = isRunningFromApp ? path.resolve("packages", packageName) : "";
+
+  packagePath = path.resolve(packagePath);
   // chdir to our package directory
-  process.chdir(path.join("packages", packageName));
+  process.chdir(path.join(packagePath));
   // launch initial walk
   var result = walk(folder);
   // restore previous cwd
@@ -57,7 +62,7 @@ function getFilesFromFolder(packageName, folder){
 }
 
 Package.onUse(function (api) {
-  api.versionsFrom("METEOR@0.9.0");
+  api.versionsFrom("0.9.2.2");
 
   var _ = Npm.require("underscore");
 

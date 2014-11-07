@@ -113,42 +113,52 @@ Meteor.publish('singleTicket', function(id) {
 });
 
 Meteor.publish('sortedTickets', function(sort, filter, limit) {
-  var user = Meteor.users.findOne({_id: this.userId});
-  var usergroups = Groups.find({members: {$in: [this.userId]}});
-  var groupids = [];
-  usergroups.forEach(function(group){
-    groupids.push(group._id);
-  });
-  if (user !== undefined) {
-    if (user.profile.isStaff) {
-      filter.isVisible = {$ne: false};
-      return Tickets.find(filter, {sort: sort, limit: limit});
-    } else {
-      if (filter['$or'] !== undefined) {
-        var newfilter = {
-          isVisible: {$ne: false},
-          status: filter.status,
-          $and: [
-            {$or: [
-              {group: {$in: groupids}},
-              {'requesters.id': {$in: [this.userId]}}
-            ]},
-            {$or: filter['$or']}
-          ]
-        };
-      } else {
-        var newfilter = {
-          isVisible: {$ne: false},
-          status: filter.status,
-          $or: [
-            {group: {$in: groupids}},
-            {'requesters.id': {$in: [this.userId]}}
-          ]
+    var user = Meteor.users.findOne({_id: this.userId});
+    var usergroups = Groups.find({members: {$in: [this.userId]}});
+    var groupids = [];
+    usergroups.forEach(function(group){
+        groupids.push(group._id);
+    });
+    if (user !== undefined) {
+        if (user.profile.isStaff) {
+            filter.isVisible = {$ne: false};
+            return Tickets.find(filter, {sort: sort, limit: limit});
+        } else {
+            if (filter['$or'] !== undefined) {
+                if (filter.status !== undefined) {
+                    var newfilter = {
+                        isVisible: {$ne: false},
+                        status: filter.status,
+                        $and: [
+                            {$or: [
+                                {group: {$in: groupids}},
+                                {'requesters.id': {$in: [this.userId]}}
+                            ]},
+                            {$or: filter['$or']}
+                        ]
+                    };
+                } else {
+                    newfilter = filter;
+                    newfilter.isVisible = {$ne: false};
+                }
+            } else {
+                if (filter.status !== undefined) {
+                    var newfilter = {
+                        isVisible: {$ne: false},
+                        status: filter.status,
+                        $or: [
+                            {group: {$in: groupids}},
+                            {'requesters.id': {$in: [this.userId]}}
+                        ]
+                    };
+                } else {
+                    newfilter = filter;
+                    newfilter.isVisible = {$ne: false};
+                }
+            }
         }
-      }
-      return Tickets.find(newfilter, {sort: sort, limit:limit});
+    return Tickets.find(newfilter, {sort: sort, limit:limit});
     }
-  }
 });
 
 Meteor.publish("counts-by-ticketstate", function (state) {

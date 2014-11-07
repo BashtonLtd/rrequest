@@ -51,11 +51,6 @@ Router.map(function() {
         },
         onBeforeAction: function () {
             this.subscribe('singleIncident', Session.get('incidentId')).wait();
-            this.subscribe(
-                'sortedTickets',
-                {sort: {'created': -1}},
-                {_id: {$in: Session.get('incidentTickets')}}
-            )
         },
         onAfterAction: function() {
             var site_name = get_sitename();

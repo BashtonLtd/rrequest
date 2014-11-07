@@ -4,6 +4,7 @@ Future = Npm.require('fibers/future')
 
 ShareJS = ShareJS || {}
 # See docs for options. Uses mongo by default to enable persistence.
+
 ShareJS.init = ->
     # Using special options from https://github.com/share/ShareJS/blob/master/src/server/index.coffee
     options = _.extend {

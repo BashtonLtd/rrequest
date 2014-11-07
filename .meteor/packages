@@ -22,12 +22,11 @@ sacha:spin@2.0.4
 tmeasday:paginated-subscription@0.2.2
 standard-app-packages
 meteor
-belisarius222:event-horizon@0.1.1
 iron:router
-meteorhacks:kadira@2.7.3
+meteorhacks:kadira
 mizzao:timesync
 dwatson:kue
-mizzao:sharejs
+mizzao:sharejs@0.6.1
 dwatson:collectionfs
 dwatson:meteor-node-imap
 dwatson:html2markdown
@@ -36,4 +35,3 @@ dwatson:meteor-mailparser
 benjaminrh:bootstrap-timepicker
 meteorhacks:zones
 wizonesolutions:moment-duration-format
-

@@ -109,9 +109,9 @@ var getFilter = function() {
 	var incident = Incidents.findOne({_id: Session.get('incidentId')});
 	var searchfilter = Session.get('ticketsSearchfilter');
 
-	var groups = '';
+	var groups = [];
 	if (incident !== undefined) {
-		if (incident.groups !== undefined) {
+		if (incident.groups !== undefined || incident.groups.length > 0) {
 			groups = incident.groups;
 		}
 	}
@@ -119,14 +119,14 @@ var getFilter = function() {
 	var filter = {};
 	if (searchfilter === '' || searchfilter === undefined || searchfilter.length < 3) {
 		if (groups !== '') {
-			filter = {group: {$in: [groups]}}
+			filter = {group: {$in: groups}}
 		} else {
 			filter = {};
 		}
 	} else {
 		if (groups !== '') {
 			filter = {
-			group: {$in: [groups]},
+			group: {$in: groups},
 			$or:
 			[
 				{_id: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
@@ -285,57 +285,11 @@ var incidentstart = function (incident, tickets) {
 	};
 };
 
-incidentresolved = function (tickets) {
-	var incident_resolved = true;
-	var incident_resolved_date = 0;
-	tickets.forEach(function (ticket) {
-		if (ticket !== undefined) {
-			if (ticket.status == 'closed') {
-				if (ticket.resolved === undefined) {
-					if (moment(incident_resolved_date).unix() < moment(findLastReply([ticket]).created).unix()) {
-						incident_resolved_date = ticket.resolved;
-					}
-				} else {
-					if (moment(incident_resolved_date).unix() < moment(ticket.resolved).unix()) {
-						incident_resolved_date = ticket.resolved;
-					}
-				}
-			} else {
-				incident_resolved = false;
-			}
-		} else {
-			incident_resolved = false;
-		}
-	});
-	if (tickets.count() == 0) {
-		incident_resolved = false;
-	}
-
-	return {
-		resolved: incident_resolved,
-		date: incident_resolved_date
-	};
-};
-
 var getTimeSpan = function(startdate, enddate) {
 	return moment.preciseDiff(moment(startdate), moment(enddate));
 };
 
-var findLastReply = function (tickets) {
-	var last_reply = {};
-	tickets.forEach(function (ticket) {
-		for (var i = 0, l = _.size(ticket.replies); i < l; i++) {
-			if (ticket.replies[i].level == 'staff' || ticket.replies[i].level == 'system') {
-				if (last_reply.created === undefined || (moment(ticket.replies[i].created).unix() > moment(last_reply.created).unix())) {
-					last_reply = ticket.replies[i];
-				}
-			}
-		}
-	});
-	return last_reply;
-};
-
-var findFirstResponse = function (tickets) {
+findFirstResponse = function (tickets) {
 	var first_response = {};
 	var responded = false;
 	// find first staff response
@@ -454,23 +408,45 @@ Template.addTicket.events({
 Template.addTicket.tickets = function () {
 	var searchfilter = Session.get('ticketsSearchfilter');
 	var tickets;
-
-	if (searchfilter == '' || searchfilter == undefined || searchfilter.length < 3) {
-		tickets = Tickets.find({},
-		{sort: {created: -1}, limit: incidentAddTicketListSub.limit()}
-		);
-	} else {
-		tickets = Tickets.find(
-			{
-			$or:
-			[
-				{_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
-				{subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
-				{'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
-			]
-			},
-			{sort: {created: -1}, limit: incidentAddTicketListSub.limit()}
-		);
+	var incident = Incidents.findOne({_id: Session.get('incidentId')});
+	if (incident !== undefined) {
+		if (searchfilter == '' || searchfilter == undefined || searchfilter.length < 3) {
+			if (incident.groups !== undefined || incident.groups.length > 0) {
+				tickets = Tickets.find({group: {$in: incident.groups}},
+				{sort: {created: -1}, limit: incidentAddTicketListSub.limit()}
+				);
+			} else {
+				tickets = Tickets.find({},
+				{sort: {created: -1}, limit: incidentAddTicketListSub.limit()}
+				);
+			}
+		} else {
+			if (incident.groups !== undefined || incident.groups.length > 0) {
+				tickets = Tickets.find(
+					{group: {$in: incident.groups},
+					$or:
+					[
+						{_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
+						{subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+						{'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
+					]
+					},
+					{sort: {created: -1}, limit: incidentAddTicketListSub.limit()}
+				);
+			} else {
+				tickets = Tickets.find(
+					{
+					$or:
+					[
+						{_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
+						{subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+						{'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
+					]
+					},
+					{sort: {created: -1}, limit: incidentAddTicketListSub.limit()}
+				);
+			}
+		}
 	}
 	return tickets;
 };

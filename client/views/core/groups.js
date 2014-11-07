@@ -86,36 +86,44 @@ Template.createGroupDialog.events({
 });
 
 Template.editGroupDialog.rendered = function () {
-  $(".grouprequesters").select2({
-    placeholder: 'Select requesters',
-    data: get_requesters,
-    multiple: true,
-    tokenSeparators: [" "],
 
-    createSearchChoice:function(term, data) {
-      if ($(data).filter(function() {
-        return this.text.localeCompare(term) === 0;
-      }).length === 0) {
-        return {id:term, text: term, isNew: true};
-      }
-    },
+    var hooks = Hooks.find({hook:'group_edit_form_field'});
+    hooks.forEach(function (hook) {
+        UI.insert(UI.render
+            (Template[hook.template]),
+            $('#groupeditextrafields').get(0)
+        );
+    });
 
-    formatResult: function(term) {
-      if (term.isNew) {
-        return '<span class="label label-important">New</span> ' + term.text;
-      } else {
-        return term.text;
-      }
-    }
-  });
+    $(".grouprequesters").select2({
+        placeholder: 'Select requesters',
+        data: get_requesters,
+        multiple: true,
+        tokenSeparators: [" "],
 
-  var group_id = Session.get("selectedGroup");
-  var group = Groups.findOne({_id:group_id});
-  $(".grouprequesters").val(group.members).trigger("change");
+        createSearchChoice:function(term, data) {
+            if ($(data).filter(function() {
+                return this.text.localeCompare(term) === 0;
+            }).length === 0) {
+                return {id:term, text: term, isNew: true};
+            }
+        },
 
+        formatResult: function(term) {
+            if (term.isNew) {
+                return '<span class="label label-important">New</span> ' + term.text;
+            } else {
+                return term.text;
+            }
+        }
+    });
+
+    var group_id = Session.get("selectedGroup");
+    var group = Groups.findOne({_id:group_id});
+    $(".grouprequesters").val(group.members).trigger("change");
 };
 
-get_requesters = function (query_opts) {
+var get_requesters = function (query_opts) {
   var users = Meteor.users.find({"profile.isStaff": false});
   var requesters = [];
   users.forEach(function (user) {
@@ -137,7 +145,7 @@ Template.editGroupDialog.events({
 
     var existing_users = [];
     var new_users = [];
-    
+
     members.forEach(function (member){
       var user = Meteor.users.findOne({_id:member});
       if (user !== undefined) {
@@ -164,13 +172,23 @@ Template.editGroupDialog.events({
       });
     });
 
-    Meteor.call('updateGroup', {
-      _id: Session.get("selectedGroup"),
-      name: name,
-      members: existing_users
-    }, function (error, group) {
+    var extras = $('#groupeditextrafields').serializeArray();
+
+    var extrafields = [];
+    $.each(extras, function() {
+      extrafields.push({name: this.name, value: this.value || ''});
+    });
+
+    var args = {
+        _id: Session.get("selectedGroup"),
+        name: name,
+        members: existing_users,
+        extrafields: extrafields
+    };
+
+    Meteor.call('updateGroup', args, function (error, group) {
       if (! error) {
-    
+
       }
     });
     Session.set("showEditGroupDialog", false);

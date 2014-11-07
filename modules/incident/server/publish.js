@@ -32,12 +32,12 @@ Meteor.publish('incidents', function(sort, filter, limit) {
         if (filter['$or'] !== undefined) {
             var newfilter = {
                 $and: [
-                    {group: {$in: groupids}},
+                    {groups: {$in: groupids}},
                     {$or: filter['$or']}
                 ]
             };
         } else {
-            var newfilter = {group: {$in: groupids}}
+            var newfilter = {groups: {$in: groupids}}
         }
         return Incidents.find(newfilter, {sort: sort, limit: limit});
     }
@@ -53,7 +53,7 @@ Meteor.publish('singleIncident', function(id) {
         usergroups.forEach(function(group){
             groupids.push(group._id);
         });
-        return Incidents.find({_id: id, group: {$in: groupids}});
+        return Incidents.find({_id: id, groups: {$in: groupids}});
     }
 });
 

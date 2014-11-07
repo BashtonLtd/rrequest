@@ -1,0 +1,33 @@
+<template name="pagerdutysettings">
+    <div class="box">
+        <div class="box-header"></div>
+
+        <div class="box-body">
+            <label>AuthToken</label>
+            <form class="form-inline">
+                <input type="text" class="span4 pagerduty-settings-authtoken" value="{{authtoken}}">
+                <button class="btn generate-auth-token">Generate New Token</button>
+                <div class="help-block">Use {{url}} or {{urlsecure}} as the pagerduty webhook endpoint.</div>
+            </form>
+
+            <label>API Key</label>
+            <input type="text" class="span4 pagerduty-settings-apikey" value="{{apikey}}">
+            <div class="help-block">Used for requests to pagerduty.</div>
+
+            <label>Pagerduty subdomain</label>
+            <input type="text" class="span4 pagerduty-settings-subdomain" value="{{subdomain}}">
+
+            <label>Service Key</label>
+            <input type="text" class="span4 pagerduty-settings-servicekey" value="{{servicekey}}">
+            <div class="help-block">The service key used for sending alerts to.</div>
+        </div>
+
+        <div class="box-footer">
+            <div class="btn-group pull-right">
+                <button class="btn btn-primary pagerduty-settings-save"><i class="icon-ok icon-white"></i> Save</button>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+    </div>
+</template>

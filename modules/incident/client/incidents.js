@@ -20,6 +20,8 @@
  *
 */
 Session.setDefault("showCreateIncidentDialog", false);
+Session.setDefault("sortorder-incidents", -1);
+Session.setDefault("sortfield-incidents", "modified");
 
 Template.incidents.events({
   'click .new-incident': function (event) {
@@ -106,9 +108,8 @@ Template.incidentrow.incidentstatus = function () {
             icon: 'icon-arrow-down',
             colour: 'bd2c00'
         };
-        var attached_tickets = Tickets.find({_id: {$in: incident.tickets}}, {sort: {'created': 1}});
-        var incident_data = incidentresolved(attached_tickets);
-        if (incident_data.resolved) {
+
+        if (incident.status == 'resolved') {
             status = {
                 _id: 'idresolved',
                 name: 'resolved',

@@ -27,9 +27,12 @@
       <div class="ticket-subject">{{subject}}</div>
       <div class="box-topright" title="{{ticketcreated}}">{{#with ticketcreated}}{{>age}}{{/with}}</div>
       <div class="clearfix"></div>
+      <div class="box-topright">
       {{#each tickettopright _id}}
          {{> tickettopright_template}}
+         <div class="clearfix"></div>
       {{/each}}
+      </div>
 
     </div>
     <div class="box-body">

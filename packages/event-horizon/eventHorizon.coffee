@@ -1,23 +1,3 @@
-#if not Deps.isolate?
-#  _.extend Deps,
-#    isolate: `function (f) {
-#      if (! Deps.active)
-#        return f();
-#
-#      var resultDep = new Deps.Dependency;
-#      var origResult;
-#      Deps.autorun(function (c) {
-#        var result = f();
-#        if (c.firstRun)
-#          origResult = result;
-#        else if (!EJSON.equals(result, origResult))
-#          resultDep.changed();
-#      });
-#      Deps.depend(resultDep);
-#
-#      return origResult;
-#    }`
-
 EventHorizon = {}
 
 _.extend EventHorizon,
@@ -47,8 +27,8 @@ _.extend EventHorizon,
   fireOnChange: (eventName, func) ->
     self = this
 
-    listener = Deps.autorun (computation) ->
-      result = Deps.isolate func
+    listener = Tracker.autorun (computation) ->
+      result = Tracker.isolate func
 
       if not computation.firstRun
         self.fire eventName, result: result
@@ -58,8 +38,8 @@ _.extend EventHorizon,
   fireWhenEqual: (eventName, value, func) ->
     self = this
 
-    listener = Deps.autorun (computation) ->
-      result = Deps.isolate func
+    listener = Tracker.autorun (computation) ->
+      result = Tracker.isolate func
       if EJSON.equals result, value
         self.fire eventName
 

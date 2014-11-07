@@ -79,6 +79,11 @@ Meteor.methods({
       query = {"profile.name": options.name, isAdmin: false, "profile.isStaff": false};
     }
 
+    if (options.extrafields !== undefined && options.extrafields.length > 0) {
+        options.extrafields.forEach(function(item) {
+            query['profile.' + item.name] = item.value;
+        });
+    }
     return Meteor.users.update({_id: options._id},
       {$set: query}
     );
@@ -86,7 +91,7 @@ Meteor.methods({
 
   createAutoUser: function (email_address) {
     return createAutoUser(email_address);
-  } 
+  }
 });
 
 createAutoUser = function (email_address) {

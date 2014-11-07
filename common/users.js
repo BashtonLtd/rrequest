@@ -36,7 +36,7 @@ get_or_create_user = function(email_address) {
 };
 
 is_admin_by_id=function(userId){
-  var user = Meteor.users.findOne(userId);
+  var user = Meteor.users.findOne({_id: userId});
   return user && is_admin(user);
 };
 
@@ -48,7 +48,7 @@ is_admin=function(user){
 };
 
 is_staff_by_id=function(userId){
-  var user = Meteor.users.findOne(userId);
+  var user = Meteor.users.findOne({_id: userId});
   return user && is_staff(user);
 };
 

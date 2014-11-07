@@ -2,22 +2,22 @@
  * rrequest
  * http://www.rrequest.com/
  * (C) Copyright Bashton Ltd, 2013
- * 
+ *
  * This file is part of rrequest.
- * 
+ *
  * rrequest is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * rrequest is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
 */
 UI.registerHelper('ticketlistfooter_items', function() {
   var hooks = Hooks.find({hook:'ticketlistfooter_items'});
@@ -235,11 +235,11 @@ Template.tickets.helpers({
 });
 
 Template.tickets.events({
-  'click .new-ticket': function (event) {
+  'click .new-ticket': function (event, template) {
     openCreateTicketDialog();
   },
-  
-  'click .load-more': function(event) {
+
+  'click .load-more': function(event, template) {
     event.preventDefault();
     ticketListSub.loadNextPage();
   },
@@ -314,7 +314,7 @@ Template.createTicketDialog.rendered = function () {
 
 };
 
-get_requesters = function (query_opts) {
+var get_requesters = function (query_opts) {
   var currentuser = Meteor.users.findOne({_id:Meteor.userId()});
   var users = Meteor.users.find({"profile.isStaff": false});
   var requesters = [];
@@ -365,7 +365,7 @@ Template.createTicketDialog.events({
         });
       }
     }
-    
+
     var existing_users = [];
     var new_users = [];
     requesters.forEach(function (requester){
@@ -388,7 +388,7 @@ Template.createTicketDialog.events({
     $.each(extras, function() {
       extrafields.push({name: this.name, value: this.value || ''});
     });
- 
+
     var args = {
       subject: subject,
       requesters: existing_users,

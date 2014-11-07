@@ -68,6 +68,10 @@ insert_event = function(options) {
   if (options.user !== undefined) {
     user = options.user;
   }
+  var level = 'system';
+  if (options.level !== undefined) {
+    level = options.level;
+  }
 
   var reply = {
     _id: Random.id(),
@@ -75,7 +79,7 @@ insert_event = function(options) {
     status: 'posted',
     type: 'event',
     body: options.body,
-    level: 'system',
+    level: level,
     created: now
   };
 
@@ -154,6 +158,10 @@ create_reply = function(options) {
 
 sortByDate = function(obj1, obj2) {
   return new Date(obj2.created) < new Date(obj1.created) ? 1 : -1;
+};
+
+sortByDateString = function(obj1, obj2) {
+    return new Date(obj2.created_at) < new Date(obj1.created_at) ? 1 : -1;
 };
 
 sortByName = function(obj1, obj2) {

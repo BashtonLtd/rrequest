@@ -19,22 +19,4 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-EventHorizon.on('modulescollectionready', function(){
-    module_enabled = Modules.findOne({name:'incident'}).enabled;
-    if (module_enabled) {
-        var nav = Session.get('navbar');
-        var exists = _.find(nav, function(item) {
-            return item.name == 'incidents';
-        });
-        if (exists === undefined) {
-            nav = _.extend([], nav);
-            nav.push({
-                name: 'incidents',
-                pageurl: '/incidents',
-                display_name: 'Incidents',
-                user_level: 'loggedin'
-            });
-            Session.set('navbar', nav);
-        }
-    }
-});
+PagerdutySettings = new Meteor.Collection("pagerdutysettings");

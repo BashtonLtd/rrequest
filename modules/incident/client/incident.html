@@ -148,11 +148,12 @@
             {{/with}}
             <a href="/ticket/{{_id}}" class="js-navigation-open">{{subject}}</a>
 
-
-            {{#if confirmdelete}}
-            <button id="{{_id}}-confirm" class="btn btn-small btn-danger confirmremove-ticket ticketlist_button"><i class="icon-trash"></i> Confirm</button>
-            {{else}}
-            <button id="{{_id}}-remove" class="btn btn-small remove-ticket ticketlist_button"><i class="icon-trash"></i> Remove</button>
+            {{#if currentUser.profile.isStaff}}
+                {{#if confirmdelete}}
+                <button id="{{_id}}-confirm" class="btn btn-small btn-danger confirmremove-ticket ticketlist_button"><i class="icon-trash"></i> Confirm</button>
+                {{else}}
+                <button id="{{_id}}-remove" class="btn btn-small remove-ticket ticketlist_button"><i class="icon-trash"></i> Remove</button>
+                {{/if}}
             {{/if}}
 
             <div class="clearfix"></div>

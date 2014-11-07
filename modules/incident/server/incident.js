@@ -25,23 +25,24 @@ Meteor.startup(function (){
     name: 'incident',
     callback_enable: 'enable_incident_module',
     callback_disable: 'disable_incident_module',
-    description: 'Incident management module.'
+    description: 'Incident management module.',
+    depends: ['ticketpriority']
   }, function(error, module_id) {
-    if (!error) {
-
-    }
+    if (!error) {}
   });
 
   var module = Modules.findOne({name: 'incident'});
   if (module !== undefined && module.enabled) {
     Meteor.call('add_navbar_item', {
-      name: 'incident',
+      name: 'incidents',
       title: 'Incidents',
       url: 'incidents',
       user_level: 'loggedin'
     }, function(error, module_id) {
       if (!error) {}
     });
+
+    watch_tickets();
   }
 });
 
@@ -76,7 +77,11 @@ create_incident = function (options) {
   args.status = options.status;
   args.groups = options.groups;
   args.comments = [];
-  args.tickets = [];
+  if (options.tickets !== undefined) {
+      args.tickets = options.tickets;
+  } else {
+      args.tickets = [];
+  }
 
   return Incidents.insert(args);
 };
@@ -125,5 +130,36 @@ remove_incident_ticket = function (options) {
                 $set: {tickets: tickets}
             }
         );
+    }
+};
+
+incident_ticket_changed = function(id, fields) {
+    var ticket = Tickets.findOne({_id: id});
+    var incidents = Incidents.find({tickets: {$in: [id]}});
+    incidents.forEach(function(incident) {
+        var tickets = Tickets.find({_id: {$in: incident.tickets}}, {sort: {'created': 1}});
+        var incidentdata = incidentresolved(tickets);
+        if (incidentdata.resolved == false && incident.status == 'resolved') {
+            // update incident
+            bound_create_event_log({level:'INFO', tags:['incident'], message:'Incident tickets updated marking incident: ' + id + ' as open.'});
+            Incidents.update({_id: incident._id}, {$set: {status: 'open'}});
+            // also start monitoring for notes
+            pagerduty_check_notes(incident._id);
+        } else if (incidentdata.resolved == true && incident.status == 'open') {
+            // update incident
+            bound_create_event_log({level:'INFO', tags:['incident'], message:'Incident tickets updated marking incident: ' + id + ' as resolved.'});
+            Incidents.update({_id: incident._id}, {$set: {status: 'resolved'}});
+        }
+    });
+
+    // Raise alert if change is the first reply added to a requester created P1 ticket
+    if (ticket.requesters.length > 0 && !is_staff_by_id(ticket.requesters[0]) && ticket.priority == "1") {
+        if (fields.replies !== undefined) {
+            if (ticket.replies.length == 1 && !is_staff_by_id(fields.replies[0].posted_by)) {
+                if (fields.replies[0].notified === false) {
+                    pagerduty_create_alert(ticket);
+                }
+            }
+        }
     }
 };

@@ -20,9 +20,9 @@
 *
 */
 var LocalBeforeHooks = {
-		subscribeAPISettings: function () {
-				Meteor.subscribe("apisettings");
+		subscribePagerdutySettings: function () {
+				Meteor.subscribe("pagerdutysettings");
 		}
 };
 
-Router.onBeforeAction(LocalBeforeHooks.subscribeAPISettings, {only: ['settings']});
+Router.onBeforeAction(LocalBeforeHooks.subscribePagerdutySettings, {only: ['settings']});

@@ -88,31 +88,33 @@
 </template>
 
 <template name="editGroupDialog">
-  <div class="mask"> </div>
-  <div class="modal">
-    <div class="modal-header">
-      <button type="button" class="close cancel">&times;</button>
-      <h3>Edit group</h3>
+    <div class="mask"> </div>
+    <div class="modal">
+        <div class="modal-header">
+            <button type="button" class="close cancel">&times;</button>
+            <h3>Edit group</h3>
+        </div>
+
+        <div class="modal-body">
+            {{#if error}}
+            <div class="alert alert-error">{{error}}</div>
+            {{/if}}
+            <label>Name</label>
+            <input type="text" value="{{groupname}}" class="name span5">
+
+            <label>Requesters</label>
+            <input id="requesterlist" style="width:100%" type="hidden" class="grouprequesters"/>
+            <div class="help-block">To add a brand new requester, type their email address followed by a space.</div>
+
+            <form id="groupeditextrafields"></form>
+
+        </div>
+
+        <div class="modal-footer">
+            <a href="#" class="btn cancel">Cancel</a>
+            <a href="#" class="btn btn-primary save">Save</a>
+        </div>
     </div>
-
-    <div class="modal-body">
-      {{#if error}}
-        <div class="alert alert-error">{{error}}</div>
-      {{/if}}
-      <label>Name</label>
-      <input type="text" value="{{groupname}}" class="name span5">
-
-      <label>Requesters</label>          
-      <input id="requesterlist" style="width:100%" type="hidden" class="grouprequesters"/>
-      <div class="help-block">To add a brand new requester, type their email address followed by a space.</div>
-
-    </div>
-
-    <div class="modal-footer">
-      <a href="#" class="btn cancel">Cancel</a>
-      <a href="#" class="btn btn-primary save">Save</a>
-    </div>
-  </div>
 </template>
 
 <template name="deleteGroupDialog">

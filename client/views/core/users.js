@@ -2,22 +2,22 @@
  * rrequest
  * http://www.rrequest.com/
  * (C) Copyright Bashton Ltd, 2013
- * 
+ *
  * This file is part of rrequest.
- * 
+ *
  * rrequest is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * rrequest is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
 */
 Template.userlist.users = function () {
   return Meteor.users.find({}, {sort: {'profile.email': 1}});
@@ -87,6 +87,17 @@ Template.editUserDialog.usereditstaff = function () {
   return usereditstaff;
 };
 
+Template.editUserDialog.rendered = function () {
+
+    var hooks = Hooks.find({hook:'user_edit_form_field'});
+    hooks.forEach(function (hook) {
+        UI.insert(UI.render
+            (Template[hook.template]),
+            $('#usereditextrafields').get(0)
+        );
+    });
+};
+
 Template.editUserDialog.usereditrequester = function () {
   var user_id = Session.get("selectedUser");
   var user = Meteor.users.findOne({_id:user_id});
@@ -108,11 +119,21 @@ Template.editUserDialog.events({
     var profilename = template.find(".profilename").value;
     var userlevel = template.find(".active").value;
 
-    var user = Meteor.call('updateUser', {
-      _id: Session.get("selectedUser"),
-      name: profilename,
-      userlevel: userlevel
-    }, function (error, group) {
+    var extras = $('#usereditextrafields').serializeArray();
+
+    var extrafields = [];
+    $.each(extras, function() {
+      extrafields.push({name: this.name, value: this.value || ''});
+    });
+
+    var args = {
+        _id: Session.get("selectedUser"),
+        name: profilename,
+        userlevel: userlevel,
+        extrafields: extrafields
+    };
+
+    var user = Meteor.call('updateUser', args, function (error, group) {
       if (! error) {
 
       }
