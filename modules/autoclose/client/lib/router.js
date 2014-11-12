@@ -22,6 +22,7 @@
 var LocalBeforeHooks = {
 		subscribeAutocloseSettings: function () {
 				Meteor.subscribe("autoclosesettings");
+				this.next();
 		}
 };
 

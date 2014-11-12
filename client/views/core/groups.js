@@ -19,27 +19,20 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-Template.grouplist.groups = function () {
-  return Groups.find({}, {sort: {'name': 1}});
-};
+Template.grouplist.helpers({
+    membercount: function () {
+        var count = 0;
+        var group = Groups.findOne({_id:this._id});
+        if (group.members.length > 0) {
+            count = group.members.length;
+        }
+        return count;
+    },
 
-Template.groups.showCreateGroupDialog = function () {
-  return Session.get("showCreateGroupDialog");
-};
-
-Template.groups.events({
-  'click .new-group': function (evt) {
-    openCreateGroupDialog();
-  }
+    groups: function() {
+        return Groups.find({}, {sort: {'name': 1}});
+    }
 });
-
-Template.groups.showEditGroupDialog = function () {
-  return Session.get("showEditGroupDialog");
-};
-
-Template.groups.showDeleteGroupDialog = function () {
-  return Session.get("showDeleteGroupDialog");
-};
 
 Template.grouplist.events({
   'click .edit-group': function (evt) {
@@ -48,6 +41,26 @@ Template.grouplist.events({
 
   'click .delete-group': function (evt) {
     openDeleteGroupDialog(this._id);
+  }
+});
+
+Template.groups.helpers({
+    showCreateGroupDialog: function() {
+        return Session.get("showCreateGroupDialog");
+    },
+
+    showEditGroupDialog: function() {
+        return Session.get("showEditGroupDialog");
+    },
+
+    showDeleteGroupDialog: function() {
+        return Session.get("showDeleteGroupDialog");
+    }
+});
+
+Template.groups.events({
+  'click .new-group': function (evt) {
+    openCreateGroupDialog();
   }
 });
 
@@ -132,11 +145,31 @@ var get_requesters = function (query_opts) {
   return {results: requesters};
 };
 
-Template.editGroupDialog.groupname = function () {
-  var group_id = Session.get("selectedGroup");
-  var group = Groups.findOne({_id:group_id});
-  return group !== undefined ? group.name : '';
-};
+Template.editGroupDialog.helpers({
+    groupname: function() {
+        var group_id = Session.get("selectedGroup");
+        var group = Groups.findOne({_id:group_id});
+        return group !== undefined ? group.name : '';
+    },
+
+    groupMembers: function() {
+        var group_id = Session.get("selectedGroup");
+        var searchterm = Session.get("existingMemberSearchTerm");
+        var group = Groups.findOne({_id:group_id});
+        if (group !== undefined) {
+            return Meteor.users.find({$and: [{"profile.name": {$regex: ".*"+ searchterm +".*", $options: 'i'}}, {"profile.isStaff": false}, {_id: {$in: group.members}}]});
+        }
+    },
+
+    possibleGroupMembers: function() {
+        var group_id = Session.get("selectedGroup");
+        var searchterm = Session.get("availableMemberSearchTerm");
+        var group = Groups.findOne({_id:group_id});
+        if (group !== undefined) {
+            return Meteor.users.find({$and: [{"profile.name": {$regex: ".*"+ searchterm +".*", $options: 'i'}}, {"profile.isStaff": false}, {_id: {$nin: group.members}}]});
+        }
+    }
+});
 
 Template.editGroupDialog.events({
   'click .save': function (event, template) {
@@ -200,29 +233,13 @@ Template.editGroupDialog.events({
 
 });
 
-Template.editGroupDialog.groupMembers = function () {
-  var group_id = Session.get("selectedGroup");
-  var searchterm = Session.get("existingMemberSearchTerm");
-  var group = Groups.findOne({_id:group_id});
-  if (group !== undefined) {
-    return Meteor.users.find({$and: [{"profile.name": {$regex: ".*"+ searchterm +".*", $options: 'i'}}, {"profile.isStaff": false}, {_id: {$in: group.members}}]});
-  }
-};
-
-Template.editGroupDialog.possibleGroupMembers = function () {
-  var group_id = Session.get("selectedGroup");
-  var searchterm = Session.get("availableMemberSearchTerm");
-  var group = Groups.findOne({_id:group_id});
-  if (group !== undefined) {
-    return Meteor.users.find({$and: [{"profile.name": {$regex: ".*"+ searchterm +".*", $options: 'i'}}, {"profile.isStaff": false}, {_id: {$nin: group.members}}]});
-  }
-};
-
-Template.deleteGroupDialog.groupname = function () {
-  var group_id = Session.get("selectedGroup");
-  var group = Groups.findOne({_id:group_id});
-  return group !== undefined ? group.name : '';
-};
+Template.deleteGroupDialog.helpers({
+    groupname: function() {
+        var group_id = Session.get("selectedGroup");
+        var group = Groups.findOne({_id:group_id});
+        return group !== undefined ? group.name : '';
+    }
+});
 
 Template.deleteGroupDialog.events({
   'click .save': function (event, template) {
@@ -232,16 +249,5 @@ Template.deleteGroupDialog.events({
 
   'click .cancel': function () {
     Session.set("showDeleteGroupDialog", false);
-  }
-});
-
-Template.grouplist.helpers({
-  membercount: function () {
-    var count = 0;
-    var group = Groups.findOne({_id:this._id});
-    if (group.members.length > 0) {
-      count = group.members.length;
-    }
-    return count;
   }
 });

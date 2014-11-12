@@ -22,6 +22,7 @@
 var LocalBeforeHooks = {
 	subscribeComments: function () {
 		Meteor.subscribe("comments");
+		this.next();
 	}
 };
 

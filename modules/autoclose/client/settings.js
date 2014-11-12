@@ -23,7 +23,7 @@ Template.autoclosesettings.events({
   'click .autoclose-settings-save': function (event, template) {
     var inactivity_warning = template.find(".inactivity_warning").value;
     var close_period = template.find(".close_period").value;
-    
+
     Meteor.call('updateAutocloseSettings', {
       inactivity_warning: inactivity_warning,
       close_period: close_period
@@ -33,19 +33,21 @@ Template.autoclosesettings.events({
   }
 });
 
-Template.autoclosesettings.inactivity_warning = function() {
-  var settings = AutocloseSettings.findOne({});
-  if (settings !== undefined) {
-    return settings.inactivity_warning;
-  }
-};
+Template.autoclosesettings.helpers({
+    inactivity_warning: function() {
+        var settings = AutocloseSettings.findOne({});
+        if (settings !== undefined) {
+            return settings.inactivity_warning;
+        }
+    },
 
-Template.autoclosesettings.close_period = function() {
-  var settings = AutocloseSettings.findOne({});
-  if (settings !== undefined) {
-    return settings.close_period;
-  }
-};
+    close_period: function() {
+        var settings = AutocloseSettings.findOne({});
+        if (settings !== undefined) {
+            return settings.close_period;
+        }
+    }
+});
 
 autoclose_settings_page = function(args) {
   args = args || {};

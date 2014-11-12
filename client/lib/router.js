@@ -23,40 +23,37 @@
 BeforeHooks = {
   resetScroll: function () {
     Session.set('currentScroll', null);
+    this.next();
   },
-  requireAdmin: function(pause) {
+  requireAdmin: function() {
     if (Meteor.user()) {
       if (is_admin(Meteor.user())) {
         this.render(this.route.name);
       } else {
         this.render('not_allowed');
-        pause();
       }
     } else if (Meteor.loggingIn()) {
       this.render('loading');
-      pause();
     } else {
       this.render('not_allowed');
-      pause();
     }
+    this.next();
   },
-  requireStaff: function(pause) {
+  requireStaff: function() {
     if (Meteor.user()) {
       if (is_staff(Meteor.user())) {
         this.render(this.route.name);
       } else {
         this.render('not_allowed');
-        pause();
       }
     } else if (Meteor.loggingIn()) {
       this.render('loading');
-      pause();
     } else {
       this.render('not_allowed');
-      pause();
     }
+    this.next();
   },
-  redirectToTickets: function(pause) {
+  redirectToTickets: function() {
     if (Meteor.user()) {
       if (is_staff(Meteor.user())) {
         this.render(this.route.name);
@@ -76,10 +73,10 @@ BeforeHooks = {
       }
     } else if (Meteor.loggingIn()) {
       this.render('loading');
-      pause();
     } else {
       this.render('home');
     }
+    this.next();
   },
   globalSubscriptions: function() {
       Meteor.subscribe('currentUser');
@@ -90,9 +87,11 @@ BeforeHooks = {
       Meteor.subscribe('modules', function() {
         EventHorizon.fire('modulescollectionready');
       });
+      this.next();
   },
   ticketsSubscriptions: function() {
       Meteor.subscribe('ticketstatus');
+      this.next();
   }
 };
 
@@ -102,13 +101,14 @@ Router.configure({
   loadingTemplate: 'loading'
 });
 
+// hooks that are shared across several routes, should call this.next() and be listed first
 Router.onBeforeAction(BeforeHooks.resetScroll);
+Router.onBeforeAction(BeforeHooks.globalSubscriptions, {except: []});
+Router.onBeforeAction(BeforeHooks.ticketsSubscriptions, {only: ['tickets', 'ticket', 'group']});
 
 Router.onBeforeAction(BeforeHooks.requireAdmin, {only: ['users', 'settings']});
 Router.onBeforeAction(BeforeHooks.requireStaff, {only: ['groups']});
 Router.onBeforeAction(BeforeHooks.redirectToTickets, {only: ['home']});
-Router.onBeforeAction(BeforeHooks.globalSubscriptions, {except: []});
-Router.onBeforeAction(BeforeHooks.ticketsSubscriptions, {only: ['tickets', 'ticket', 'group']});
 
 get_sitename = function () {
   site_name_setting = Settings.findOne({name: 'site_name'});
@@ -148,8 +148,8 @@ Router.map(function() {
     path: '/ticket/:_id',
     onRun: function () {
       Session.set('viewticketId', this.params._id);
+      this.next();
     },
-    onBeforeAction: 'loading',
     onAfterAction: function() {
       var site_name = get_sitename();
       var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {reactive: false});
@@ -184,11 +184,11 @@ Router.map(function() {
     path: '/group/:_id',
     onRun: function () {
       Session.set('viewgroupId', this.params._id);
+      this.next();
     },
     waitOn: function () {
       return Meteor.subscribe("counts-by-group", this.params._id);
     },
-    onBeforeAction: 'loading',
     onAfterAction: function() {
       var site_name = get_sitename();
       var group = Groups.findOne({_id: Session.get('viewgroupId')}, {reactive: false});

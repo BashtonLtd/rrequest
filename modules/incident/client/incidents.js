@@ -29,19 +29,63 @@ Template.incidents.events({
   },
 });
 
-Template.incidentrow.isResolved = function(_id) {
-    var incident = Incidents.findOne({_id: _id});
-    if (incident !== undefined) {
-        if (incident.resolved !== undefined) {
-            return true;
+Template.incidentrow.helpers({
+    isResolved: function(_id) {
+        var incident = Incidents.findOne({_id: _id});
+        if (incident !== undefined) {
+            if (incident.resolved !== undefined) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    incidentstatus: function() {
+        var incident = Incidents.findOne({_id: this._id});
+        if (incident !== undefined) {
+            var status = {
+                _id: 'idopen',
+                name: 'open',
+                icon: 'icon-arrow-down',
+                colour: 'bd2c00'
+            };
+
+            if (incident.status == 'resolved') {
+                status = {
+                    _id: 'idresolved',
+                    name: 'resolved',
+                    icon: 'icon-ok',
+                    colour: '60b044'
+                }
+            }
+            return status;
         }
     }
-    return false;
-};
+});
 
-Template.incidents.showCreateIncidentDialog = function () {
-  return Session.get("showCreateIncidentDialog");
-};
+Template.incidents.helpers({
+    showCreateIncidentDialog: function() {
+        return Session.get("showCreateIncidentDialog");
+    },
+
+    incidents_data: function() {
+        return {
+            listLabel: "Incidents",
+            name: 'incidents',
+            collection: Incidents,
+            collectionFilterKey: '',
+            collectionFilterValue: '',
+            publication: 'incidents',
+            rowtemplate: 'incidentrow',
+            perpage: 10,
+            searchfields: '_id,subject',
+            sorttemplate: 'incidentSortFields',
+            filterrow: 'status',
+            filtertemplate: 'incidentFilterChoices',
+            footerhooks: 'incidentfooter_items'
+        };
+    }
+});
 
 var openCreateIncidentDialog = function () {
   Session.set('currentScroll',$(document).scrollTop());
@@ -99,46 +143,6 @@ Template.createIncidentDialog.events({
   }
 });
 
-Template.incidentrow.incidentstatus = function () {
-    var incident = Incidents.findOne({_id: this._id});
-    if (incident !== undefined) {
-        var status = {
-            _id: 'idopen',
-            name: 'open',
-            icon: 'icon-arrow-down',
-            colour: 'bd2c00'
-        };
-
-        if (incident.status == 'resolved') {
-            status = {
-                _id: 'idresolved',
-                name: 'resolved',
-                icon: 'icon-ok',
-                colour: '60b044'
-            }
-        }
-        return status;
-    }
-}
-
-Template.incidents.incidents_data = function () {
-  return {
-    listLabel: "Incidents",
-    name: 'incidents',
-    collection: Incidents,
-    collectionFilterKey: '',
-    collectionFilterValue: '',
-    publication: 'incidents',
-    rowtemplate: 'incidentrow',
-    perpage: 10,
-    searchfields: '_id,subject',
-    sorttemplate: 'incidentSortFields',
-    filterrow: 'status',
-    filtertemplate: 'incidentFilterChoices',
-    footerhooks: 'incidentfooter_items'
-  };
-};
-
 var incident_states = function() {
     states = [
       {
@@ -165,19 +169,21 @@ UI.registerHelper('sort_selected_incidents', function (field, order) {
   }
 });
 
-Template.incidentFilterChoices.states = function() {
-  var statelist = [];
-  var states = incident_states();
-  states.forEach(function(state) {
-    var idx = _.indexOf(Session.get('selectedfilterchoices-incidents'), state.name);
-      if (idx != -1) {
-        statelist.push(_.extend(state, {selected: 'filterunselected'}));
-      } else {
-        statelist.push(_.extend(state, {selected: 'filterselected'}));
-      }
-    });
-  return statelist;
-};
+Template.incidentFilterChoices.helpers({
+    states: function() {
+        var statelist = [];
+        var states = incident_states();
+        states.forEach(function(state) {
+            var idx = _.indexOf(Session.get('selectedfilterchoices-incidents'), state.name);
+            if (idx != -1) {
+                statelist.push(_.extend(state, {selected: 'filterunselected'}));
+            } else {
+                statelist.push(_.extend(state, {selected: 'filterselected'}));
+            }
+        });
+        return statelist;
+    }
+});
 
 Template.incidentFilterChoices.events({
   'click .cancel': function () {

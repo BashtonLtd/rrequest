@@ -19,13 +19,15 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-Template.eventlogsettings.showAddRuleDialog = function() {
-  return Session.get('showAddRuleDialog');
-};
+Template.eventlogsettings.helpers({
+    showAddRuleDialog: function() {
+        return Session.get('showAddRuleDialog');
+    },
 
-Template.eventlogsettings.eventrules = function() {
-  return EventlogSettings.find();
-};
+    eventrules: function() {
+        return EventlogSettings.find();
+    }
+});
 
 var openAddRuleDialog = function() {
   Session.set('showAddRuleDialog', true);

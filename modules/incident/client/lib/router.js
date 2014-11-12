@@ -22,14 +22,16 @@
 var LocalBeforeHooks = {
     subscribeIncidentsSettings: function () {
         Meteor.subscribe("incidentsettings");
+        this.next();
     },
     subscribeIncidents: function () {
         Meteor.subscribe("incidents");
+        this.next();
     }
 };
 
 Router.onBeforeAction(LocalBeforeHooks.subscribeIncidentsSettings, {only: ['settings']});
-Router.onBeforeAction(LocalBeforeHooks.subscribeIncidents, {only: ['incidnets']});
+Router.onBeforeAction(LocalBeforeHooks.subscribeIncidents, {only: ['incidents']});
 
 Router.map(function() {
     this.route('incidents', {
@@ -48,9 +50,11 @@ Router.map(function() {
         path: '/incident/:_id',
         onRun: function () {
             Session.set('incidentId', this.params._id);
+            this.next();
         },
         onBeforeAction: function () {
             this.subscribe('singleIncident', Session.get('incidentId')).wait();
+            this.next();
         },
         onAfterAction: function() {
             var site_name = get_sitename();

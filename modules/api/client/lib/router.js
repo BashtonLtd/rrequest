@@ -22,6 +22,7 @@
 var LocalBeforeHooks = {
 		subscribeAPISettings: function () {
 				Meteor.subscribe("apisettings");
+				this.next();
 		}
 };
 

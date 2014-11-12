@@ -37,33 +37,35 @@ Template.dashingsubmitsettings.events({
   }
 });
 
-Template.dashingsubmitsettings.host = function() {
-  var settings = DashingSubmitSettings.findOne({});
-  if (settings !== undefined) {
-    return settings.host;
-  }
-};
+Template.dashingsubmitsettings.helpers({
+    host: function() {
+        var settings = DashingSubmitSettings.findOne({});
+        if (settings !== undefined) {
+            return settings.host;
+        }
+    },
 
-Template.dashingsubmitsettings.port = function() {
-  var settings = DashingSubmitSettings.findOne({});
-  if (settings !== undefined) {
-    return settings.port;
-  }
-};
+    port: function() {
+        var settings = DashingSubmitSettings.findOne({});
+        if (settings !== undefined) {
+            return settings.port;
+        }
+    },
 
-Template.dashingsubmitsettings.path = function() {
-  var settings = DashingSubmitSettings.findOne({});
-  if (settings !== undefined) {
-    return settings.path;
-  }
-};
+    path: function() {
+        var settings = DashingSubmitSettings.findOne({});
+        if (settings !== undefined) {
+            return settings.path;
+        }
+    },
 
-Template.dashingsubmitsettings.auth_token = function() {
-  var settings = DashingSubmitSettings.findOne({});
-  if (settings !== undefined) {
-    return settings.auth_token;
-  }
-};
+    auth_token: function() {
+        var settings = DashingSubmitSettings.findOne({});
+        if (settings !== undefined) {
+            return settings.auth_token;
+        }
+    }
+});
 
 dashingsubmit_settings_page = function(args) {
   args = args || {};

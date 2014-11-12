@@ -19,63 +19,177 @@
 * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
-Template.incident.connectedtickets = function () {
-	var incident = Incidents.findOne({_id: Session.get('incidentId')});
-	if (incident !== undefined) {
-		// get tickets from tickets field
-		Meteor.subscribe(
-			'sortedTickets',
-			{sort: {'created': 1}},
-			{_id: {$in: incident.tickets}}
-		)
-		return Tickets.find({_id: {$in: incident.tickets}}, {sort: {'created': 1}});
-	}
-};
-
-Template.incident.subject = function () {
-	var incident = Incidents.findOne({_id: Session.get('incidentId')});
-	if (incident !== undefined) {
-		return incident.subject;
-	}
-};
-
-Template.incidentsummary.incidentsummary = function () {
-	var summary = {};
-	var incident = Incidents.findOne({_id: Session.get('incidentId')});
-	if (incident !== undefined) {
-		var attached_tickets = Tickets.find({_id: {$in: incident.tickets}}, {sort: {'created': 1}});
-		var incident_start_data = incidentstart(incident, attached_tickets);
-		summary.opendate = moment(incident_start_data.date).format('D/MM/YYYY');
-		summary.opentime = moment(incident_start_data.date).format('HH:mm:ss');
-
-		var first_response = findFirstResponse(attached_tickets);
-		summary.responded = first_response.responded;
-		if (summary.responded) {
-			summary.firstresponsetime = getTimeSpan(incident_start_data.date, first_response.event.eventFullDate);
+Template.incident.helpers({
+	connectedtickets: function() {
+		var incident = Incidents.findOne({_id: Session.get('incidentId')});
+		if (incident !== undefined) {
+			// get tickets from tickets field
+			Meteor.subscribe(
+				'sortedTickets',
+				{sort: {'created': 1}},
+				{_id: {$in: incident.tickets}}
+			)
+			return Tickets.find({_id: {$in: incident.tickets}}, {sort: {'created': 1}});
 		}
-		summary.responsedate = first_response.event.eventDate;
-		summary.responsetime = first_response.event.eventTime;
+	},
 
-		var resolved_data = incidentresolved(attached_tickets);
-		summary.resolved = resolved_data.resolved;
-		if (resolved_data.date == 0) {
-			summary.resolveddate = '';
-			summary.resolvedtime = '';
-		} else {
-			summary.resolveddate = moment(resolved_data.date).format('D/MM/YYYY');
-			summary.resolvedtime = moment(resolved_data.date).format('HH:mm:ss');
+	subject: function() {
+		var incident = Incidents.findOne({_id: Session.get('incidentId')});
+		if (incident !== undefined) {
+			return incident.subject;
+		}
+	},
+
+	showCreateIncidentComment: function() {
+		return Session.get('showCreateIncidentComment');
+	},
+
+	showAddTicket: function() {
+		return Session.get('showAddTicket');
+	},
+
+	timelineEvents: function() {
+		var incident = Incidents.findOne({_id: Session.get('incidentId')});
+		var events = [];
+		var hidden_events = [];
+
+		if (incident !== undefined) {
+			var attached_tickets = Tickets.find({_id: {$in: incident.tickets}}, {sort: {'created': 1}});
+			var incident_start_data = incidentstart(incident, attached_tickets);
+			hidden_events.push(incident_start_data.id);
+			events.push({
+				eventRawDate: moment(incident_start_data.date).unix(),
+				eventTypeClass: "new",
+				eventIconClass: "new",
+				eventType: "event",
+				eventDate: moment(incident_start_data.date).format('D/MM/YYYY'),
+				eventTime: moment(incident_start_data.date).format('HH:mm:ss'),
+				eventIcon: "icon-arrow-down",
+				eventHeaderText: incident_start_data.text
+			});
+
+			attached_tickets.forEach(function (ticket) {
+				if (ticket !== undefined) {
+					if (_.contains(hidden_events, ticket._id)) {
+						// don't add
+					} else {
+						events.push({
+							eventRawDate: moment(ticket.created).unix(),
+							eventTypeClass: "open",
+							eventIconClass: "open",
+							eventType: "event",
+							eventDate: moment(ticket.created).format('D/MM/YYYY'),
+							eventTime: moment(ticket.created).format('HH:mm:ss'),
+							eventIcon: "icon-asterisk",
+							eventHeaderText: "Ticket " + ticket.subject + " ( " + ticket._id + " ) opened."
+						});
+					}
+
+					// add resolved event if available
+					if (ticket.status == 'closed') {
+						var resolved_date = ticket.resolved;
+						if (ticket.resolved === undefined) {
+							resolved_date = findLastReply([ticket]).created;
+						}
+						events.push({
+							eventRawDate: moment(resolved_date).unix(),
+							eventTypeClass: "open",
+							eventIconClass: "open",
+							eventType: "event",
+							eventDate: moment(resolved_date).format('D/MM/YYYY'),
+							eventTime: moment(resolved_date).format('HH:mm:ss'),
+							eventIcon: "icon-asterisk",
+							eventHeaderText: "Ticket " + ticket.subject + " ( " + ticket._id + " ) closed."
+						});
+					}
+				}
+			});
+
+			// Add first reponse event
+			var first_response = findFirstResponse(attached_tickets);
+			if (first_response.responded) {
+				events.push(first_response.event);
+			}
+
+			incident.comments.forEach(function (comment) {
+				events.push({
+					_id: comment._id,
+					eventRawDate: moment(comment.timeline_date).unix(),
+					eventTypeClass: "open",
+					eventIconClass: "open",
+					eventType: "comment",
+					eventDate: moment(comment.timeline_date).format('D/MM/YYYY'),
+					eventTime: moment(comment.timeline_date).format('HH:mm:ss'),
+					eventIcon: "icon-comment",
+					eventHeaderText: "",
+					eventText: marked(comment.body),
+					eventRawText: comment.body,
+					eventHasButtons: true,
+					eventHasBody: true
+				});
+			});
+
+			var resolved_data = incidentresolved(attached_tickets);
+
+			if (resolved_data.resolved) {
+				events.push({
+					eventRawDate: moment(resolved_data.date).unix()+1,
+					eventTypeClass: "resolved",
+					eventIconClass: "resolved",
+					eventType: "event",
+					eventDate: moment(resolved_data.date).format('D/MM/YYYY'),
+					eventTime: moment(resolved_data.date).format('HH:mm:ss'),
+					eventIcon: "icon-ok",
+					eventHeaderText: "All related tickets closed."
+				});
+			}
+
 		}
 
-		var incident_end_date = resolved_data.date
-		if (!resolved_data.resolved) {
-			incident_end_date = new Date();
-		}
-
-		summary.totaltime = getTimeSpan(incident_start_data.date, incident_end_date);
-
+		events.sort(sortIncidentComments);
+		return events;
 	}
-	return summary;
-};
+});
+
+Template.incidentsummary.helpers({
+	incidentsummary: function() {
+		var summary = {};
+		var incident = Incidents.findOne({_id: Session.get('incidentId')});
+		if (incident !== undefined) {
+			var attached_tickets = Tickets.find({_id: {$in: incident.tickets}}, {sort: {'created': 1}});
+			var incident_start_data = incidentstart(incident, attached_tickets);
+			summary.opendate = moment(incident_start_data.date).format('D/MM/YYYY');
+			summary.opentime = moment(incident_start_data.date).format('HH:mm:ss');
+
+			var first_response = findFirstResponse(attached_tickets);
+			summary.responded = first_response.responded;
+			if (summary.responded) {
+				summary.firstresponsetime = getTimeSpan(incident_start_data.date, first_response.event.eventFullDate);
+			}
+			summary.responsedate = first_response.event.eventDate;
+			summary.responsetime = first_response.event.eventTime;
+
+			var resolved_data = incidentresolved(attached_tickets);
+			summary.resolved = resolved_data.resolved;
+			if (resolved_data.date == 0) {
+				summary.resolveddate = '';
+				summary.resolvedtime = '';
+			} else {
+				summary.resolveddate = moment(resolved_data.date).format('D/MM/YYYY');
+				summary.resolvedtime = moment(resolved_data.date).format('HH:mm:ss');
+			}
+
+			var incident_end_date = resolved_data.date
+			if (!resolved_data.resolved) {
+				incident_end_date = new Date();
+			}
+
+			summary.totaltime = getTimeSpan(incident_start_data.date, incident_end_date);
+
+		}
+		return summary;
+	}
+});
 
 UI.registerHelper('incidentopenfor', function() {
 	var incident = Incidents.findOne({_id: Session.get('incidentId')});
@@ -146,116 +260,6 @@ var getFilter = function() {
 		}
 	}
 	return filter;
-};
-
-Template.incident.showCreateIncidentComment = function () {
-	return Session.get('showCreateIncidentComment');
-};
-
-Template.incident.showAddTicket = function () {
-	return Session.get('showAddTicket');
-};
-
-Template.incident.timelineEvents = function () {
-	var incident = Incidents.findOne({_id: Session.get('incidentId')});
-	var events = [];
-	var hidden_events = [];
-
-	if (incident !== undefined) {
-		var attached_tickets = Tickets.find({_id: {$in: incident.tickets}}, {sort: {'created': 1}});
-		var incident_start_data = incidentstart(incident, attached_tickets);
-		hidden_events.push(incident_start_data.id);
-		events.push({
-			eventRawDate: moment(incident_start_data.date).unix(),
-			eventTypeClass: "new",
-			eventIconClass: "new",
-			eventType: "event",
-			eventDate: moment(incident_start_data.date).format('D/MM/YYYY'),
-			eventTime: moment(incident_start_data.date).format('HH:mm:ss'),
-			eventIcon: "icon-arrow-down",
-			eventHeaderText: incident_start_data.text
-		});
-
-		attached_tickets.forEach(function (ticket) {
-			if (ticket !== undefined) {
-				if (_.contains(hidden_events, ticket._id)) {
-					// don't add
-				} else {
-					events.push({
-						eventRawDate: moment(ticket.created).unix(),
-						eventTypeClass: "open",
-						eventIconClass: "open",
-						eventType: "event",
-						eventDate: moment(ticket.created).format('D/MM/YYYY'),
-						eventTime: moment(ticket.created).format('HH:mm:ss'),
-						eventIcon: "icon-asterisk",
-						eventHeaderText: "Ticket " + ticket.subject + " ( " + ticket._id + " ) opened."
-					});
-				}
-
-				// add resolved event if available
-				if (ticket.status == 'closed') {
-					var resolved_date = ticket.resolved;
-					if (ticket.resolved === undefined) {
-						resolved_date = findLastReply([ticket]).created;
-					}
-					events.push({
-						eventRawDate: moment(resolved_date).unix(),
-						eventTypeClass: "open",
-						eventIconClass: "open",
-						eventType: "event",
-						eventDate: moment(resolved_date).format('D/MM/YYYY'),
-						eventTime: moment(resolved_date).format('HH:mm:ss'),
-						eventIcon: "icon-asterisk",
-						eventHeaderText: "Ticket " + ticket.subject + " ( " + ticket._id + " ) closed."
-					});
-				}
-			}
-		});
-
-		// Add first reponse event
-		var first_response = findFirstResponse(attached_tickets);
-		if (first_response.responded) {
-			events.push(first_response.event);
-		}
-
-		incident.comments.forEach(function (comment) {
-			events.push({
-				_id: comment._id,
-				eventRawDate: moment(comment.timeline_date).unix(),
-				eventTypeClass: "open",
-				eventIconClass: "open",
-				eventType: "comment",
-				eventDate: moment(comment.timeline_date).format('D/MM/YYYY'),
-				eventTime: moment(comment.timeline_date).format('HH:mm:ss'),
-				eventIcon: "icon-comment",
-				eventHeaderText: "",
-				eventText: marked(comment.body),
-				eventRawText: comment.body,
-				eventHasButtons: true,
-				eventHasBody: true
-			});
-		});
-
-		var resolved_data = incidentresolved(attached_tickets);
-
-		if (resolved_data.resolved) {
-			events.push({
-				eventRawDate: moment(resolved_data.date).unix()+1,
-				eventTypeClass: "resolved",
-				eventIconClass: "resolved",
-				eventType: "event",
-				eventDate: moment(resolved_data.date).format('D/MM/YYYY'),
-				eventTime: moment(resolved_data.date).format('HH:mm:ss'),
-				eventIcon: "icon-ok",
-				eventHeaderText: "All related tickets closed."
-			});
-		}
-
-	}
-
-	events.sort(sortIncidentComments);
-	return events;
 };
 
 var incidentstart = function (incident, tickets) {
@@ -405,55 +409,57 @@ Template.addTicket.events({
 	}
 });
 
-Template.addTicket.tickets = function () {
-	var searchfilter = Session.get('ticketsSearchfilter');
-	var tickets;
-	var incident = Incidents.findOne({_id: Session.get('incidentId')});
-	if (incident !== undefined) {
-		if (searchfilter == '' || searchfilter == undefined || searchfilter.length < 3) {
-			if (incident.groups !== undefined || incident.groups.length > 0) {
-				tickets = Tickets.find({group: {$in: incident.groups}},
-				{sort: {created: -1}, limit: incidentAddTicketListSub.limit()}
-				);
-			} else {
-				tickets = Tickets.find({},
-				{sort: {created: -1}, limit: incidentAddTicketListSub.limit()}
-				);
-			}
-		} else {
-			if (incident.groups !== undefined || incident.groups.length > 0) {
-				tickets = Tickets.find(
-					{group: {$in: incident.groups},
-					$or:
-					[
-						{_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
-						{subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
-						{'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
-					]
-					},
+Template.addTicket.helpers({
+	tickets: function() {
+		var searchfilter = Session.get('ticketsSearchfilter');
+		var tickets;
+		var incident = Incidents.findOne({_id: Session.get('incidentId')});
+		if (incident !== undefined) {
+			if (searchfilter == '' || searchfilter == undefined || searchfilter.length < 3) {
+				if (incident.groups !== undefined || incident.groups.length > 0) {
+					tickets = Tickets.find({group: {$in: incident.groups}},
 					{sort: {created: -1}, limit: incidentAddTicketListSub.limit()}
-				);
-			} else {
-				tickets = Tickets.find(
-					{
-					$or:
-					[
-						{_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
-						{subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
-						{'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
-					]
-					},
+					);
+				} else {
+					tickets = Tickets.find({},
 					{sort: {created: -1}, limit: incidentAddTicketListSub.limit()}
-				);
+					);
+				}
+			} else {
+				if (incident.groups !== undefined || incident.groups.length > 0) {
+					tickets = Tickets.find(
+						{group: {$in: incident.groups},
+						$or:
+						[
+							{_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
+							{subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+							{'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
+						]
+						},
+						{sort: {created: -1}, limit: incidentAddTicketListSub.limit()}
+					);
+				} else {
+					tickets = Tickets.find(
+						{
+						$or:
+						[
+							{_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
+							{subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+							{'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
+						]
+						},
+						{sort: {created: -1}, limit: incidentAddTicketListSub.limit()}
+					);
+				}
 			}
 		}
-	}
-	return tickets;
-};
+		return tickets;
+	},
 
-Template.addTicket.subReady = function() {
-	return ! incidentAddTicketListSub.loading();
-};
+	subReady: function() {
+		return ! incidentAddTicketListSub.loading();
+	}
+});
 
 Template.createIncidentComment.events({
 	'click .cancel': function (event, template) {

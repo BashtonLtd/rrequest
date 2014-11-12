@@ -19,23 +19,23 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-Template.attachments.items = function(replyId) {
-  return Attachments.find({'metadata.replyId':replyId});
-};
-
 Template.attachments.helpers({
-  hasAttachments: function(replyId){
-    var attachments = Attachments.find({'metadata.replyId':replyId});
-    if (attachments.count() > 0) {
-      return true;
-    } else {
-      return false;
-    }
-  },
+    hasAttachments: function(replyId){
+        var attachments = Attachments.find({'metadata.replyId':replyId});
+        if (attachments.count() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    },
 
-  niceSize: function() {
-    return niceSize(this);
-  }
+    niceSize: function() {
+        return niceSize(this);
+    },
+
+    items: function(replyId) {
+        return Attachments.find({'metadata.replyId':replyId});
+    }
 });
 
 Template.attachments.events({
@@ -44,7 +44,6 @@ Template.attachments.events({
     window.location = '/filedownload/'+this._id;
   }
 });
-
 
 Template.replyentry_attachments.events({
   'change .fileUploader': function (event, template) {
@@ -70,23 +69,23 @@ Template.replyentry_attachments.events({
 });
 
 Template.replyentry_attachments.helpers({
-  Files: function(replyId) {
-    return Attachments.find({'metadata.replyId':replyId});
-  },
+    Files: function(replyId) {
+        return Attachments.find({'metadata.replyId':replyId});
+    },
 
-  progress : function() {
-    var filesProgress = Math.round(this.currentChunk / (this.countChunks - 1) * 100);
+    progress : function() {
+        var filesProgress = Math.round(this.currentChunk / (this.countChunks - 1) * 100);
 
-    if (this.complete) {
-      return { barstyle: 'progress-success', fileprogress: 100 };
-    } else {
-      return { barstyle: 'progress-info progress-striped active', fileprogress: filesProgress };
+        if (this.complete) {
+            return { barstyle: 'progress-success', fileprogress: 100 };
+        } else {
+            return { barstyle: 'progress-info progress-striped active', fileprogress: filesProgress };
+        }
+    },
+
+    niceSize: function() {
+        return niceSize(this);
     }
-  },
-
-  niceSize: function() {
-    return niceSize(this);
-  }
 });
 
 niceSize = function(item) {

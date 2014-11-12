@@ -118,51 +118,53 @@ Template.timeworked_groupstatbox.events({
   }
 });
 
-Template.timeworked_groupstatbox.getDateRange = function () {
-  if (Session.get('timeworkedstart') === undefined) {
-    var to = new Date();
-    to = new Date(to.getFullYear(),
-      to.getMonth(),
-      to.getDate(),
-      23,59,59);
-    var from = new Date(to.getTime() - 1000 * 60 * 60 * 24 * 28);
-    Session.set('timeworkedstart', from);
-    Session.set('timeworkedend', to);
-  }
-  var range = moment(Session.get('timeworkedstart')).twix(Session.get('timeworkedend'), true);
-  return range.format();
-};
+Template.timeworked_groupstatbox.helpers({
+    getDateRange: function() {
+        if (Session.get('timeworkedstart') === undefined) {
+            var to = new Date();
+            to = new Date(to.getFullYear(),
+                to.getMonth(),
+                to.getDate(),
+                23,59,59);
+            var from = new Date(to.getTime() - 1000 * 60 * 60 * 24 * 28);
+            Session.set('timeworkedstart', from);
+            Session.set('timeworkedend', to);
+        }
+        var range = moment(Session.get('timeworkedstart')).twix(Session.get('timeworkedend'), true);
+        return range.format();
+    },
 
-Template.timeworked_groupstatbox.dateclass = function () {
-  var rangelength = moment(Session.get('timeworkedstart')).twix(Session.get('timeworkedend'), true).format().length;
-  if (rangelength > 16) {
-    return 'statboxsubtext-small';
-  } else {
-    return 'statboxsubtext';
-  }
-};
+    dateclass: function() {
+        var rangelength = moment(Session.get('timeworkedstart')).twix(Session.get('timeworkedend'), true).format().length;
+        if (rangelength > 16) {
+            return 'statboxsubtext-small';
+        } else {
+            return 'statboxsubtext';
+        }
+    },
 
-Template.timeworked_groupstatbox.getTimeworked = function () {
-  var timeworked = GroupTimeworked.findOne();
+    getTimeworked: function() {
+        var timeworked = GroupTimeworked.findOne();
 
-  if (timeworked !== undefined) {
-    var hours = parseInt(timeworked.timeworked/60, 10);
-    if (hours < 10) {
-      hours = '0' + hours;
+        if (timeworked !== undefined) {
+            var hours = parseInt(timeworked.timeworked/60, 10);
+            if (hours < 10) {
+                hours = '0' + hours;
+            }
+            var minutes = timeworked.timeworked - (hours * 60);
+            if (minutes < 10) {
+                minutes = '0' + minutes;
+            }
+            return hours + ':' + minutes;
+        } else {
+            return '...';
+        }
+    },
+
+    showTimeworkedStatOptionsDialog: function() {
+        return Session.get('showTimeworkedStatOptionsDialog');
     }
-    var minutes = timeworked.timeworked - (hours * 60);
-    if (minutes < 10) {
-      minutes = '0' + minutes;
-    }
-    return hours + ':' + minutes;
-  } else {
-    return '...';
-  }
-};
-
-Template.timeworked_groupstatbox.showTimeworkedStatOptionsDialog = function () {
-  return Session.get('showTimeworkedStatOptionsDialog');
-};
+});
 
 Template.timeworkedStatOptionsDialog.rendered = function () {
   var to = new Date();

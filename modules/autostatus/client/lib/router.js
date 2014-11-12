@@ -22,6 +22,7 @@
 var LocalBeforeHooks = {
         subscribeAutoStatusSettings: function () {
                 Meteor.subscribe("autostatussettings");
+                this.next();
         }
 };
 

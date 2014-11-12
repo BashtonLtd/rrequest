@@ -20,25 +20,129 @@
  *
 */
 Session.set('showEditor', false);
-Template.ticketheader.ticketfooter_items = function() {
-  var hooks = Hooks.find({hook:'ticketfooter_items'});
-  return hooks;
-};
 
-Template.ticketheader.ticketfooter_items_template = function () {
-  return Template[this.template];
-};
+Template.ticketheader.helpers({
+    ticketfooter_items: function() {
+        var hooks = Hooks.find({hook:'ticketfooter_items'});
+        return hooks;
+    },
 
-Template.ticketreplybox.documentId = function () {
-    var user = Meteor.users.findOne({_id: Meteor.userId()});
-    var user_level = 'requester';
-    if (user !== undefined) {
-        if(user.profile.isStaff) {
-            user_level = 'staff';
-        }
+    ticketfooter_items_template: function() {
+        return Template[this.template];
+    },
+
+    tickettopright: function(ticketId) {
+        var items = [];
+        var hooks = Hooks.find({hook:'tickettopright'});
+        hooks.forEach(function (hook) {
+            hook.ticketId = ticketId;
+            items.push(hook);
+        });
+        return items;
+    },
+
+    tickettopright_template: function() {
+        return Template[this.template];
+    },
+
+    tickettopright_data: function() {
+        return {ticketId: this.ticketId, template: this.template};
     }
-    return Session.get('viewticketId') + '-' + user_level;
-};
+});
+
+Template.ticketreplybox.helpers({
+    documentId: function () {
+        var user = Meteor.users.findOne({_id: Meteor.userId()});
+        var user_level = 'requester';
+        if (user !== undefined) {
+            if(user.profile.isStaff) {
+                user_level = 'staff';
+            }
+        }
+        return Session.get('viewticketId') + '-' + user_level;
+    },
+
+    unposted_reply: function() {
+        var user = Meteor.users.findOne({_id: Meteor.userId()});
+        var user_level = 'requester';
+        if (user !== undefined) {
+            if(user.profile.isStaff) {
+                user_level = 'staff';
+            }
+        }
+        var reply = UnpostedReplies.findOne({ticket_id: Session.get('viewticketId'), level: user_level}, {sort: {created: 1}});
+        if (reply !== undefined) {
+            return reply;
+        } else {
+            var replydata = {ticket_id: Session.get('viewticketId'), level: user_level, body:'', created: new Date().getTime()};
+            var count = UnpostedReplies.find({ticket_id: Session.get('viewticketId'), level: user_level}).count();
+            if (count === 0) {
+                return UnpostedReplies.insert(replydata);
+            }
+        }
+    },
+
+    ticket_reply_button: function() {
+        var hooks = Hooks.find({hook:'ticket_reply_button'});
+        var buttons = [];
+        var user_id = Meteor.userId();
+        hooks.forEach(function (hook) {
+            if(window[hook.render]({userId:user_id})) {
+                buttons.push(hook);
+            }
+        });
+        return buttons;
+    },
+
+    replyentryformfields: function(replyId) {
+        var extraformfields = [];
+        var ticketId = Session.get('viewticketId');
+        var hooks = Hooks.find({hook:'ticket_reply_form_field'});
+        hooks.forEach(function (hook) {
+            hook.ticketId = ticketId;
+            hook.replyId = replyId;
+            extraformfields.push(hook);
+        });
+        return extraformfields;
+    },
+
+    replyentryformfields_template: function() {
+        return Template[this.data.template];
+    },
+
+    replyentryformfields_data: function() {
+        return {data: this};
+    },
+
+    replyentryfooter_items: function(replyId) {
+        var replyentryfooter_items = [];
+        var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
+
+        if (ticket !== undefined) {
+            var hooks = Hooks.find({hook:'replyentry_footer'});
+            hooks.forEach(function (hook) {
+                hook.ticketId = Session.get('viewticketId');
+                hook.replyId = replyId;
+                hook.groups = ticket.group;
+                hook.requester = Meteor.userId();
+                replyentryfooter_items.push(hook);
+            });
+        }
+        return replyentryfooter_items;
+    },
+
+    replyentryfooter_items_template: function() {
+        return Template[this.template];
+    },
+
+    replyentryfooter_items_data: function() {
+        return this;
+    },
+
+    showEditor: function() {
+        return Session.get('showEditor');
+    }
+});
 
 Template.ticketreplybox.rendered = function () {
     // Initially render the editor after a quick delay
@@ -60,64 +164,16 @@ Template.ticketreplybox.rendered = function () {
   }, 4000);
 };
 
-Template.ticketreplybox.unposted_reply = function () {
-  var user = Meteor.users.findOne({_id: Meteor.userId()});
-  var user_level = 'requester';
-  if (user !== undefined) {
-    if(user.profile.isStaff) {
-      user_level = 'staff';
+Template.ticket.helpers({
+    sidebaritems: function() {
+        var hooks = Hooks.find({hook:'ticket_sidebar'});
+        return hooks;
+    },
+
+    sidebaritems_template: function() {
+        return Template[this.template];
     }
-  }
-  var reply = UnpostedReplies.findOne({ticket_id: Session.get('viewticketId'), level: user_level}, {sort: {created: 1}});
-  if (reply !== undefined) {
-    return reply;
-  } else {
-    var replydata = {ticket_id: Session.get('viewticketId'), level: user_level, body:'', created: new Date().getTime()};
-      var count = UnpostedReplies.find({ticket_id: Session.get('viewticketId'), level: user_level}).count();
-      if (count === 0) {
-        return UnpostedReplies.insert(replydata);
-      }
-  }
-};
-
-Template.ticketreplybox.ticket_reply_button = function () {
-  var hooks = Hooks.find({hook:'ticket_reply_button'});
-  var buttons = [];
-  var user_id = Meteor.userId();
-  hooks.forEach(function (hook) {
-    if(window[hook.render]({userId:user_id})) {
-      buttons.push(hook);
-    }
-  });
-  return buttons;
-};
-
-Template.ticket.sidebaritems = function() {
-  var hooks = Hooks.find({hook:'ticket_sidebar'});
-  return hooks;
-};
-
-Template.ticket.sidebaritems_template = function () {
-  return Template[this.template];
-};
-
-Template.ticketheader.tickettopright = function(ticketId) {
-  var items = [];
-  var hooks = Hooks.find({hook:'tickettopright'});
-  hooks.forEach(function (hook) {
-    hook.ticketId = ticketId;
-    items.push(hook);
-  });
-  return items;
-};
-
-Template.ticketheader.tickettopright_template = function () {
-  return Template[this.template];
-};
-
-Template.ticketheader.tickettopright_data = function () {
-  return {ticketId: this.ticketId, template: this.template};
-};
+});
 
 UI.registerHelper('reply_header_items', function(replyId) {
   var header_items = [];
@@ -193,55 +249,6 @@ UI.registerHelper('isMuted', function(replytype) {
   }
 });
 
-Template.ticketreplybox.replyentryformfields = function(replyId) {
-  var extraformfields = [];
-  var ticketId = Session.get('viewticketId');
-  var hooks = Hooks.find({hook:'ticket_reply_form_field'});
-  hooks.forEach(function (hook) {
-    hook.ticketId = ticketId;
-    hook.replyId = replyId;
-    extraformfields.push(hook);
-  });
-  return extraformfields;
-};
-
-Template.ticketreplybox.replyentryformfields_template = function () {
-  return Template[this.data.template];
-};
-
-Template.ticketreplybox.replyentryformfields_data = function () {
-  return {data: this};
-};
-
-Template.ticketreplybox.replyentryfooter_items = function(replyId) {
-  var replyentryfooter_items = [];
-  var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
-
-  if (ticket !== undefined) {
-    var hooks = Hooks.find({hook:'replyentry_footer'});
-    hooks.forEach(function (hook) {
-      hook.ticketId = Session.get('viewticketId');
-      hook.replyId = replyId;
-      hook.groups = ticket.group;
-      hook.requester = Meteor.userId();
-      replyentryfooter_items.push(hook);
-    });
-  }
-  return replyentryfooter_items;
-};
-
-Template.ticketreplybox.replyentryfooter_items_template = function () {
-  return Template[this.template];
-};
-
-Template.ticketreplybox.replyentryfooter_items_data = function () {
-  return this;
-};
-
-Template.ticketreplybox.showEditor = function () {
-    return Session.get('showEditor');
-};
-
 var displayreply = function(replytype) {
   var user = Meteor.users.findOne({_id: Meteor.userId()});
   if(user.profile.isStaff) {
@@ -254,67 +261,71 @@ var displayreply = function(replytype) {
   return false;
 };
 
-Template.ticketreplies.posted_replies = function () {
-  var user = Meteor.users.findOne({_id: Meteor.userId()});
-  var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {fields: {unpostedstaffreply: 0, unpostedrequesterreply: 0}});
-  if (ticket !== undefined) {
-    var replies = [];
-    var existingReplies = [];
-    var existingReplyIds = [];
-    var updateReplies = false;
-    ticket.replies.forEach(function(reply){
-      if(reply !== undefined) {
-        if(reply.status == 'posted') {
-          var workingReply = JSON.parse( JSON.stringify( reply ) );
-          if (_.contains(existingReplyIds, workingReply._id)) {
-            workingReply._id = Random.id();
-            existingReplies.push(workingReply);
-            updateReplies = true;
-          } else {
-            existingReplyIds.push(workingReply._id);
-            existingReplies.push(workingReply);
-          }
+Template.ticketreplies.helpers({
+    posted_replies: function() {
+        var user = Meteor.users.findOne({_id: Meteor.userId()});
+        var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {fields: {unpostedstaffreply: 0, unpostedrequesterreply: 0}});
+        if (ticket !== undefined) {
+            var replies = [];
+            var existingReplies = [];
+            var existingReplyIds = [];
+            var updateReplies = false;
+            ticket.replies.forEach(function(reply){
+                if(reply !== undefined) {
+                    if(reply.status == 'posted') {
+                        var workingReply = JSON.parse( JSON.stringify( reply ) );
+                        if (_.contains(existingReplyIds, workingReply._id)) {
+                            workingReply._id = Random.id();
+                            existingReplies.push(workingReply);
+                            updateReplies = true;
+                        } else {
+                            existingReplyIds.push(workingReply._id);
+                            existingReplies.push(workingReply);
+                        }
 
-          reply.body = marked(reply.body);
-          reply.ticketId = ticket._id;
-          replies.push(reply);
-        }
-      }
+                        reply.body = marked(reply.body);
+                        reply.ticketId = ticket._id;
+                        replies.push(reply);
+                    }
+                }
+            });
+            if (updateReplies == true) {
+                Tickets.update(
+                    {_id:ticket._id},
+                    {
+                        $set: {replies: existingReplies}
+                    }
+                );
+            }
 
-    });
-    if (updateReplies == true) {
-      Tickets.update(
-        {_id:ticket._id},
-        {
-          $set: {replies: existingReplies}
+            // Fetch replies from modules
+            var hooks = Hooks.find({hook:'ticket_replies'});
+            hooks.forEach(function (hook) {
+                var ticketreplies = window[hook.data]({ticketId: Session.get('viewticketId')});
+                ticketreplies.forEach(function(ticketreply) {
+                    ticketreply.body = marked(ticketreply.body);
+                    ticketreply.ticketId = ticket._id;
+                    replies.push(ticketreply);
+                });
+            });
+
+            // Sort array into date order
+            replies.sort(sortByDate);
+            return replies;
         }
-      );
+    },
+
+    posted_reply_template: function() {
+        return Template['ticketreply-'+this.reply.type];
+    },
+
+    posted_reply_data: function() {
+        return {reply: this};
     }
 
-    // Fetch replies from modules
-    var hooks = Hooks.find({hook:'ticket_replies'});
-    hooks.forEach(function (hook) {
-      var ticketreplies = window[hook.data]({ticketId: Session.get('viewticketId')});
-      ticketreplies.forEach(function(ticketreply) {
-        ticketreply.body = marked(ticketreply.body);
-        ticketreply.ticketId = ticket._id;
-        replies.push(ticketreply);
-      });
-    });
+});
 
-    // Sort array into date order
-    replies.sort(sortByDate);
-    return replies;
-  }
-};
 
-Template.ticketreplies.posted_reply_template = function () {
-  return Template['ticketreply-'+this.reply.type];
-};
-
-Template.ticketreplies.posted_reply_data = function () {
-  return {reply: this};
-};
 
 Template.ticketheader.ticketcreated = function () {
   var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {fields: {unpostedstaffreply: 0, unpostedrequesterreply: 0}});

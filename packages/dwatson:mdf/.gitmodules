@@ -1,0 +1,3 @@
+[submodule "lib/moment-duration-format"]
+	path = lib/moment-duration-format
+	url = https://github.com/jsmreese/moment-duration-format

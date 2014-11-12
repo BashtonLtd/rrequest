@@ -55,9 +55,53 @@ Template.emailgatewaysettings.events({
   }
 });
 
-Template.emailgatewaysettings.password_button_label = function() {
-  return Session.get('password_button_label');
-};
+Template.emailgatewaysettings.helpers({
+    password_button_label: function() {
+        return Session.get('password_button_label');
+    },
+
+    imap_username: function() {
+        var settings = EmailGatewaySettings.findOne({});
+        if (settings !== undefined) {
+            return settings.imap_username;
+        }
+    },
+
+    imap_password: function() {
+        var settings = EmailGatewaySettings.findOne({});
+        if (settings !== undefined) {
+            return settings.imap_password;
+        }
+    },
+
+    imap_host: function() {
+        var settings = EmailGatewaySettings.findOne({});
+        if (settings !== undefined) {
+            return settings.imap_host;
+        }
+    },
+
+    imap_port: function() {
+        var settings = EmailGatewaySettings.findOne({});
+        if (settings !== undefined) {
+            return settings.imap_port;
+        }
+    },
+
+    imap_interval: function() {
+        var settings = EmailGatewaySettings.findOne({});
+        if (settings !== undefined) {
+            return settings.imap_interval;
+        }
+    },
+
+    imap_secure: function() {
+        var settings = EmailGatewaySettings.findOne({});
+        if (settings !== undefined) {
+            return settings.imap_secure;
+        }
+    }
+});
 
 var togglePasswordField = function(template) {
   var password_input = template.find(".emailgateway-settings-password");
@@ -69,48 +113,6 @@ var togglePasswordField = function(template) {
   } else {
     password_input.setAttribute("type","password");
     Session.set('password_button_label', 'Show password');
-  }
-};
-
-Template.emailgatewaysettings.imap_username = function() {
-  var settings = EmailGatewaySettings.findOne({});
-  if (settings !== undefined) {
-    return settings.imap_username;
-  }
-};
-
-Template.emailgatewaysettings.imap_password = function() {
-  var settings = EmailGatewaySettings.findOne({});
-  if (settings !== undefined) {
-    return settings.imap_password;
-  }
-};
-
-Template.emailgatewaysettings.imap_host = function() {
-  var settings = EmailGatewaySettings.findOne({});
-  if (settings !== undefined) {
-    return settings.imap_host;
-  }
-};
-
-Template.emailgatewaysettings.imap_port = function() {
-  var settings = EmailGatewaySettings.findOne({});
-  if (settings !== undefined) {
-    return settings.imap_port;
-  }
-};
-
-Template.emailgatewaysettings.imap_interval = function() {
-  var settings = EmailGatewaySettings.findOne({});
-  if (settings !== undefined) {
-    return settings.imap_interval;
-  }
-};
-
-Template.emailgatewaysettings.imap_secure = function() {
-  var settings = EmailGatewaySettings.findOne({});
-  if (settings !== undefined) {
-    return settings.imap_secure;
   }
 };
 

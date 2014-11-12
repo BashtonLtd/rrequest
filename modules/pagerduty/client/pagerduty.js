@@ -49,47 +49,49 @@ Template.pagerdutysettings.events({
   }
 });
 
-Template.pagerdutysettings.authtoken = function() {
-    var settings = PagerdutySettings.findOne({});
-    if (settings !== undefined) {
-        return settings.authtoken;
-    }
-};
+Template.pagerdutysettings.helpers({
+    authtoken: function() {
+        var settings = PagerdutySettings.findOne({});
+        if (settings !== undefined) {
+            return settings.authtoken;
+        }
+    },
 
-Template.pagerdutysettings.apikey = function() {
-    var settings = PagerdutySettings.findOne({});
-    if (settings !== undefined) {
-        return settings.apikey;
-    }
-};
+    apikey: function() {
+        var settings = PagerdutySettings.findOne({});
+        if (settings !== undefined) {
+            return settings.apikey;
+        }
+    },
 
-Template.pagerdutysettings.subdomain = function() {
-    var settings = PagerdutySettings.findOne({});
-    if (settings !== undefined) {
-        return settings.subdomain;
-    }
-};
+    subdomain: function() {
+        var settings = PagerdutySettings.findOne({});
+        if (settings !== undefined) {
+            return settings.subdomain;
+        }
+    },
 
-Template.pagerdutysettings.servicekey = function() {
-    var settings = PagerdutySettings.findOne({});
-    if (settings !== undefined) {
-        return settings.servicekey;
-    }
-};
+    servicekey: function() {
+        var settings = PagerdutySettings.findOne({});
+        if (settings !== undefined) {
+            return settings.servicekey;
+        }
+    },
 
-Template.pagerdutysettings.url = function() {
-    var authtoken = Session.get('pagerdutyauthtoken');
-    if (authtoken !== undefined || authtoken != '') {
-        return Meteor.absoluteUrl('api/pagerduty/' + authtoken);
-    }
-};
+    url: function() {
+        var authtoken = Session.get('pagerdutyauthtoken');
+        if (authtoken !== undefined || authtoken != '') {
+            return Meteor.absoluteUrl('api/pagerduty/' + authtoken);
+        }
+    },
 
-Template.pagerdutysettings.urlsecure = function() {
-    var authtoken = Session.get('pagerdutyauthtoken');
-    if (authtoken !== undefined || authtoken != '') {
-        return Meteor.absoluteUrl('api/pagerduty/' + authtoken, {secure:true});
+    urlsecure: function() {
+        var authtoken = Session.get('pagerdutyauthtoken');
+        if (authtoken !== undefined || authtoken != '') {
+            return Meteor.absoluteUrl('api/pagerduty/' + authtoken, {secure:true});
+        }
     }
-};
+});
 
 pagerduty_settings_page = function(args) {
   args = args || {};
@@ -110,22 +112,26 @@ var generate_auth_token = function () {
   return authtoken;
 };
 
-Template.pagerduty_group_edit_form_field.pagerduty_custref = function () {
-    var group = Groups.findOne({_id:Session.get("selectedGroup")});
-    if (group !== undefined) {
-        return group.pagerduty_custref;
-    }
-};
-
-Template.pagerduty_user_edit_form_field.pagerduty_blockedP1 = function () {
-    var user = Meteor.users.findOne({_id: Session.get("selectedUser")});
-    if (user !== undefined) {
-        if (user.profile.pagerduty_blockedP1 == "true") {
-            return true;
+Template.pagerduty_group_edit_form_field.helpers({
+    pagerduty_custref: function() {
+        var group = Groups.findOne({_id:Session.get("selectedGroup")});
+        if (group !== undefined) {
+            return group.pagerduty_custref;
         }
     }
-    return false;
-};
+});
+
+Template.pagerduty_user_edit_form_field.helpers({
+    pagerduty_blockedP1: function() {
+        var user = Meteor.users.findOne({_id: Session.get("selectedUser")});
+        if (user !== undefined) {
+            if (user.profile.pagerduty_blockedP1 == "true") {
+                return true;
+            }
+        }
+        return false;
+    }
+});
 
 UI.registerHelper('staffresponse', function(ticketId) {
     var response_needed = 30; // this should be a setting

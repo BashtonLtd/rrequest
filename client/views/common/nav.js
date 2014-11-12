@@ -19,22 +19,24 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-Template.nav.site_name = function() {
-  site_name_setting = Settings.findOne({name: 'site_name'});
-  if (site_name_setting !== undefined) {
-    return site_name_setting.value;
-  }
-  return '';
-};
-
 Template.nav.helpers({
+  site_name: function() {
+      site_name_setting = Settings.findOne({name: 'site_name'});
+      if (site_name_setting !== undefined) {
+        return site_name_setting.value;
+      }
+      return '';
+  },
+
   navbar: function() {
     return Session.get('navbar');
   },
 
   is_active: function(page) {
     if (Router.current() !== null) {
-      return Router.current().route.name == page;
+        if (Router.current().route !== undefined) {
+            return Router.current().route.getName() == page;
+        }
     }
   },
 

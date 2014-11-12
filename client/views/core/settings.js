@@ -26,30 +26,30 @@ Template.settings.created = function () {
   }
 };
 
-Template.settings.pagecontent = function() {
-  var page = Session.get('activeSettingsPage');
-  if(page !== "" && page !== undefined) {
-    return Template[page];
-  } else {
-    return null;
-  }
-};
-
-Template.settings.module_settings_pages = function() {
-  var hooks = Hooks.find({hook:'settings_page'});
-  var pages = [];
-
-  hooks.forEach(function (hook) {
-    var settingspage = window[hook.data]();
-    pages.push(settingspage);
-  });
-  return pages.sort(sortByName);
-};
-
 Template.settings.helpers({
-  is_active: function(pagename) {
-    return Session.get('activeSettingsPage') == pagename;
-  }
+    is_active: function(pagename) {
+        return Session.get('activeSettingsPage') == pagename;
+    },
+
+    pagecontent: function() {
+        var page = Session.get('activeSettingsPage');
+        if(page !== "" && page !== undefined) {
+            return Template[page];
+        } else {
+            return null;
+        }
+    },
+
+    module_settings_pages: function() {
+        var hooks = Hooks.find({hook:'settings_page'});
+        var pages = [];
+
+        hooks.forEach(function (hook) {
+            var settingspage = window[hook.data]();
+            pages.push(settingspage);
+        });
+        return pages.sort(sortByName);
+    }
 });
 
 Template.settings.events({
@@ -59,29 +59,45 @@ Template.settings.events({
 });
 
 Template.moduleactivation.helpers({
-  has_depends: function(moduleId) {
-    var module = Modules.findOne({_id: moduleId});
-    var depends = module.depends;
-    var conflicts = module.conflicts;
+    has_depends: function(moduleId) {
+        var module = Modules.findOne({_id: moduleId});
+        var depends = module.depends;
+        var conflicts = module.conflicts;
 
-    if (module !== undefined) {
-      var required_depends = get_depends(moduleId);
-      var required_conflicts = get_conflicts(moduleId);
+        if (module !== undefined) {
+            var required_depends = get_depends(moduleId);
+            var required_conflicts = get_conflicts(moduleId);
 
-      if (required_depends.length > 0 || required_conflicts.length > 0) {
-        return true;
-      } else {
-        // check if this is a depends of another module
-        if (get_reverse_depends(moduleId).length > 0) {
-          return true;
+            if (required_depends.length > 0 || required_conflicts.length > 0) {
+                return true;
+            } else {
+                // check if this is a depends of another module
+                if (get_reverse_depends(moduleId).length > 0) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         } else {
-          return false;
+            return true;
         }
-      }
-    } else {
-      return true;
+    },
+
+    module_depends: function(moduleId) {
+        return get_depends(moduleId);
+    },
+
+    module_conflicts: function(moduleId) {
+        return get_conflicts(moduleId);
+    },
+
+    module_reverse_depends: function(moduleId) {
+        return get_reverse_depends(moduleId);
+    },
+
+    availablemodules: function() {
+        return Modules.find({}, {sort: {'name': 1}});
     }
-  }
 });
 
 var get_reverse_depends = function(moduleId) {
@@ -143,22 +159,6 @@ var get_conflicts = function(moduleId) {
   return conflicts_list;
 };
 
-Template.moduleactivation.module_depends = function(moduleId) {
-  return get_depends(moduleId);
-};
-
-Template.moduleactivation.module_conflicts = function(moduleId) {
-  return get_conflicts(moduleId);
-};
-
-Template.moduleactivation.module_reverse_depends = function(moduleId) {
-  return get_reverse_depends(moduleId);
-};
-
-Template.moduleactivation.availablemodules = function() {
-  return Modules.find({}, {sort: {'name': 1}});
-};
-
 Template.moduleactivation.events({
   'click .disable-module': function (event, template) {
     Meteor.call('disableModule', {
@@ -203,16 +203,18 @@ Template.general.events({
   }
 });
 
-Template.general.site_name = function() {
-  var setting = Settings.findOne({name: 'site_name'});
-  if (setting !== undefined) {
-    return setting.value;
-  }
-};
+Template.general.helpers({
+    site_name: function() {
+        var setting = Settings.findOne({name: 'site_name'});
+        if (setting !== undefined) {
+            return setting.value;
+        }
+    },
 
-Template.general.support_email = function() {
-  var setting = Settings.findOne({name: 'support_email'});
-  if (setting !== undefined) {
-    return setting.value;
-  }
-};
+    support_email: function() {
+        var setting = Settings.findOne({name: 'support_email'});
+        if (setting !== undefined) {
+            return setting.value;
+        }
+    }
+});

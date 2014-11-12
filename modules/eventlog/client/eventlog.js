@@ -21,14 +21,6 @@
 */
 var levels = ['ERROR', 'WARNING', 'INFO', 'DEBUG'];
 
-Template.eventlist.eventitems = function () {
-  var events = Eventlog.find(
-    {}, 
-    {sort: {'created': -1}, limit: eventListSub.limit()}
-  );
-  return events;
-};
-
 Template.eventlog.events({
   'click .load-more': function (event) {
     event.preventDefault();
@@ -74,18 +66,20 @@ var getFilter = function() {
   }
 };
 
-Template.eventfilter.levels = function() {
-  var levellist = [];
-  levels.forEach(function(level) {
-    var idx = _.indexOf(Session.get('selected_filter_levels'), level);
-    if (idx != -1) {
-      levellist.push({name: level, selected: 'filterunselected'});
-    } else {
-      levellist.push({name: level, selected: 'filterselected'});
+Template.eventfilter.helpers({
+    levels: function() {
+        var levellist = [];
+        levels.forEach(function(level) {
+            var idx = _.indexOf(Session.get('selected_filter_levels'), level);
+            if (idx != -1) {
+                levellist.push({name: level, selected: 'filterunselected'});
+            } else {
+                levellist.push({name: level, selected: 'filterselected'});
+            }
+        });
+        return levellist;
     }
-  });
-  return levellist;
-};
+});
 
 Template.eventfilter.events({
   'click .filterrow': function (event, template) {
@@ -150,33 +144,41 @@ Template.eventcalendarfilter.rendered = function () {
 };
 
 Template.eventlist.helpers({
-  getLabel: function(level) {
-    if(levels.indexOf(level) != -1) {
-      return level;
-    } else {
-      return 'INFO';
+    eventitems: function() {
+        var events = Eventlog.find(
+            {},
+            {sort: {'created': -1}, limit: eventListSub.limit()}
+        );
+        return events;
+    },
+
+    getLabel: function(level) {
+        if(levels.indexOf(level) != -1) {
+            return level;
+        } else {
+            return 'INFO';
+        }
+    },
+
+    getLabelClass: function(level) {
+        if (level == 'ERROR') {
+            return 'label-important';
+        } else if (level == 'WARNING') {
+            return 'label-warning';
+        } else if (level == 'INFO') {
+            return 'label-info';
+        } else if (level == 'DEBUG') {
+            return 'label-inverse'
+        } else {
+            return ''
+        }
+    },
+
+    getTag: function() {
+        return this;
+    },
+
+    getTagClass: function() {
+        return '';
     }
-  },
-
-  getLabelClass: function(level) {
-    if (level == 'ERROR') {
-      return 'label-important';
-    } else if (level == 'WARNING') {
-      return 'label-warning';
-    } else if (level == 'INFO') {
-      return 'label-info';
-    } else if (level == 'DEBUG') {
-      return 'label-inverse'
-    } else {
-      return ''
-    }
-  },
-
-  getTag: function() {
-    return this;
-  },
-
-  getTagClass: function() {
-    return '';
-  }
 });

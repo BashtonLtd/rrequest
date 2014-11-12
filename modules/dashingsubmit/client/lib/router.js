@@ -22,6 +22,7 @@
 var LocalBeforeHooks = {
 	subscribeDashing: function () {
 		Meteor.subscribe("dashingsubmitsettings");
+		this.next();
 	}
 };
 

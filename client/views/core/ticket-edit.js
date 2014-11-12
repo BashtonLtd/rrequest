@@ -24,13 +24,11 @@ openEditTicketDialog = function () {
 	Session.set("showEditTicketDialog", true);
 };
 
-Template.ticket.showEditTicketDialog = function () {
-	return Session.get("showEditTicketDialog");
-};
-
-Template.editTicketDialog.ticketstatus = function() {
-	return TicketStatus.find({}, {sort: {'name': 1}});
-};
+Template.ticket.helpers({
+	showEditTicketDialog: function() {
+		return Session.get("showEditTicketDialog");
+	}
+});
 
 Template.editTicketDialog.rendered = function () {
 	$(".ticketrequester").select2({
@@ -98,17 +96,21 @@ Template.editTicketDialog.helpers({
 				return 'selected';
 			}
 		}
+	},
+
+	ticketstatus: function() {
+		return TicketStatus.find({}, {sort: {'name': 1}});
+	},
+
+	ticketeditformfields: function() {
+		var hooks = Hooks.find({hook:'ticket_edit_form_field'});
+		return hooks;
+	},
+
+	ticketeditformfields_template: function() {
+		return Template[this.template];
 	}
 });
-
-Template.editTicketDialog.ticketeditformfields = function() {
-	var hooks = Hooks.find({hook:'ticket_edit_form_field'});
-	return hooks;
-};
-
-Template.editTicketDialog.ticketeditformfields_template = function () {
-	return Template[this.template];
-};
 
 Template.editTicketDialog.events({
 	'click .cancel': function () {

@@ -22,6 +22,7 @@
 var LocalBeforeHooks = {
 	subscribePrioritySettings: function () {
 		Meteor.subscribe("ticketprioritysettings");
+		this.next();
 	}
 };
 

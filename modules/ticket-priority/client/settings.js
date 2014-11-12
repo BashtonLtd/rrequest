@@ -21,49 +21,53 @@
 */
 //var settings = TicketPrioritySettings.findOne();
 
-Template.ticketprioritysettings.priorities = function () {
-  var priorities = TicketPrioritySettings.findOne().priorities;
-  return priorities;
-};
+Template.ticketprioritysettings.helpers({
+    priorities: function() {
+        var priorities = TicketPrioritySettings.findOne().priorities;
+        return priorities;
+    },
 
-Template.ticketprioritysettings.max_response_time = function () {
-  var settings = TicketPrioritySettings.findOne();
-  var timevalue = settings.max_response_time;
-  if (settings.time_unit == 'days') {
-    timevalue = timevalue / 24 / 60;
-  } else if (settings.time_unit == 'hours') {
-    timevalue = timevalue / 60;
-  }
-  return timevalue;
-};
+    max_response_time: function() {
+        var settings = TicketPrioritySettings.findOne();
+        var timevalue = settings.max_response_time;
+        if (settings.time_unit == 'days') {
+            timevalue = timevalue / 24 / 60;
+        } else if (settings.time_unit == 'hours') {
+            timevalue = timevalue / 60;
+        }
+        return timevalue;
+    },
 
-Template.ticketprioritysettings.selectedtimeunit = function (unit) {
-  var settings = TicketPrioritySettings.findOne();
-  if (unit == settings.time_unit) {
-    return 'selected';
-  }
-};
+    selectedtimeunit: function(unit) {
+        var settings = TicketPrioritySettings.findOne();
+        if (unit == settings.time_unit) {
+            return 'selected';
+        }
+    }
+});
 
-Template.priorityrow.isDefault = function() {
-  var settings = TicketPrioritySettings.findOne();
-  if (settings.default_priority == this.priority) {
-    return 'highlight';
-  }
-};
+Template.priorityrow.helpers({
+    isDefault: function() {
+        var settings = TicketPrioritySettings.findOne();
+        if (settings.default_priority == this.priority) {
+            return 'highlight';
+        }
+    },
 
-Template.priorityrow.isLast = function(priority) {
-  var settings = TicketPrioritySettings.findOne();
-  if (priority == settings.priorities.length) {
-    return true;
-  }
-};
+    isLast: function(priority) {
+        var settings = TicketPrioritySettings.findOne();
+        if (priority == settings.priorities.length) {
+            return true;
+        }
+    }
+});
 
 Template.ticketprioritysettings.events({
   'click .prioritytimeunit': function (event, template) {
     event.preventDefault();
     var timevalue = template.find(".maxtime").value;
     var timeunit = template.find(".timeunits").value;
-    
+
     if (timeunit == 'days') {
       timevalue = timevalue * 24 * 60;
     } else if (timeunit == 'hours') {
@@ -195,7 +199,6 @@ format_time_span = function(totalminutes) {
   }
   return output;
 };
-
 
 Template.ticketprioritysettings.events({
   'click .new-priority': function (event, template) {

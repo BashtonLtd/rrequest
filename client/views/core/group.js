@@ -19,37 +19,32 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-Template.group.groupname = function () {
-  var group = Groups.findOne({_id: Session.get('viewgroupId')});
-  if (group !== undefined) {
-    return group.name;
-  }
-};
+Template.group.helpers({
+    groupname: function() {
+        var group = Groups.findOne({_id: Session.get('viewgroupId')});
+        if (group !== undefined) {
+          return group.name;
+        }
+    },
 
-Template.groupstatboxes.boxes = function (groupId) {
-  var statboxes = [];
-  var hooks = Hooks.find({hook:'groupstatboxes'});
-  hooks.forEach(function (hook) {
-    hook.groupId = groupId;
-    statboxes.push(hook);
-  });
-  return statboxes;
-};
-
-Template.groupstatboxes.boxes_template = function () {
-  return Template[this.template];
-};
-
-Template.groupstatboxes.boxes_data = function () {
-  return this;
-};
-
-Template.groupstatboxes.ticketscreated = function (days) {
-  var counts = TicketGroupCounts.findOne();
-  if (counts !== undefined) {
-    return counts[days];
-  }
-};
+    grouptickets_data: function() {
+        return {
+            listLabel: "Group's Tickets",
+            name: 'groupsTickets',
+            collection: Tickets,
+            collectionFilterKey: 'group',
+            collectionFilterValue: 'viewgroupId',
+            publication: 'sortedTickets',
+            rowtemplate: 'ticketrow',
+            perpage: 5,
+            searchfields: '_id,subject,requesters.email',
+            sorttemplate: 'groupsTicketsSortFields',
+            filterrow: 'status',
+            filtertemplate: 'groupsTicketsFilterChoices',
+            footerhooks: 'ticketlistfooter_items'
+        };
+    }
+})
 
 Template.group.created = function () {
   if (Session.get('sortorder-groupsTickets') === undefined) {
@@ -60,23 +55,33 @@ Template.group.created = function () {
   }
 };
 
-Template.group.grouptickets_data = function () {
-  return {
-    listLabel: "Group's Tickets",
-    name: 'groupsTickets',
-    collection: Tickets,
-    collectionFilterKey: 'group',
-    collectionFilterValue: 'viewgroupId',
-    publication: 'sortedTickets',
-    rowtemplate: 'ticketrow',
-    perpage: 5,
-    searchfields: '_id,subject,requesters.email',
-    sorttemplate: 'groupsTicketsSortFields',
-    filterrow: 'status',
-    filtertemplate: 'groupsTicketsFilterChoices',
-    footerhooks: 'ticketlistfooter_items'
-  };
-};
+Template.groupstatboxes.helpers({
+    boxes: function(groupId) {
+        var statboxes = [];
+        var hooks = Hooks.find({hook:'groupstatboxes'});
+        hooks.forEach(function (hook) {
+            hook.groupId = groupId;
+            statboxes.push(hook);
+        });
+        return statboxes;
+    },
+
+    boxes_template: function() {
+        return Template[this.template];
+    },
+
+    boxes_data: function() {
+        return this;
+    },
+
+    ticketscreated: function(days) {
+        var counts = TicketGroupCounts.findOne();
+        if (counts !== undefined) {
+            return counts[days];
+        }
+    }
+});
+
 
 Template.groupsTicketsSortFields.events({
   'click .cancel': function () {
@@ -120,19 +125,21 @@ UI.registerHelper('sort_selected', function (field, order) {
 });
 
 
-Template.groupsTicketsFilterChoices.states = function() {
-  var statelist = [];
-  states = TicketStatus.find({}, {sort: {'name': 1}});
-  states.forEach(function(state) {
-  var idx = _.indexOf(Session.get('selectedfilterchoices-groupsTickets'), state.name);
-    if (idx != -1) {
-      statelist.push(_.extend(state, {selected: 'filterunselected'}));
-    } else {
-      statelist.push(_.extend(state, {selected: 'filterselected'}));
+Template.groupsTicketsFilterChoices.helpers({
+    states: function() {
+        var statelist = [];
+        states = TicketStatus.find({}, {sort: {'name': 1}});
+        states.forEach(function(state) {
+            var idx = _.indexOf(Session.get('selectedfilterchoices-groupsTickets'), state.name);
+            if (idx != -1) {
+                statelist.push(_.extend(state, {selected: 'filterunselected'}));
+            } else {
+                statelist.push(_.extend(state, {selected: 'filterselected'}));
+            }
+        });
+        return statelist;
     }
-  });
-  return statelist;
-};
+});
 
 Template.groupsTicketsFilterChoices.events({
   'click .cancel': function () {
@@ -221,80 +228,82 @@ var getsort = function() {
   return sort;
 };
 
-Template._collectionList.collection = function () {
-  var searchfilter = Session.get('search-' + this.name);
-  var collectionFilter = {};
-  if (this.collectionFilterValue != '') {
-    collectionFilter[Session.get('key-'+this.name)] = Session.get(Session.get('value-'+this.name));
-  }
+Template._collectionList.helpers({
+    collection: function() {
+        var searchfilter = Session.get('search-' + this.name);
+        var collectionFilter = {};
+        if (this.collectionFilterValue != '') {
+            collectionFilter[Session.get('key-'+this.name)] = Session.get(Session.get('value-'+this.name));
+        }
 
-  collectionFilter[Session.get('filterrow-'+listname)] = {$nin: Session.get('selectedfilterchoices-' + listname)};
+        collectionFilter[Session.get('filterrow-'+listname)] = {$nin: Session.get('selectedfilterchoices-' + listname)};
 
-  var searchfields = [];
-  if (searchfilter.length >= 3) {
-    this.searchfields.split(',').forEach(function(item) {
-      var field = {};
-      field[item] = {$regex: ".*"+ searchfilter +".*", $options: 'i'};
-      searchfields.push(field);
-    });
-    collectionFilter['$or'] = searchfields;
-  }
-  sort = {};
-  if (Session.get('sortfield-' + this.name) !== '' && Session.get('sortfield-' + this.name) !== undefined) {
-    sort[Session.get('sortfield-' + this.name)] = Session.get('sortorder-' + this.name);
-  }
-  var results = this.collection.find(collectionFilter, {sort: sort});
-  if (results.count() > 0) {
-    return results;
-  }
-};
+        var searchfields = [];
+        if (searchfilter.length >= 3) {
+            this.searchfields.split(',').forEach(function(item) {
+                var field = {};
+                field[item] = {$regex: ".*"+ searchfilter +".*", $options: 'i'};
+                searchfields.push(field);
+            });
+            collectionFilter['$or'] = searchfields;
+        }
+        sort = {};
+        if (Session.get('sortfield-' + this.name) !== '' && Session.get('sortfield-' + this.name) !== undefined) {
+            sort[Session.get('sortfield-' + this.name)] = Session.get('sortorder-' + this.name);
+        }
+        var results = this.collection.find(collectionFilter, {sort: sort});
+        if (results.count() > 0) {
+            return results;
+        }
+    },
 
-Template._collectionList.footerhook_items = function() {
-    var hooks = Hooks.find({hook:this.footerhooks});
-    return hooks;
-};
+    footerhook_items: function() {
+        var hooks = Hooks.find({hook:this.footerhooks});
+        return hooks;
+    },
 
-Template._collectionList.footerhook_items_template = function() {
-    return Template[this.template];
-};
+    footerhook_items_template: function() {
+        return Template[this.template];
+    },
 
-Template._collectionList.rowTemplate = function () {
-  if (this._id !== undefined) {
-    return Template[rowTemplate];
-  }
-};
+    rowTemplate: function() {
+        if (this._id !== undefined) {
+            return Template[rowTemplate];
+        }
+    },
 
-Template._collectionList.rowTemplate_data = function () {
-  return this;
-};
+    rowTemplate_data: function() {
+        return this;
+    },
 
-Template._collectionList.showSortOrderDialog = function () {
-  return Session.get('showSortOrderDialog');
-};
+    showSortOrderDialog: function() {
+        return Session.get('showSortOrderDialog');
+    },
 
-Template._collectionList.sortTemplate = function () {
-  return Template[sortTemplate];
-};
+    sortTemplate: function() {
+        return Template[sortTemplate];
+    },
 
-Template._collectionList.sortTemplate_data = function () {
-  return this;
-};
+    sortTemplate_data: function() {
+        return this;
+    },
 
-Template._collectionList.showFilterDialog = function () {
-  return Session.get('showFilterDialog');
-};
+    showFilterDialog: function() {
+        return Session.get('showFilterDialog');
+    },
 
-Template._collectionList.filterTemplate = function () {
-  return Template[filterTemplate];
-};
+    filterTemplate: function() {
+        return Template[filterTemplate];
+    },
 
-Template._collectionList.filterTemplate_data = function () {
-  return this;
-};
+    filterTemplate_data: function() {
+        return this;
+    },
 
-Template._collectionList.collectionReady = function() {
-  return ! collectionSub.loading();
-};
+    collectionReady: function() {
+        return ! collectionSub.loading();
+    }
+});
 
 Template._collectionList.events({
   'input .searchfilter': function (event, template) {

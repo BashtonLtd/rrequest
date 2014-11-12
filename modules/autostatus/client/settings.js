@@ -32,26 +32,26 @@ Template.autostatussettings.events({
 });
 
 Template.autostatussettings.helpers({
-  selectedstatus: function(statusname){
-    var settings = AutostatusSettings.findOne({});
-    if (settings !== undefined) {
-      if (settings.staff_typing == statusname) {
-        return 'selected';
-      }
+    selectedstatus: function(statusname){
+        var settings = AutostatusSettings.findOne({});
+        if (settings !== undefined) {
+            if (settings.staff_typing == statusname) {
+                return 'selected';
+            }
+        }
+    },
+
+    staff_typing: function() {
+        var settings = AutostatusSettings.findOne({});
+        if (settings !== undefined) {
+            return settings.staff_typing;
+        }
+    },
+
+    ticketstatus: function() {
+        return TicketStatus.find({}, {sort: {'name': 1}});
     }
-  }
 });
-
-Template.autostatussettings.staff_typing = function() {
-  var settings = AutostatusSettings.findOne({});
-  if (settings !== undefined) {
-    return settings.staff_typing;
-  }
-};
-
-Template.autostatussettings.ticketstatus = function() {
-  return TicketStatus.find({}, {sort: {'name': 1}});
-};
 
 autostatus_settings_page = function(args) {
   args = args || {};

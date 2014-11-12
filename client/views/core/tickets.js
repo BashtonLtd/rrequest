@@ -28,24 +28,26 @@ UI.registerHelper('ticketlistfooter_template', function () {
   return Template[this.template];
 });
 
-Template.ticketrow.ticketlistitemfooter_items = function () {
-  var ticketId = this._id;
-  var footerhooks = [];
-  var hooks = Hooks.find({hook:'ticketlistitemfooter_items'});
-  hooks.forEach(function(hook) {
-    hook.ticketId = ticketId;
-    footerhooks.push(hook);
-  });
-  return footerhooks;
-};
+Template.ticketrow.helpers({
+    ticketlistitemfooter_items: function() {
+        var ticketId = this._id;
+        var footerhooks = [];
+        var hooks = Hooks.find({hook:'ticketlistitemfooter_items'});
+        hooks.forEach(function(hook) {
+            hook.ticketId = ticketId;
+            footerhooks.push(hook);
+        });
+        return footerhooks;
+    },
 
-Template.ticketrow.ticketlistitemfooter_template = function () {
-  return Template[this.template];
-};
+    ticketlistitemfooter_template: function() {
+        return Template[this.template];
+    },
 
-Template.ticketrow.ticketlistitemfooter_data = function () {
-  return {ticketId: this.ticketId, template: this.template};
-};
+    ticketlistitemfooter_data: function() {
+        return {ticketId: this.ticketId, template: this.template};
+    }
+});
 
 UI.registerHelper('ticketlist_sort_filter', function () {
   var hooks = Hooks.find({hook:'ticketlist_sort_filter'});
@@ -64,55 +66,6 @@ UI.registerHelper('ticketlist_sort_selected', function(field, order) {
   }
 });
 
-Template.ticketlist.tickets = function () {
-  var searchfilter = Session.get('ticketsSearchfilter');
-  var selected_filter_states = Session.get('selected_filter_states');
-  var sortorder = Session.get('selected_sort_order');
-  var sortfield = Session.get('selected_sort_field');
-  var tickets;
-  if (Session.get('selected_sort_order') == 1) {
-    sortorder = 'asc';
-  } else {
-    sortorder = 'desc';
-  }
-  if (searchfilter == '' || searchfilter == undefined || searchfilter.length < 3) {
-    tickets = Tickets.find(
-      {
-        status: {$nin: selected_filter_states}
-      },
-      {sort: [[Session.get('selected_sort_field'), sortorder]], limit: ticketListSub.limit()}
-    );
-  } else {
-    if (selected_filter_states.length === 0) {
-      tickets = Tickets.find(
-        {
-          $or:
-          [
-            {_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
-            {subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
-            {'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
-          ]
-        },
-        {sort: [[Session.get('selected_sort_field'), sortorder]], limit: ticketListSub.limit()}
-      );
-    } else {
-      tickets = Tickets.find(
-        {
-          status: {$nin: selected_filter_states},
-          $or:
-          [
-            {_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
-            {subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
-            {'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
-          ]
-        },
-        {sort: [[Session.get('selected_sort_field'), sortorder]], limit: ticketListSub.limit()}
-      );
-    }
-  }
-  return tickets;
-};
-
 Template.tickets.created = function() {
   Session.set('ticketsSearchfilter', '');
   if (Session.get('selected_filter_states') === undefined) {
@@ -129,10 +82,6 @@ Template.tickets.created = function() {
     getModified,
     getFilter,
     10);
-};
-
-Template.tickets.requesterGroups = function() {
-  return Groups.find({members: {$in: [Meteor.userId()]}});
 };
 
 var getModified = function() {
@@ -161,19 +110,21 @@ var getFilter = function() {
   }
 };
 
-Template.statefilter.states = function() {
-  var statelist = [];
-  states = TicketStatus.find({}, {sort: {'name': 1}});
-  states.forEach(function(state) {
-  var idx = _.indexOf(Session.get('selected_filter_states'), state.name);
-    if (idx != -1) {
-      statelist.push(_.extend(state, {selected: 'filterunselected'}));
-    } else {
-      statelist.push(_.extend(state, {selected: 'filterselected'}));
+Template.statefilter.helpers({
+    states: function() {
+        var statelist = [];
+        states = TicketStatus.find({}, {sort: {'name': 1}});
+        states.forEach(function(state) {
+        var idx = _.indexOf(Session.get('selected_filter_states'), state.name);
+            if (idx != -1) {
+                statelist.push(_.extend(state, {selected: 'filterunselected'}));
+            } else {
+                statelist.push(_.extend(state, {selected: 'filterselected'}));
+            }
+        });
+        return statelist;
     }
-  });
-  return statelist;
-};
+})
 
 Template.statefilter.events({
   'click .filterrow': function (event, template) {
@@ -224,14 +175,19 @@ Template.selectall.events({
   }
 });
 
-Template.tickets.showCreateTicketDialog = function () {
-  return Session.get("showCreateTicketDialog");
-};
 
 Template.tickets.helpers({
-  ticketsReady: function() {
-    return ! ticketListSub.loading();
-  }
+    ticketsReady: function() {
+        return ! ticketListSub.loading();
+    },
+
+    showCreateTicketDialog: function() {
+        return Session.get("showCreateTicketDialog");
+    },
+
+    requesterGroups: function() {
+        return Groups.find({members: {$in: [Meteor.userId()]}});
+    }
 });
 
 Template.tickets.events({
@@ -427,42 +383,92 @@ Template.createTicketDialog.events({
   }
 });
 
-Template.createTicketDialog.ticketRequesters = function () {
-  return Meteor.users.find({"profile.isStaff": false});
-};
-
-Template.createTicketDialog.ticketRequesterGroups = function () {
-  if (Session.get('selectedRequesters') === undefined) {
-    Session.set('selectedRequesters', []);
-  }
-  return Groups.find({members: {$in: Session.get("selectedRequesters")}});
-};
 
 Template.createTicketDialog.helpers({
-  displayGroups: function () {
-    var user = Meteor.users.findOne({_id: Meteor.userId()});
-    if (user !== undefined) {
-      if (is_staff(user)) {
-        return true;
-      }
-      if (in_multiple_groups(user)) {
-        return true;
-      } else {
-        return false;
-      }
+    displayGroups: function () {
+        var user = Meteor.users.findOne({_id: Meteor.userId()});
+        if (user !== undefined) {
+            if (is_staff(user)) {
+                return true;
+            }
+            if (in_multiple_groups(user)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    },
+
+    ticketRequesterGroups: function() {
+        if (Session.get('selectedRequesters') === undefined) {
+            Session.set('selectedRequesters', []);
+        }
+        return Groups.find({members: {$in: Session.get("selectedRequesters")}});
+    },
+
+    ticketRequesters: function() {
+        return Meteor.users.find({"profile.isStaff": false});
     }
-  }
 });
 
 Template.ticketlist.helpers({
-  ticketready: function(){
-    var ticket = Tickets.findOne({_id:this._id});
-    if (ticket !== undefined) {
-      if (ticket.status == 'creating') {
-        return false;
-      } else {
-        return true;
-      }
+    ticketready: function(){
+        var ticket = Tickets.findOne({_id:this._id});
+        if (ticket !== undefined) {
+            if (ticket.status == 'creating') {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    },
+
+    tickets: function() {
+        var searchfilter = Session.get('ticketsSearchfilter');
+        var selected_filter_states = Session.get('selected_filter_states');
+        var sortorder = Session.get('selected_sort_order');
+        var sortfield = Session.get('selected_sort_field');
+        var tickets;
+        if (Session.get('selected_sort_order') == 1) {
+            sortorder = 'asc';
+        } else {
+            sortorder = 'desc';
+        }
+        if (searchfilter == '' || searchfilter == undefined || searchfilter.length < 3) {
+            tickets = Tickets.find(
+                {
+                    status: {$nin: selected_filter_states}
+                },
+                {sort: [[Session.get('selected_sort_field'), sortorder]], limit: ticketListSub.limit()}
+            );
+        } else {
+            if (selected_filter_states.length === 0) {
+                tickets = Tickets.find(
+                    {
+                        $or:
+                        [
+                        {_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
+                        {subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+                        {'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
+                        ]
+                    },
+                    {sort: [[Session.get('selected_sort_field'), sortorder]], limit: ticketListSub.limit()}
+                );
+            } else {
+                tickets = Tickets.find(
+                    {
+                        status: {$nin: selected_filter_states},
+                        $or:
+                        [
+                        {_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},
+                        {subject: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+                        {'requesters.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
+                        ]
+                    },
+                    {sort: [[Session.get('selected_sort_field'), sortorder]], limit: ticketListSub.limit()}
+                );
+            }
+        }
+        return tickets;
     }
-  }
 });

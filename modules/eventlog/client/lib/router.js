@@ -23,6 +23,7 @@ var LocalBeforeHooks = {
     subscribeEventlog: function () {
         Meteor.subscribe("eventlog");
         Meteor.subscribe("eventlogsettings");
+        this.next();
     }
 };
 

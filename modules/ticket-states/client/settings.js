@@ -27,6 +27,42 @@ var formatSelection = function(state) {
   return state.text;
 };
 
+Template.createStateDialog.helpers({
+    editStateName: function(state_id) {
+        return Session.get('editStateName');
+    },
+
+    editStateIcon: function() {
+        return Session.get('editStateIcon');
+    },
+
+    editStateColour: function() {
+        return Session.get('editStateColour');
+    },
+
+    error: function() {
+        return Session.get('error');
+    },
+
+    usercreated: function() {
+        return Session.get("selectedStateUserCreated");
+    }
+});
+
+Template.ticketstatesettings.helpers({
+    states: function() {
+        return TicketStatus.find({}, {sort: {'name': 1}});
+    },
+
+    showCreateStateDialog: function() {
+        return Session.get("showCreateStateDialog");
+    },
+
+    showDeleteStateDialog: function() {
+        return Session.get("showDeleteStateDialog");
+    }
+});
+
 Template.createStateDialog.rendered = function () {
   $(".iconselect").select2({
     placeholder: 'Select icon',
@@ -40,6 +76,7 @@ Template.createStateDialog.rendered = function () {
     $('#iconcolour').val(e.color.replace('#',''));
   });
 };
+
 Template.createStateDialog.events({
   'click .cancel': function () {
     Session.set("showCreateStateDialog", false);
@@ -54,14 +91,6 @@ get_icons = function (query_opts) {
   })
 
   return {results: icons.sort()};
-};
-
-Template.ticketstatesettings.states = function () {
-  return TicketStatus.find({}, {sort: {'name': 1}});
-};
-
-Template.ticketstatesettings.showCreateStateDialog = function () {
-  return Session.get("showCreateStateDialog");
 };
 
 var openCreateStateDialog = function (state_id) {
@@ -80,33 +109,9 @@ var openCreateStateDialog = function (state_id) {
   Session.set("showCreateStateDialog", true);
 };
 
-Template.ticketstatesettings.showDeleteStateDialog = function () {
-  return Session.get("showDeleteStateDialog");
-};
-
 var openDeleteStateDialog = function (state_id) {
   Session.set("selectedState", state_id);
   Session.set("showDeleteStateDialog", true);
-};
-
-Template.createStateDialog.editStateName = function (state_id) {
-  return Session.get('editStateName');
-};
-
-Template.createStateDialog.editStateIcon = function () {
-  return Session.get('editStateIcon');
-};
-
-Template.createStateDialog.editStateColour = function () {
-  return Session.get('editStateColour');
-};
-
-Template.createStateDialog.error = function () {
-  return Session.get('error');
-};
-
-Template.createStateDialog.usercreated = function () {
-  return Session.get("selectedStateUserCreated");
 };
 
 Template.ticketstatesettings.events({
@@ -221,11 +226,13 @@ ticketstate_settings_page = function(args) {
   };
 };
 
-Template.deleteStateDialog.statename = function () {
-  var state_id = Session.get("selectedState");
-  var state = TicketStatus.findOne({_id:state_id});
-  return state !== undefined ? state.name : '';
-};
+Template.deleteStateDialog.helpers({
+    statename: function() {
+        var state_id = Session.get("selectedState");
+        var state = TicketStatus.findOne({_id:state_id});
+        return state !== undefined ? state.name : '';
+    }
+});
 
 Template.deleteStateDialog.events({
   'click .delete': function (event, template) {

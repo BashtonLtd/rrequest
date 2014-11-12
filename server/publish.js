@@ -20,7 +20,7 @@
  *
 */
 Meteor.publish('currentUser', function() {
-  return Meteor.users.find(this.userId);
+  return Meteor.users.find({_id: this.userId});
 });
 
 Meteor.publish('allUsers', function() {

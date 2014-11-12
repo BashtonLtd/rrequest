@@ -44,9 +44,11 @@ init_gridster = function () {
   gridster = $(".gridster ul").gridster().data('gridster');
 };
 
-Template.dashboard.showSelectWidgetDialog = function() {
-  return Session.get('showSelectWidgetDialog');
-};
+Template.dashboard.helpers({
+    showSelectWidgetDialog: function() {
+        return Session.get('showSelectWidgetDialog');
+    }
+});
 
 var openSelectWidgetDialog = function() {
   Session.set('showSelectWidgetDialog', true);
@@ -87,13 +89,15 @@ Template.gridster.helpers({
   }
 });
 
-Template.widget.widget_template = function () {
-  return Template[this.template_name];
-};
+Template.widget.helpers({
+    widget_template: function() {
+        return Template[this.template_name];
+    },
 
-Template.widget.widget_data = function () {
-  return this;
-};
+    widget_data: function() {
+        return this;
+    }
+});
 
 store_positions = function(data) {
   data.forEach(function(widget) {

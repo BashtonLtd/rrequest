@@ -22,6 +22,7 @@
 var LocalBeforeHooks = {
 		subscribePagerdutySettings: function () {
 				Meteor.subscribe("pagerdutysettings");
+				this.next();
 		}
 };
 

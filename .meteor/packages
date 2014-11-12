@@ -34,4 +34,5 @@ dwatson:eventhorizon
 dwatson:meteor-mailparser
 benjaminrh:bootstrap-timepicker
 meteorhacks:zones
-wizonesolutions:moment-duration-format
+dwatson:mdf
+

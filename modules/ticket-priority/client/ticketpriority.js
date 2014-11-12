@@ -19,12 +19,12 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-Template.ticketpriority_ticket_create_form_field.ticketpriority = function () {
-  var priorities = TicketPrioritySettings.findOne().priorities;
-  return priorities;
-};
-
 Template.ticketpriority_ticket_create_form_field.helpers({
+    ticketpriority: function() {
+        var priorities = TicketPrioritySettings.findOne().priorities;
+        return priorities;
+    },
+
     selectedpriority: function(priority) {
         var settings = TicketPrioritySettings.findOne();
         if (settings.default_priority == priority) {
@@ -48,18 +48,18 @@ Template.ticketpriority_ticket_create_form_field.helpers({
     }
 });
 
-Template.ticketpriority_ticket_edit_form_field.ticketpriority = function () {
-  var priorities = TicketPrioritySettings.findOne().priorities;
-  return priorities;
-};
-
 Template.ticketpriority_ticket_edit_form_field.helpers({
-  selectedpriority: function(priority) {
-    var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
-    if (ticket.priority == priority) {
-      return 'selected';
+    ticketpriority: function() {
+        var priorities = TicketPrioritySettings.findOne().priorities;
+        return priorities;
+    },
+
+    selectedpriority: function(priority) {
+        var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
+        if (ticket.priority == priority) {
+            return 'selected';
+        }
     }
-  }
 });
 
 Template.ticketpriority_ticketlistitemfooter.helpers({
@@ -82,7 +82,9 @@ Template.ticketpriority_ticketlistsortfilter.events({
   }
 });
 
-Template.ticketpriority_tickettopright.priority = function (ticketId) {
-  var ticket = Tickets.findOne({_id: ticketId}, {fields: {priority: 1}});
-  return ticket.priority;
-};
+Template.ticketpriority_tickettopright.helpers({
+    priority: function(ticketId) {
+        var ticket = Tickets.findOne({_id: ticketId}, {fields: {priority: 1}});
+        return ticket.priority;
+    }
+});

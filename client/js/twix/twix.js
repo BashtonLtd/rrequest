@@ -26,7 +26,7 @@
         for (_i = 0, _len = others.length; _i < _len; _i++) {
           other = others[_i];
           for (attr in other) {
-            if (typeof other[attr] !== "undefined") {
+            if (typeof other[attr] !== "undefined" && first !== undefined) {
               first[attr] = other[attr];
             }
           }
@@ -655,7 +655,9 @@
     })();
     getPrototypeOf = function(o) {
       if (typeof Object.getPrototypeOf === "function") {
-        return Object.getPrototypeOf(o);
+        if (o !== undefined) {
+          return Object.getProtoxtypeOf(o);
+        }
       } else if ("".__proto__ === String.prototype) {
         return o.__proto__;
       } else {

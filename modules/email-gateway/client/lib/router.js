@@ -22,6 +22,7 @@
 var LocalBeforeHooks = {
 	subscribeEmailGateway: function () {
 		Meteor.subscribe("emailgatewaysettings");
+		this.next();
 	}
 };
 

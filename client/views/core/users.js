@@ -19,10 +19,6 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-Template.userlist.users = function () {
-  return Meteor.users.find({}, {sort: {'profile.email': 1}});
-};
-
 Template.userlist.events({
   'click .edit-user': function (evt) {
     openEditUserDialog(this._id);
@@ -33,9 +29,11 @@ Template.userlist.events({
   }
 });
 
-Template.users.showEditUserDialog = function () {
-  return Session.get("showEditUserDialog");
-};
+Template.users.helpers({
+    showEditUserDialog: function() {
+        return Session.get("showEditUserDialog");
+    }
+});
 
 var openEditUserDialog = function (user_id) {
   Session.set('currentScroll',$(document).scrollTop());
@@ -43,49 +41,69 @@ var openEditUserDialog = function (user_id) {
   Session.set("showEditUserDialog", true);
 };
 
-Template.editUserDialog.email = function () {
-  var user_id = Session.get("selectedUser");
-  var user = Meteor.users.findOne({_id:user_id});
-  return user !== undefined ? user.profile.email : '';
-};
+Template.editUserDialog.helpers({
+    email: function() {
+        var user_id = Session.get("selectedUser");
+        var user = Meteor.users.findOne({_id:user_id});
+        return user !== undefined ? user.profile.email : '';
+    },
 
-Template.editUserDialog.profilename = function () {
-  var user_id = Session.get("selectedUser");
-  var user = Meteor.users.findOne({_id:user_id});
-  var profilename = '';
-  if (user !== undefined) {
-    if (user.profile.name !== null) {
-      profilename = user.profile.name;
-    }
-  }
-  return profilename;
-};
+    profilename: function() {
+        var user_id = Session.get("selectedUser");
+        var user = Meteor.users.findOne({_id:user_id});
+        var profilename = '';
+        if (user !== undefined) {
+            if (user.profile.name !== null) {
+                profilename = user.profile.name;
+            }
+        }
+        return profilename;
+    },
 
-Template.editUserDialog.usereditadmin = function () {
-  var user_id = Session.get("selectedUser");
-  var user = Meteor.users.findOne({_id:user_id});
-  var usereditadmin = '';
-  if (user !== undefined) {
-    if (user.isAdmin) {
-      usereditadmin = 'active';
-    }
-  }
-  return usereditadmin;
-};
+    usereditadmin: function() {
+        var user_id = Session.get("selectedUser");
+        var user = Meteor.users.findOne({_id:user_id});
+        var usereditadmin = '';
+        if (user !== undefined) {
+            if (user.isAdmin) {
+                usereditadmin = 'active';
+            }
+        }
+        return usereditadmin;
+    },
 
-Template.editUserDialog.usereditstaff = function () {
-  var user_id = Session.get("selectedUser");
-  var user = Meteor.users.findOne({_id:user_id});
-  var usereditstaff = '';
-  if (user !== undefined) {
-    if (user.isAdmin) {
-      usereditstaff = '';
-    } else if (user.profile.isStaff) {
-      usereditstaff = 'active';
+    usereditstaff: function() {
+        var user_id = Session.get("selectedUser");
+        var user = Meteor.users.findOne({_id:user_id});
+        var usereditstaff = '';
+        if (user !== undefined) {
+            if (user.isAdmin) {
+                usereditstaff = '';
+            } else if (user.profile.isStaff) {
+                usereditstaff = 'active';
+            }
+        }
+        return usereditstaff;
+    },
+
+    usereditrequester: function() {
+        var user_id = Session.get("selectedUser");
+        var user = Meteor.users.findOne({_id:user_id});
+        var usereditrequester = '';
+        if (user !== undefined) {
+            if (user.isAdmin) {
+                usereditrequester = '';
+            } else if (user.profile.isStaff) {
+                usereditrequester = '';
+            } else {
+                usereditrequester = 'active';
+            }
+        }
+        return usereditrequester;
     }
-  }
-  return usereditstaff;
-};
+});
+
+
 
 Template.editUserDialog.rendered = function () {
 
@@ -96,22 +114,6 @@ Template.editUserDialog.rendered = function () {
             $('#usereditextrafields').get(0)
         );
     });
-};
-
-Template.editUserDialog.usereditrequester = function () {
-  var user_id = Session.get("selectedUser");
-  var user = Meteor.users.findOne({_id:user_id});
-  var usereditrequester = '';
-  if (user !== undefined) {
-    if (user.isAdmin) {
-      usereditrequester = '';
-    } else if (user.profile.isStaff) {
-      usereditrequester = '';
-    } else {
-      usereditrequester = 'active';
-    }
-  }
-  return usereditrequester;
 };
 
 Template.editUserDialog.events({
@@ -146,15 +148,18 @@ Template.editUserDialog.events({
   }
 });
 
-
 Template.userlist.helpers({
-  usertype: function () {
-    if (is_admin_by_id(this._id)) {
-      return 'Admin User';
+    usertype: function () {
+        if (is_admin_by_id(this._id)) {
+            return 'Admin User';
+        }
+        if (is_staff_by_id(this._id)) {
+            return 'Staff User';
+        }
+        return 'Requester';
+    },
+
+    users: function() {
+        return Meteor.users.find({}, {sort: {'profile.email': 1}});
     }
-    if (is_staff_by_id(this._id)) {
-      return 'Staff User';
-    }
-    return 'Requester';
-  }
 });
