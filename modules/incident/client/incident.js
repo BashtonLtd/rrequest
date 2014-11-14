@@ -26,7 +26,7 @@ Template.incident.helpers({
 			// get tickets from tickets field
 			Meteor.subscribe(
 				'sortedTickets',
-				{sort: {'created': 1}},
+				{'created': 1},
 				{_id: {$in: incident.tickets}}
 			)
 			return Tickets.find({_id: {$in: incident.tickets}}, {sort: {'created': 1}});
