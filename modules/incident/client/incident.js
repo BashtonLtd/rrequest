@@ -225,20 +225,20 @@ var getFilter = function() {
 
 	var groups = [];
 	if (incident !== undefined) {
-		if (incident.groups !== undefined || incident.groups.length > 0) {
+		if (incident.groups !== undefined && incident.groups.length > 0) {
 			groups = incident.groups;
 		}
 	}
 
 	var filter = {};
 	if (searchfilter === '' || searchfilter === undefined || searchfilter.length < 3) {
-		if (groups !== '') {
+		if (groups !== '' && groups.length > 0) {
 			filter = {group: {$in: groups}}
 		} else {
 			filter = {};
 		}
 	} else {
-		if (groups !== '') {
+		if (groups !== '' && groups.length > 0) {
 			filter = {
 			group: {$in: groups},
 			$or:
@@ -416,7 +416,7 @@ Template.addTicket.helpers({
 		var incident = Incidents.findOne({_id: Session.get('incidentId')});
 		if (incident !== undefined) {
 			if (searchfilter == '' || searchfilter == undefined || searchfilter.length < 3) {
-				if (incident.groups !== undefined || incident.groups.length > 0) {
+				if (incident.groups !== undefined && incident.groups.length > 0) {
 					tickets = Tickets.find({group: {$in: incident.groups}},
 					{sort: {created: -1}, limit: incidentAddTicketListSub.limit()}
 					);
@@ -426,7 +426,7 @@ Template.addTicket.helpers({
 					);
 				}
 			} else {
-				if (incident.groups !== undefined || incident.groups.length > 0) {
+				if (incident.groups !== undefined && incident.groups.length > 0) {
 					tickets = Tickets.find(
 						{group: {$in: incident.groups},
 						$or:
