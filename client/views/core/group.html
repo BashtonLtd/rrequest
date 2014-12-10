@@ -147,8 +147,8 @@
 
           <div class="btn-group pull-right">
             <input id="searchfilter" class="searchfilter" type="text" placeholder="Search..."/>
-            <button class="btn btn-fix sortorder"><i class="icon-sort"></i> Sort</button>
-            <button class="btn btn-fix filter"><i class="icon-filter"> Filter</i></button>
+            {{#if showsort}}<button class="btn btn-fix sortorder"><i class="icon-sort"></i> Sort</button>{{/if}}
+            {{#if showfilter}}<button class="btn btn-fix filter"><i class="icon-filter"> Filter</i></button>{{/if}}
 
           </div>
           <div class="clearfix"></div>
@@ -158,8 +158,8 @@
             {{> rowTemplate rowTemplate_data}}
           {{/each}}
           <div id="ticketlistfooter_items" class="btn-group pull-right">
-            {{#each ticketlistfooter_items}}
-                {{> ticketlistfooter_template}}
+            {{#each footerhook_items}}
+                {{> footerhook_items_template}}
               {{/each}}
             <button class="btn pull-right load-more">
               {{#if collectionReady}}Load More

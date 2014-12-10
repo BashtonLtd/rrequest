@@ -10,7 +10,6 @@ accounts-ui
 bootstrap
 coffeescript
 jquery
-mrt:moment@2.8.1
 random
 chuangbo:marked@0.3.3
 underscore
@@ -35,4 +34,6 @@ dwatson:meteor-mailparser
 benjaminrh:bootstrap-timepicker
 meteorhacks:zones
 dwatson:mdf
-
+sanjo:jasmine
+velocity:html-reporter
+splendido:moment-twix

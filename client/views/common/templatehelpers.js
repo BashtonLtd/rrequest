@@ -136,3 +136,7 @@ UI.registerHelper('isNotGrouped', function(ticketId) {
   return false;
 
 });
+
+UI.registerHelper('formatDateTime', function(datetime) {
+    return moment(datetime).format('Do MMMM YYYY HH:mm');
+});

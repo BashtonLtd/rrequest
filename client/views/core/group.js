@@ -163,6 +163,7 @@ Template._collectionList.created = function() {
   rowTemplate = this.data.rowtemplate;
   sortTemplate = this.data.sorttemplate;
   filterTemplate = this.data.filtertemplate;
+  footerhooks = this.data.footerhooks;
   listname = this.data.name;
 
   // set session variables
@@ -258,8 +259,10 @@ Template._collectionList.helpers({
     },
 
     footerhook_items: function() {
-        var hooks = Hooks.find({hook:this.footerhooks});
-        return hooks;
+        if (this.footerhooks != false) {
+            var hooks = Hooks.find({hook:this.footerhooks});
+            return hooks;
+        }
     },
 
     footerhook_items_template: function() {
@@ -290,6 +293,20 @@ Template._collectionList.helpers({
 
     showFilterDialog: function() {
         return Session.get('showFilterDialog');
+    },
+
+    showsort: function() {
+        if (sortTemplate == false) {
+            return false;
+        }
+        return true;
+    },
+
+    showfilter: function() {
+        if (filterTemplate == false) {
+            return false;
+        }
+        return true;
     },
 
     filterTemplate: function() {

@@ -30,7 +30,48 @@ Template.ticket.helpers({
 	}
 });
 
-Template.editTicketDialog.rendered = function () {
+Template.editTicketDialog.created = function() {
+	Session.set('usersSearchfilter', '');
+	usersSub = Meteor.subscribeWithPagination(
+		'sortedUsers',
+		getModified,
+		getFilter,
+		20);
+};
+
+var getModified = function() {
+	var filter_field = {'profile.email': 1};
+	return filter_field;
+};
+
+var getFilter = function() {
+	var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
+	var searchfilter = Session.get('usersSearchfilter');
+	var selected_filter_states = Session.get('selected_filter_states');
+	var groups = Groups.find({_id: {$in: ticket.group}});
+	var userids = [];
+	groups.forEach(function(group){
+		group.members.forEach(function(groupuser){
+			userids.push(groupuser);
+		});
+	});
+
+	var requesters = _.union(_.pluck(ticket.requesters, 'id'), userids);
+	if (searchfilter === '' || searchfilter === undefined) {
+		return {_id: {$in: requesters}};
+	} else {
+		return {
+		_id: {$in: requesters},
+		$or:
+		[
+			{'profile.name': {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+			{'profile.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
+		]
+		};
+	}
+};
+
+var initRequesterBox = function() {
 	$(".ticketrequester").select2({
 		placeholder: 'Select requesters',
 		data: get_requesters,
@@ -41,6 +82,7 @@ Template.editTicketDialog.rendered = function () {
 			if ($(data).filter(function() {
 				return this.text.localeCompare(term) === 0;
 			}).length === 0) {
+				Session.set('usersSearchfilter', term);
 				return {id:term, text: term, isNew: true};
 			}
 		},
@@ -53,7 +95,11 @@ Template.editTicketDialog.rendered = function () {
 			}
 		}
 	});
+	var ticket = Tickets.findOne({_id:Session.get('viewticketId')}, {fields: {requesters: 1, group: 1}});
+	$(".ticketrequester").val(_.pluck(ticket.requesters, 'id')).trigger('change');
+};
 
+Template.editTicketDialog.rendered = function () {
 	$(".ticketgroup").select2({
 		placeholder: 'Select groups',
 		data: get_groups,
@@ -61,12 +107,27 @@ Template.editTicketDialog.rendered = function () {
 	});
 
 	var ticket = Tickets.findOne({_id:Session.get('viewticketId')}, {fields: {requesters: 1, group: 1}});
-	$(".ticketrequester").val(_.pluck(ticket.requesters, 'id')).trigger('change');
 	$(".ticketgroup").val(ticket.group, 'id').trigger('change');
 };
 
 get_requesters = function (query_opts) {
-	var users = Meteor.users.find({"profile.isStaff": false});
+	var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
+	if (ticket !== undefined) {
+		if (ticket.group.length == 0 || (ticket.group.length == 1 && ticket.group[0] === null)) {
+			var users = Meteor.users.find({"profile.isStaff": false});
+		} else {
+			var groups = Groups.find({_id: {$in: ticket.group}});
+			var userids = [];
+			groups.forEach(function(group){
+				group.members.forEach(function(groupuser){
+					userids.push(groupuser);
+				});
+			});
+			var users = Meteor.users.find({_id: {$in: userids}});
+		}
+	} else {
+		var users = Meteor.users.find({"profile.isStaff": false});
+	}
 	var requesters = [];
 	users.forEach(function (user) {
 		requesters.push({id:user._id, text:user.profile.email});
@@ -76,7 +137,11 @@ get_requesters = function (query_opts) {
 
 var get_groups = function (query_opts) {
 	var user = Meteor.users.findOne({_id:Meteor.userId()});
-	var requesters = $(".ticketrequester").select2('val');
+	if (usersSub.ready()) {
+		var requesters = $(".ticketrequester").select2('val');
+	} else {
+		var requesters = [];
+	}
 	var grouplist = Groups.find({members: {$in: requesters}});
 	if (grouplist.count() < 1 && is_staff(user)) {
 		grouplist = Groups.find({}, {sort: {'name': 1}});
@@ -109,6 +174,14 @@ Template.editTicketDialog.helpers({
 
 	ticketeditformfields_template: function() {
 		return Template[this.template];
+	},
+
+	usersSubReady: function() {
+		if (usersSub.ready()) {
+			if ($(".ticketrequester").select2("container").attr('id') == 'requesterlist') {
+				initRequesterBox();
+			}
+		}
 	}
 });
 

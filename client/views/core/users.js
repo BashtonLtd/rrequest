@@ -19,7 +19,12 @@
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-Template.userlist.events({
+Template.users.created = function () {
+    Session.setDefault('sortorder-users', 1);
+    Session.setDefault('sortfield-users', 'profile.email');
+};
+
+Template.user_row.events({
   'click .edit-user': function (evt) {
     openEditUserDialog(this._id);
   },
@@ -32,6 +37,24 @@ Template.userlist.events({
 Template.users.helpers({
     showEditUserDialog: function() {
         return Session.get("showEditUserDialog");
+    },
+
+    users_data: function() {
+        return {
+            listLabel: "Users",
+            name: 'users',
+            collection: Meteor.users,
+            collectionFilterKey: '',
+            collectionFilterValue: '',
+            publication: 'sortedUsers',
+            rowtemplate: 'user_row',
+            perpage: 15,
+            searchfields: '_id,profile.email',
+            sorttemplate: false,
+            filterrow: '',
+            filtertemplate: false,
+            footerhooks: false
+        };
     }
 });
 
@@ -148,18 +171,13 @@ Template.editUserDialog.events({
   }
 });
 
-Template.userlist.helpers({
+Template.user_row.helpers({
     usertype: function () {
         if (is_admin_by_id(this._id)) {
-            return 'Admin User';
+            return '<span class="label label-success">Admin</span>';
         }
         if (is_staff_by_id(this._id)) {
-            return 'Staff User';
+            return '<span class="label label-info">Staff</span>';
         }
-        return 'Requester';
-    },
-
-    users: function() {
-        return Meteor.users.find({}, {sort: {'profile.email': 1}});
     }
 });

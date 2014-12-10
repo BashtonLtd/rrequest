@@ -98,6 +98,37 @@ Template.createGroupDialog.events({
   }
 });
 
+Template.editGroupDialog.created = function () {
+    Session.set('usersSearchfilter', '');
+    usersSub = Meteor.subscribeWithPagination(
+        'sortedUsers',
+        getModified,
+        getFilter,
+        20);
+};
+
+var getModified = function() {
+    var filter_field = {'profile.email': 1};
+    return filter_field;
+};
+
+var getFilter = function() {
+    var group = Groups.find({_id: Session.get('selectedGroup')});
+    var searchfilter = Session.get('usersSearchfilter');
+    var selected_filter_states = Session.get('selected_filter_states');
+    if (searchfilter === '' || searchfilter === undefined) {
+        return {};
+    } else {
+        return {
+        $or:
+        [
+            {'profile.name': {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+            {'profile.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
+        ]
+        };
+    }
+};
+
 Template.editGroupDialog.rendered = function () {
 
     var hooks = Hooks.find({hook:'group_edit_form_field'});

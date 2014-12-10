@@ -293,35 +293,6 @@ var getTimeSpan = function(startdate, enddate) {
 	return moment.preciseDiff(moment(startdate), moment(enddate));
 };
 
-findFirstResponse = function (tickets) {
-	var first_response = {};
-	var responded = false;
-	// find first staff response
-	tickets.forEach(function (ticket) {
-		for (var i = 0, l = _.size(ticket.replies); i < l; i++) {
-			if (ticket.replies[i].level == 'staff') {
-				// compare with stored first response
-				if (first_response.eventRawDate === undefined || (moment(ticket.replies[i].created).unix() < first_response.eventRawDate)) {
-					first_response = {
-						eventRawDate: moment(ticket.replies[i].created).unix(),
-						eventFullDate: ticket.replies[i].created,
-						eventTypeClass: "open",
-						eventIconClass: "open",
-						eventType: "event",
-						eventDate: moment(ticket.replies[i].created).format('D/MM/YYYY'),
-						eventTime: moment(ticket.replies[i].created).format('HH:mm:ss'),
-						eventIcon: "icon-asterisk",
-						eventHeaderText: "First response to ticket " + ticket.subject + " ( " + ticket._id + " )."
-					};
-					responded = true;
-					break;
-				}
-			}
-		}
-	});
-	return {responded: responded, event: first_response};
-};
-
 var sortIncidentComments = function(obj1, obj2) {
 	return new Date(obj2.eventRawDate) < new Date(obj1.eventRawDate) ? 1 : -1;
 };

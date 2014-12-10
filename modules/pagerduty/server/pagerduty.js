@@ -22,7 +22,7 @@
 Fiber = Npm.require('fibers');
 
 var https = Npm.require('https');
-// var querystring = Npm.require('querystring');
+
 var handle;
 var timers = [];
 
@@ -322,7 +322,7 @@ var pagerduty_post_notes = function(incident_id, ticket_id) {
     Fiber(function() {
         var incident = Incidents.findOne({_id: incident_id});
         var now = new Date();
-        var modifier = {$set: {}, $unset: {}, $push: {}};
+        var modifier = {$set: {}, $push: {}};
 
         modifier.$set["modified"] = now;
         var replydata = {};

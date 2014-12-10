@@ -82,7 +82,7 @@ Template.incidents.helpers({
             sorttemplate: 'incidentSortFields',
             filterrow: 'status',
             filtertemplate: 'incidentFilterChoices',
-            footerhooks: 'incidentfooter_items'
+            footerhooks: false
         };
     }
 });

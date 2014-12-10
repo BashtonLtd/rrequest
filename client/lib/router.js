@@ -80,7 +80,9 @@ BeforeHooks = {
   },
   globalSubscriptions: function() {
       Meteor.subscribe('currentUser');
-      Meteor.subscribe('allUsers');
+      //Meteor.subscribe('allUsers');
+      Meteor.subscribe('staffUsers');
+      Meteor.subscribe('groupUsers');
       Meteor.subscribe('groups');
       Meteor.subscribe('hooks');
       Meteor.subscribe('settings');
@@ -168,16 +170,19 @@ Router.map(function() {
     }
   });
 
-  this.route('groups', {
-    path: '/groups',
-    onAfterAction: function() {
-      var site_name = get_sitename();
-      if (site_name !== undefined) {
-        document.title = site_name + ': ' + this.route.name;
-      } else {
-        document.title = this.route.name;
-      }
-    }
+    this.route('groups', {
+        path: '/groups',
+        onAfterAction: function() {
+            var site_name = get_sitename();
+            if (site_name !== undefined) {
+              document.title = site_name + ': ' + this.route.name;
+            } else {
+              document.title = this.route.name;
+            }
+        },
+        waitOn: function () {
+            return Meteor.subscribe('singleGroup', Session.get("selectedGroup"));
+        }
   });
 
   this.route('group', {

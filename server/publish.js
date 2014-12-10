@@ -23,21 +23,8 @@ Meteor.publish('currentUser', function() {
   return Meteor.users.find({_id: this.userId});
 });
 
-Meteor.publish('allUsers', function() {
-  var user = Meteor.users.findOne({_id: this.userId});
-  if (user && user.profile.isStaff) {
-    return Meteor.users.find();
-  } else {
-    var usergroups = Groups.find({members: {$in: [this.userId]}});
-    var groupids = [];
-    var userids = [];
-    usergroups.forEach(function(group){
-      groupids.push(group._id);
-      group.members.forEach(function(groupuser){
-        userids.push(groupuser);
-      });
-    });
-    return Meteor.users.find({$or: [{"profile.isStaff": true}, {_id: {$in: userids}}]}, {fields: {
+Meteor.publish('staffUsers', function() {
+    return Meteor.users.find({"profile.isStaff": true}, {fields: {
       secret_id: false,
       isAdmin: false,
       emails: false,
@@ -53,8 +40,46 @@ Meteor.publish('allUsers', function() {
       'services.google.locale': false,
       'services.google.verified_email': false
     }});
-  }
+});
 
+Meteor.publish('sortedUsers', function(sort, filter, limit) {
+    var user = Meteor.users.findOne({_id: this.userId});
+
+    if (user !== undefined) {
+        if (user.profile.isStaff) {
+            var results = Meteor.users.find(filter, {sort: sort, limit: limit});
+            return results;
+        } else {
+            var usergroups = Groups.find({members: {$in: [this.userId]}});
+            var groupids = [];
+            var userids = [];
+            usergroups.forEach(function(group){
+              groupids.push(group._id);
+              group.members.forEach(function(groupuser){
+                userids.push(groupuser);
+              });
+            });
+            newfilter = filter;
+            newfilter._id = {$in: userids};
+            newfilter.profile.isStaff = true;
+            return Meteor.users.find(newfilter, {sort: sort, limit: limit, fields: {
+              secret_id: false,
+              isAdmin: false,
+              emails: false,
+              notifications: false,
+              'services.password': false,
+              'services.resume': false,
+              'services.google.accessToken': false,
+              'services.google.expiresAt': false,
+              'services.google.family_name': false,
+              'services.google.gender': false,
+              'services.google.given_name': false,
+              'services.google.id': false,
+              'services.google.locale': false,
+              'services.google.verified_email': false
+            }});
+        }
+    }
 });
 
 Meteor.startup(function(){
@@ -157,7 +182,8 @@ Meteor.publish('sortedTickets', function(sort, filter, limit) {
                 }
             }
         }
-    return Tickets.find(newfilter, {sort: sort, limit:limit});
+        ticketsCursor = Tickets.find(newfilter, {sort: sort, limit:limit});
+        return ticketsCursor;
     }
 });
 
@@ -309,19 +335,57 @@ Meteor.startup(function(){
 });
 
 Meteor.publish('groups', function() {
-  return Groups.find();
+    var self = this;
+    var user = Meteor.users.findOne({_id: this.userId});
+    if (user && user.profile.isStaff) {
+        groupsCursor = Groups.find();
+    } else {
+        groupsCursor = Groups.find({members: {$in: [this.userId]}});
+    }
+
+    var userIds = [];
+    groupsCursor.forEach(function(group) {
+        group.members.forEach(function(member){
+            userIds.push(member);
+        });
+    });
+
+    groupsUsersCursor = Meteor.users.find({_id: {$in: userIds}});
+    return [groupsCursor, groupsUsersCursor];
+});
+
+Meteor.publish('singleGroup', function(id) {
+    var user = Meteor.users.findOne({_id: this.userId});
+    var usergroups = Groups.find({members: {$in: [this.userId]}});
+    if (user && user.profile.isStaff) {
+        return Groups.find();
+    } else if (usergroups.count() > 0) {
+        return usergroups;
+    }
 });
 
 Meteor.startup(function(){
   Groups.allow({
     insert: function(userId, doc) {
-      return true;
+      if (is_staff_by_id(userId)) {
+        return true;
+      } else {
+        return false;
+      }
     },
     update: function(userId, docs, fieldNames, modifier) {
-      return true;
+      if (is_staff_by_id(userId)) {
+        return true;
+      } else {
+        return false;
+      }
     },
     remove: function(userId, docs) {
-      return true;
+      if (is_staff_by_id(userId)) {
+        return true;
+      } else {
+        return false;
+      }
     }
   });
 });

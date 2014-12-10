@@ -21,8 +21,10 @@
 */
 Template.ticketpriority_ticket_create_form_field.helpers({
     ticketpriority: function() {
-        var priorities = TicketPrioritySettings.findOne().priorities;
-        return priorities;
+        var settings = TicketPrioritySettings.findOne();
+        if (settings != undefined) {
+            return settings.priorities;
+        }
     },
 
     selectedpriority: function(priority) {

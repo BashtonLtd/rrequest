@@ -231,6 +231,7 @@ Template.createTicketDialog.rendered = function () {
   });
 
   Session.set('selectedRequesters', []);
+  get_requesters();
   var user = Meteor.users.findOne({_id:Meteor.userId()});
   $(".ticketrequester").select2({
     placeholder: 'Select requesters',

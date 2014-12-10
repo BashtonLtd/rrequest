@@ -20,11 +20,11 @@
  *
 */
 Meteor.publish('pagerdutysettings', function() {
-  var user = Meteor.users.findOne({_id: this.userId});
+    var user = Meteor.users.findOne({_id: this.userId});
 
-  if (user && user.profile.isStaff) {
-    return PagerdutySettings.find();
-  }
+    if (user && user.profile.isStaff) {
+        return PagerdutySettings.find();
+    }
 });
 
 Meteor.startup(function(){
