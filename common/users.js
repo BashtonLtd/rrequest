@@ -35,6 +35,17 @@ get_or_create_user = function(email_address) {
   }
 };
 
+current_user_level = function() {
+    var user = Meteor.users.findOne({_id: Meteor.userId()});
+    var user_level = 'requester';
+    if (user !== undefined) {
+        if(user.profile.isStaff) {
+            user_level = 'staff';
+        }
+    }
+    return user_level;
+};
+
 is_admin_by_id=function(userId){
   var user = Meteor.users.findOne({_id: userId});
   return user && is_admin(user);

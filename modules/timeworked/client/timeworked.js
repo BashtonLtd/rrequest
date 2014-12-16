@@ -23,24 +23,26 @@ Template.timeworked_reply_header.helpers({
   reply: function(replyId) {
     var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
 
-    var replies = [];
-    ticket.replies.forEach(function(reply){
-      if(reply.status == 'posted') {
-        replies.push(reply);
-      }
-    });
+    if (ticket !== undefined) {
+        var replies = [];
+        ticket.replies.forEach(function(reply){
+          if(reply.status == 'posted') {
+            replies.push(reply);
+          }
+        });
 
-    // Fetch replies from other modules
-    var hooks = Hooks.find({hook:'ticket_replies'});
-    hooks.forEach(function (hook) {
-      var ticketreplies = window[hook.data]({ticketId: Session.get('viewticketId')});
-      ticketreplies.forEach(function(ticketreply) {
-        replies.push(ticketreply);
-      });
-    });
+        // Fetch replies from other modules
+        var hooks = Hooks.find({hook:'ticket_replies'});
+        hooks.forEach(function (hook) {
+          var ticketreplies = window[hook.data]({ticketId: Session.get('viewticketId')});
+          ticketreplies.forEach(function(ticketreply) {
+            replies.push(ticketreply);
+          });
+        });
 
-    var replyIndex = _.indexOf(_.pluck(replies, '_id'), replyId);
-    return replies[replyIndex];
+        var replyIndex = _.indexOf(_.pluck(replies, '_id'), replyId);
+        return replies[replyIndex];
+    }
   }
 });
 

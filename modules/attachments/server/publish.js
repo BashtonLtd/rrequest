@@ -28,7 +28,7 @@ Meteor.publish('attachments', function(ticketId) {
   });
 
   if (user && user.profile.isStaff) {
-    return Attachments.find();
+    return Attachments.find({'metadata.ticketId': ticketId});
   } else {
     return Attachments.find({$or: [{group: {$in: groupids}}, {requesters: {$in: [this.userId]}}, {'metadata.ticketId': ticketId}]});
   }
@@ -39,9 +39,12 @@ Meteor.startup(function(){
     insert: function(userId, doc) {
       return true;
     },
-    update: function(userId, docs, fieldNames, modifier) {
+    update: function(userId, doc, fieldNames, modifier) {
       if (is_staff_by_id(userId)) {
         return true;
+      }
+      if (doc.metadata.requester == userId) {
+          return true;
       }
       return false;
     },

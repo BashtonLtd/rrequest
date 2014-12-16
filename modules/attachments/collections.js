@@ -20,4 +20,4 @@
  *
 */
 //Attachments = new Meteor.Collection('attachments');
-Attachments = new CollectionFS('attachments');
+Attachments = new CollectionFS('attachments', {autopublish: false});
