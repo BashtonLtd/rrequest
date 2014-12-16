@@ -164,9 +164,11 @@ Router.map(function() {
     waitOn: function () {
         return [
             Meteor.subscribe('singleTicket', Session.get('viewticketId')),
-            Meteor.subscribe('unpostedReply', Session.get('viewticketId')),
             Meteor.subscribe('attachments', Session.get('viewticketId'))
         ];
+    },
+    onStop: function () {
+        Session.set('viewticketId', null);
     }
   });
 
