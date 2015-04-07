@@ -1,25 +1,15 @@
 <template name="ticketpriority_ticket_create_form_field">
+    <label>Priority</label>
+    <select name="priority" class="ticketpriority">
+        {{#each ticketpriority}}
+            <option name="priority" value="{{priority}}" {{selectedpriority priority}}>P{{priority}}</option>
+        {{/each}}
+    </select>
     {{#if currentUser.profile.isStaff}}
-        <label>Priority</label>
-        <select name="priority" class="ticketpriority">
-            {{#each ticketpriority}}
-                <option name="priority" value="{{priority}}" {{selectedpriority priority}}>P{{priority}}</option>
-            {{/each}}
-        </select>
+
     {{else}}
         {{#if P1Allowed}}
-            <label>Priority</label>
-            <label class="radio inline">
-                <input type="radio" name="priority" id="prioritydefault" value="{{defaultpriority}}" checked>
-                Important
-            </label>
-            <label class="radio inline">
-                <input type="radio" name="priority" id="prioritycritical" value="1">
-                Critical
-            </label>
-            <span class="help-block">Selecting 'Critical' will raise an alert to an on call engineer.</span>
-        {{else}}
-            <input type="hidden" name="priority" id="prioritydefault" value="{{defaultpriority}}">
+            <span class="help-block">Selecting 'P1' will raise an alert to an on-call engineer.</span>
         {{/if}}
     {{/if}}
 </template>

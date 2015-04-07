@@ -23,6 +23,14 @@ Template.ticketpriority_ticket_create_form_field.helpers({
     ticketpriority: function() {
         var settings = TicketPrioritySettings.findOne();
         if (settings != undefined) {
+            var user = Meteor.users.findOne({_id: Meteor.userId()});
+            if (user !== undefined) {
+                if (user.profile.pagerduty_blockedP1 == "true") {
+
+                    return _.without(settings.priorities, _.findWhere(settings.priorities, {priority: "1"}));
+                }
+            }
+
             return settings.priorities;
         }
     },

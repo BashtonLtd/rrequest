@@ -114,12 +114,25 @@ Template.editTicketDialog.rendered = function () {
 };
 
 get_requesters = function (query_opts) {
+	var searchfilter = Session.get('usersSearchfilter');
 	var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
 	if (ticket !== undefined) {
-		if (ticket.group.length == 0 || (ticket.group.length == 1 && ticket.group[0] === null)) {
-			var users = Meteor.users.find({"profile.isStaff": false});
+		if (ticket.groups.length == 0) {
+			if (searchfilter === '' || searchfilter === undefined) {
+				var users = Meteor.users.find({"profile.isStaff": false});
+			} else {
+				filter = {
+				'profile.isStaff': false,
+				$or:
+				[
+					{'profile.name': {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
+					{'profile.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
+				]
+				};
+				var users = Meteor.users.find(filter);
+			}
 		} else {
-			var groups = Groups.find({_id: {$in: ticket.group}});
+			var groups = Groups.find({_id: {$in: ticket.groups}});
 			var userids = [];
 			groups.forEach(function(group){
 				group.members.forEach(function(groupuser){
@@ -181,7 +194,8 @@ Template.editTicketDialog.helpers({
 
 	usersSubReady: function() {
 		if (usersSub.ready()) {
-			if ($(".ticketrequester").select2("container").attr('id') == 'requesterlist') {
+			if ($(".ticketrequester").select2("container").attr('id') == 's2id_requesterlist') {
+			} else {
 				initRequesterBox();
 			}
 		}
@@ -194,11 +208,13 @@ Template.editTicketDialog.events({
 	},
 
 	'click .save': function (event, template) {
+		var current_user = Meteor.users.findOne({_id:Meteor.userId()});
 		var subject = template.find(".subject").value;
 		var requesters = $(".ticketrequester").select2('val');
 		var groups = $(".ticketgroup").select2('val');
 		var status = template.find(".ticketstatus").value;
-		var ticket = Tickets.findOne({_id:Session.get('viewticketId')}, {fields: {status: 1}});
+
+		var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
 		var original_status = ticket.status;
 
 		var existing_users = [];
