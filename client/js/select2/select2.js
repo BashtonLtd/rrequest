@@ -2925,7 +2925,7 @@ the specific language governing permissions and limitations under the Apache Lic
             opts,
             select2,
             value, multiple,
-            allowedMethods = ["val", "destroy", "opened", "open", "close", "focus", "isFocused", "container", "onSortStart", "onSortEnd", "enable", "readonly", "positionDropdown", "data"],
+            allowedMethods = ["updateResults", "val", "destroy", "opened", "open", "close", "focus", "isFocused", "container", "onSortStart", "onSortEnd", "enable", "readonly", "positionDropdown", "data"],
             valueMethods = ["val", "opened", "isFocused", "container", "data"];
 
         this.each(function () {

@@ -84,7 +84,7 @@ var start_watching_replies = function() {
                 replyId: latest_reply._id
               }, function (error) {
                 if (!error) {
-                  set_reply_notified(id, latest_reply._id);
+                  ticket.set_reply_notified(latest_reply._id);
                 }
               });
             }
@@ -120,7 +120,7 @@ Meteor.methods({
       try {
         handle.handle.stop();
       } catch(error) {
-        
+
       }
     });
   },
@@ -147,23 +147,6 @@ Meteor.methods({
     emailgateway_send_ticket_updated_email(args);
   }
 });
-
-var set_reply_notified = function(ticketId, replyId) {
-  var now = new Date();
-  var modifier = {$set: {}};
-  var ticket = Tickets.findOne({_id: ticketId});
-
-  if (ticket !== undefined) {
-    var replyIndex = _.indexOf(_.pluck(ticket.replies, '_id'), replyId);
-
-    modifier.$set["replies." + replyIndex + ".notified"] = now;
-
-    return Tickets.update(
-      {_id: ticketId},
-      modifier
-    );
-  }
-};
 
 var emailgateway_send_ticket_updated_email = function(args) {
   args = args || {};
@@ -210,7 +193,7 @@ var emailgateway_send_ticket_updated_email = function(args) {
         site_name = site_name_setting.value;
       }
       var emailfrom = args.user.profile.name + ' via ' + site_name + ' <' + EMAIL_FROM + '>';
-      
+
       Email.send({
         text: text,
         from: emailfrom,
@@ -249,4 +232,3 @@ get_requester_message_id = function(ticketId) {
   }
   return message_id;
 };
-

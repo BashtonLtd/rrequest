@@ -1,24 +1,23 @@
-
 /*
  * rrequest
  * http://www.rrequest.com/
  * (C) Copyright Bashton Ltd, 2013
- * 
+ *
  * This file is part of rrequest.
- * 
+ *
  * rrequest is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * rrequest is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
 */
 Meteor.startup(function() {
   // register the ticketmerge module
@@ -84,15 +83,6 @@ merge_tickets = function (userId, target, source) {
     return false;
   }
 
-  if (target_ticket.group === null) {
-    Tickets.update(
-      {_id: target},
-      {
-        $set: { group: []}
-      }
-    );
-  }
-
   Tickets.update(
     {_id: {$in: source}},
     {$set: {isVisible: false}},
@@ -104,7 +94,7 @@ merge_tickets = function (userId, target, source) {
   var replies_to_merge = [];
   var groups_to_merge = [];
   var original_requesters = target_ticket.requesters;
-  var original_group = target_ticket.group;
+  var original_groups = target_ticket.groups;
   var source_ticket_requesters = [];
   source_tickets.forEach(function(source_ticket) {
     source_ticket.replies.forEach(function(reply){
@@ -122,18 +112,18 @@ merge_tickets = function (userId, target, source) {
       source_ticket_requesters.push(source_ticket.requesters);
     }
 
-    if (source_ticket.group === null) {
-      source_ticket.group = [];
+    if (source_ticket.groups === null) {
+      source_ticket.groups = [];
     }
-    if (source_ticket.group.length !== 0) {
+    if (source_ticket.groups.length !== 0) {
       // this should be a loop over the entries if it is array
-      if (source_ticket.group instanceof Array) {
+      if (source_ticket.groups instanceof Array) {
         // loop and add
-        source_ticket.group.forEach(function(group) {
+        source_ticket.groups.forEach(function(group) {
           groups_to_merge.push(group);
         });
       } else {
-        groups_to_merge.push(source_ticket.group);
+        groups_to_merge.push(source_ticket.groups);
       }
     }
 
@@ -149,7 +139,7 @@ merge_tickets = function (userId, target, source) {
       );
     });
   });
-  
+
   Tickets.update(
     {_id: {$in: source}},
     {
@@ -157,8 +147,7 @@ merge_tickets = function (userId, target, source) {
     }
   );
 
-  insert_event({
-    ticketId: target,
+  target_ticket.insert_event({
     user: user._id,
     body: 'Tickets merged by ' + user.profile.email + ' ' + source.join(', ')
   });
@@ -169,14 +158,14 @@ merge_tickets = function (userId, target, source) {
     $set: {}
   };
 
-  var group_list = _.union(target_ticket.group, groups_to_merge);
+  var group_list = _.union(target_ticket.groups, groups_to_merge);
   var final_group_list = _.reject(group_list, function(item){ return item === '' || item === null;});
 
   modifier.$pushAll['replies'] = replies_to_merge;
   modifier.$addToSet['requesters'] = {$each: source_ticket_requesters};
   modifier.$set['original_requester'] = original_requesters;
-  modifier.$set['original_group'] = original_group;
-  modifier.$set['group'] = final_group_list;
+  modifier.$set['original_groups'] = original_groups;
+  modifier.$set['groups'] = final_group_list;
 
   Tickets.update(
     {_id: target},
@@ -218,7 +207,7 @@ unmerge_tickets = function (userId, target) {
   Tickets.update(
     {_id: target},
     {
-      $set: {replies: replies, requesters: target_ticket.original_requester, group: target_ticket.original_group}
+      $set: {replies: replies, requesters: target_ticket.original_requester, groups: target_ticket.original_groups}
     }
   );
 
@@ -231,15 +220,13 @@ unmerge_tickets = function (userId, target) {
     }
   );
   unmerged_tickets.forEach(function(ticket) {
-    insert_event({
-      ticketId: ticket,
+    ticket.insert_event({
       user: user._id,
       body: 'Ticket unmerged from ' + target + ' by ' + user.profile.email
     });
   });
 
-  insert_event({
-    ticketId: target,
+  target_ticket.insert_event({
     user: user._id,
     body: 'Tickets unmerged by ' + user.profile.email + ' ' + unmerged_tickets.join(', ')
   });

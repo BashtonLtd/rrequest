@@ -24,69 +24,36 @@ Meteor.methods({
     return create_ticket(options);
   },
 
-  addTicketRequester: function (options) {
-    return add_ticket_requester(options);
-  },
-
-  setTicketGroups: function (options) {
-    return set_ticket_groups(options);
-  },
-
   getTicket: function (ticketId) {
     return get_ticket(ticketId);
   }
 });
 
-
-set_ticket_groups = function (options) {
-  options = options || {};
-  return Tickets.update(
-    {_id:options.ticketId},
-    {
-      $set: {group: options.groups}
-    }
-  );
-};
-
-add_ticket_requester = function (options) {
-  options = options || {};
-  var user = Meteor.users.findOne({_id:options.requesterId});
-  if (user !== undefined) {
-    return Tickets.update(
-      {_id:options.ticketId},
-      {
-        $push: {requesters: {id:options.requesterId, email:user.profile.email}}
-      }
-    );
-  }
-};
-
 create_ticket = function (options) {
-  options = options || {};
-  var args = {};
-  if (options._id !== undefined) {
-    args._id = options._id;
-  }
-  var now = new Date();
-  args.subject = options.subject;
-  args.created = now;
-  args.modified = now;
-  args.status = options.status;
-  args.requesters = options.requesters;
-  args.group = options.groups;
-  if (options.replies !== undefined) {
-      args.replies = options.replies;
-  } else {
-      args.replies = [];
-  }
+    options = options || {};
+    var args = {};
+    if (options._id !== undefined) {
+        args._id = options._id;
+    } else {
+        args._id = Random.id();
+    }
+    var now = new Date();
 
-  if (options.extrafields !== undefined && options.extrafields.length > 0) {
-    options.extrafields.forEach(function(item) {
-      args[item.name] = item.value;
-    });
-  }
+    if (options.replies !== undefined) {
+        args.replies = options.replies;
+    } else {
+        args.replies = [];
+    }
 
-  return Tickets.insert(args);
+    if (options.status == 'closed') {
+        options.resolved = now;
+    } else {
+        options.resolved = null;
+    }
+
+    var ticket = new Ticket(args._id, now, now, options.resolved, options.subject, options.status, options.requesters, options.groups, args.replies, true, options.extrafields);
+    ticket.insert();
+    return ticket.id;
 };
 
 get_ticket = function(ticketId) {

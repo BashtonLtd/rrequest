@@ -137,9 +137,11 @@ var pagerduty_create = function(incident_id, alert_data, custref) {
 
 		// lookup group from custref
 		var groups = [];
-		var group = Groups.findOne({pagerduty_custref: custref});
-		if (group !== undefined) {
-			groups.push(group._id);
+		if (custref !== '' && custref !== undefined) {
+			var group = Groups.findOne({pagerduty_custref: custref});
+			if (group !== undefined) {
+				groups.push(group._id);
+			}
 		}
 
 
@@ -180,10 +182,8 @@ var pagerduty_close = function(incident_id) {
 	Fiber(function() {
 		var ticket = Tickets.findOne({pagerduty_id: incident_id});
 		if (ticket !== undefined) {
-			var args = {};
-			args.ticketId = ticket._id;
-			args.status = 'closed';
-			update_status(args);
+			ticket.status = 'closed';
+			ticket.save();
 		}
 	}).run();
 };
@@ -197,10 +197,9 @@ var pagerduty_ack = function(incident_id, alert_data, useremail) {
 			userdata = {id: user._id, email:user.profile.email};
 		}
 		var args = {};
-		args.ticketId = ticket._id;
 		args.body = 'Pagerduty alert acknowledged by ' + userdata.email + '.';
 		args.level = 'staff';
 		args.user = userdata;
-		insert_event(args);
+		ticket.insert_event(args);
 	}).run();
 };

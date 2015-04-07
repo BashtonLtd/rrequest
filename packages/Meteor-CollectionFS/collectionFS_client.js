@@ -3,7 +3,7 @@
  * 2013-01-03
  * 
  * By Morten N.O. Henriksen, http://gi2.dk
- * 
+ *
  */
 
 CollectionFS = function(name, options) {
@@ -15,7 +15,7 @@ CollectionFS = function(name, options) {
 	self.queue = new _queueCollectionFS(name);
 	self._options = { autopublish: true };
 	_.extend(self._options, options);
-        
+
         //events
         self._events = {
           'ready': function() {},

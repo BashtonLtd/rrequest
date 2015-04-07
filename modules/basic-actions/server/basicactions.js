@@ -2,22 +2,22 @@
  * rrequest
  * http://www.rrequest.com/
  * (C) Copyright Bashton Ltd, 2013
- * 
+ *
  * This file is part of rrequest.
- * 
+ *
  * rrequest is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * rrequest is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with rrequest.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
 */
 Meteor.startup(function() {
     // register the basicactions module
@@ -91,7 +91,8 @@ editgroups_action = function (userId, target, groups) {
     var target_ticket = Tickets.findOne({_id: target});
 
     if (target_ticket !== undefined) {
-        set_ticket_groups({ticketId: target_ticket._id, groups: groups});
+        target_ticket.groups = groups;
+        target_ticket.save();
     }
 
 };
@@ -99,15 +100,14 @@ editgroups_action = function (userId, target, groups) {
 resolvetickets_action = function (userId, targets) {
     var user = Meteor.users.findOne({_id: userId});
     targets.forEach(function (ticket) {
-        update_status({
-            ticketId: ticket,
-            status: 'closed'
+        ticket.status = 'closed';
+
+        ticket.insert_event({
+            body: 'Ticket status changed to "closed" by ' + useremail(user._id) + '.',
+            update: false
         });
 
-        insert_event({
-            ticketId: ticket,
-            body: 'Ticket status changed to "closed" by ' + useremail(user._id) + '.'
-        });
+        ticket.save();
     });
 
 };

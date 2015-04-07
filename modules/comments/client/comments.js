@@ -76,7 +76,9 @@ Template.ticket.events({
                     }
                 )
                 template.find("#ticketreply-editor").value = '';
-                Tickets.update({_id: ticket._id}, {$set: {commentmodified: created}});
+
+                ticket.commentmodified = created;
+                ticket.save();
             }
         }
     }

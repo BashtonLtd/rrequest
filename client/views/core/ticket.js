@@ -107,7 +107,7 @@ Template.ticketreplybox.helpers({
             hooks.forEach(function (hook) {
                 hook.ticketId = Session.get('viewticketId');
                 hook.replyId = replyId;
-                hook.groups = ticket.group;
+                hook.groups = ticket.groups;
                 hook.requester = Meteor.userId();
                 replyentryfooter_items.push(hook);
             });
@@ -209,15 +209,15 @@ UI.registerHelper('ticket', function() {
 });
 
 UI.registerHelper('getGroups', function() {
-  var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {fields: {unpostedstaffreply: 0, unpostedrequesterreply: 0}});
-  var groups = [];
-  if (ticket.group !== null && ticket.group != undefined) {
-    ticket.group.forEach(function (group) {
-      groups.push('<a href="/group/' + group + '">'+groupname(group)+'</a>');
-    });
-    return groups.join(', ');
-  }
-  return '';
+    var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
+    var groups = [];
+    if (ticket.groups.length !== 0) {
+        ticket.groups.forEach(function (group) {
+            groups.push('<a href="/group/' + group + '">'+groupname(group)+'</a>');
+        });
+        return groups.join(', ');
+    }
+    return '';
 });
 
 UI.registerHelper('displayname', function(replytype) {
@@ -248,39 +248,19 @@ var displayreply = function(replytype) {
 Template.ticketreplies.helpers({
     posted_replies: function() {
         var user = Meteor.users.findOne({_id: Meteor.userId()});
-        var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {fields: {unpostedstaffreply: 0, unpostedrequesterreply: 0}});
+        var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
         if (ticket !== undefined) {
             var replies = [];
-            var existingReplies = [];
-            var existingReplyIds = [];
-            var updateReplies = false;
+
             ticket.replies.forEach(function(reply){
                 if(reply !== undefined) {
                     if(reply.status == 'posted') {
-                        var workingReply = JSON.parse( JSON.stringify( reply ) );
-                        if (_.contains(existingReplyIds, workingReply._id)) {
-                            workingReply._id = Random.id();
-                            existingReplies.push(workingReply);
-                            updateReplies = true;
-                        } else {
-                            existingReplyIds.push(workingReply._id);
-                            existingReplies.push(workingReply);
-                        }
-
                         reply.body = marked(reply.body);
                         reply.ticketId = ticket._id;
                         replies.push(reply);
                     }
                 }
             });
-            if (updateReplies == true) {
-                Tickets.update(
-                    {_id:ticket._id},
-                    {
-                        $set: {replies: existingReplies}
-                    }
-                );
-            }
 
             // Fetch replies from modules
             var hooks = Hooks.find({hook:'ticket_replies'});
@@ -430,81 +410,32 @@ Template.ticket.events({
 
 var promote_ticket_reply = function(options) {
     // Create reply in ticket
-    var now = new Date();
-    var modifier = {$set: {}, $unset: {}, $push: {}};
-
-    if (!is_staff_by_id(options.userId)) {
-        modifier.$set['status'] = 'new';
-    }
-    modifier.$set["modified"] = now;
-    // This should be in the autoclose module, can't use the ticket reply event as that is client side
-    modifier.$unset["close_warning"] = "";
-
-    var replydata = {};
-    for (var i = 0, l = _.size(options.replyfields); i < l; i++) {
-        replydata[options.replyfields[i].name] = options.replyfields[i].value;
-    }
-
     var ticket = Tickets.findOne({_id: options.ticketId});
+    if (ticket !== undefined) {
+        var now = new Date();
 
-    if (options.userId !== undefined) {
-        replydata._id = options.replyId;
-        replydata.posted_by = options.userId;
-        replydata.level = options.level;
-        replydata.created = now;
-        replydata.notified = false;
-        if (!is_staff_by_id(options.userId)) {
-            var addToRequesters = true;
-            ticket.requesters.forEach(function(requester) {
-                if (requester.id !== undefined) {
-                    if (requester.id == options.userId) {
-                        addToRequesters = false;
-                    }
-                } else {
-                    if (requester == options.userId) {
-                        addToRequesters = false;
-                    }
-                }
-            });
-            if (addToRequesters === true) {
-                add_ticket_requesters(options.ticketId, options.userId);
-            }
+        var replydata = {};
+        for (var i = 0, l = _.size(options.replyfields); i < l; i++) {
+            replydata[options.replyfields[i].name] = options.replyfields[i].value;
         }
+
+        if (options.userId !== undefined) {
+            replydata._id = options.replyId;
+            replydata.posted_by = options.userId;
+            replydata.level = options.level;
+            replydata.created = now;
+            replydata.notified = false;
+
+            var user = Meteor.users.findOne({_id: options.userId});
+
+            ticket.add_requester(user, false);
+        }
+
+        ticket.create_reply({user: user, reply: replydata});
+        var attachments = Attachments.find({'metadata.replyId':documentId()});
+
+        attachments.forEach(function(attachment) {
+            Attachments.update({_id: attachment._id}, {$set: {'metadata.replyId': options.replyId}});
+        });
     }
-    modifier.$push['replies'] = replydata;
-
-    var log_email = useremail(options.userId);
-    var log_subject = ticket.subject;
-    var log_ticket_url = Meteor.absoluteUrl('ticket/' + ticket._id, {secure: true});
-
-    Meteor.call('createEventLog',{
-        level:'INFO',
-        tags:['replycreated'],
-        message: log_email + ' replied to ' + log_subject + ' ' + log_ticket_url
-    }, function(error, result){});
-
-    // any attachments with the current documentId should be updated with the reply id
-    var attachments = Attachments.find({'metadata.replyId':documentId()});
-
-    attachments.forEach(function(attachment) {
-        Attachments.update({_id: attachment._id}, {$set: {'metadata.replyId': options.replyId}});
-    });
-
-    // This should be a Ticket object with a call to save.
-    return Tickets.update(
-        {_id: options.ticketId},
-        modifier
-    );
-};
-
-var add_ticket_requesters = function(ticketId, requesterId) {
-  var user = Meteor.users.findOne({_id:requesterId});
-  if (user !== undefined) {
-    return Tickets.update(
-      {_id:ticketId},
-      {
-        $push: {requesters: {id:requesterId, email:user.profile.email}}
-      }
-    );
-  }
 };

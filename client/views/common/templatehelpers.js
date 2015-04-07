@@ -67,26 +67,26 @@ UI.registerHelper('lastModifiedBy', function() {
 });
 
 UI.registerHelper('getGroupOrRequester', function() {
-  var ticket = Tickets.findOne({_id:this._id});
-  var output = '';
-  if (ticket !== undefined) {
-    if (ticket.group === null || ticket.group === undefined || ticket.group.length === 0) {
-      // return first requester
-      output = useremail(ticket.requesters[0]);
-    } else if (ticket.group[0] === null) {
-      output = useremail(ticket.requesters[0]);
-    } else {
-      // return group
-      var groups = [];
-      ticket.group.forEach(function (group) {
-        if (group !== null && group !== '') {
-          groups.push('<a href="/group/' + group + '">' + groupname(group) + '</a>');
+    var ticket = Tickets.findOne({_id:this._id});
+    var output = '';
+    if (ticket !== undefined) {
+        if (ticket.groups.length === 0) {
+            // return first requester
+            output = useremail(ticket.requesters[0]);
+        } else if (ticket.groups[0] === null) {
+            output = useremail(ticket.requesters[0]);
+        } else {
+            // return group
+            var groups = [];
+            ticket.groups.forEach(function (group) {
+                if (group !== null && group !== '') {
+                    groups.push('<a href="/group/' + group + '">' + groupname(group) + '</a>');
+                }
+            });
+            output = groups.join(', ');
         }
-      });
-      output = groups.join(', ');
     }
-  }
-  return output;
+    return output;
 });
 
 UI.registerHelper('getUserEmail', function(userId) {
@@ -123,10 +123,10 @@ UI.registerHelper('isRequesterInMultipleGroups', function() {
 UI.registerHelper('isNotGrouped', function(ticketId) {
   var ticket = Tickets.findOne({_id: ticketId});
   if (ticket !== undefined) {
-    if (ticket.group === null || ticket.group === undefined || ticket.group.length === 0) {
+    if (ticket.groups.length === 0) {
         return true;
-    } else if (ticket.group.length == 1) {
-      if (ticket.group[0] === null) {
+    } else if (ticket.groups.length == 1) {
+      if (ticket.groups[0] === null) {
         return true;
       }
       return false;

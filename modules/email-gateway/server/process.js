@@ -114,9 +114,8 @@ process_mail = function(mail_object) {
       return false;
     }
 
-    var replyId = create_reply({
+    var replyId = ticket.create_reply({
       user: requestfrom,
-      ticketId: ticket._id,
       reply: {
         message_id: mail_object.headers['message-id'],
         body: ticketBody,
@@ -147,7 +146,7 @@ process_mail = function(mail_object) {
               ticketId:ticket._id,
               replyId:replyId,
               requester:requestfrom._id,
-              group:ticket.group,
+              group:ticket.groups,
               ondisk:filelocation
             }
           });

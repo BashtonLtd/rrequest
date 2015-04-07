@@ -50,7 +50,7 @@ Meteor.startup(function (){
 
 Meteor.methods({
   createEventLog: function(args) {
-    this.unblock();
+    //this.unblock();
     return create_event_log(args);
   }
 });

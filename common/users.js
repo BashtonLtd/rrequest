@@ -48,6 +48,9 @@ current_user_level = function() {
 
 is_admin_by_id=function(userId){
   var user = Meteor.users.findOne({_id: userId});
+  if (user === undefined) {
+      return false;
+  }
   return user && is_admin(user);
 };
 
@@ -60,6 +63,9 @@ is_admin=function(user){
 
 is_staff_by_id=function(userId){
   var user = Meteor.users.findOne({_id: userId});
+  if (user === undefined) {
+      return false;
+  }
   return user && is_staff(user);
 };
 

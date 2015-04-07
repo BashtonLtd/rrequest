@@ -322,33 +322,32 @@ var pagerduty_post_notes = function(incident_id, ticket_id) {
     Fiber(function() {
         var incident = Incidents.findOne({_id: incident_id});
         var now = new Date();
-        var modifier = {$set: {}, $push: {}};
 
-        modifier.$set["modified"] = now;
-        var replydata = {};
-        replydata._id = Random.id();
-        replydata.posted_by = {email: 'Pagerduty'};
-        replydata.level = 'staff';
-        replydata.created = now;
-        replydata.notified = false;
-        replydata.type = 'reply';
-        replydata.status = 'posted';
+        var ticket = Tickets.findOne({_id: ticket_id});
 
-        replydata.body = '';
-        var notes = incident.pending_notes;
-        notes.sort(sortByDateString);
+        if (ticket !== undefined) {
+            var body = '';
+            var notes = incident.pending_notes;
+            notes.sort(sortByDateString);
 
-        notes.forEach(function(note) {
-            replydata.body = replydata.body + '**' + note.created_at + ':** ' + note.content + '\n\n';
-        });
+            notes.forEach(function(note) {
+                body = body + '**' + note.created_at + ':** ' + note.content + '\n\n';
+            });
 
-        modifier.$push['replies'] = replydata;
+            replyId = ticket.create_reply({
+                user: user,
+                created: now,
+                reply: {
+                    body: "This is the reply body.",
+                    posted_by: {email: 'Pagerduty'},
+                    status: 'posted',
+                    notified: false,
+                    level: 'staff'
+                }
+            });
+        }
 
         bound_create_event_log({level:'INFO', tags:['pagerduty'], message:'Adding pagerduty notes as reply to ticket: ' + ticket_id});
-        Tickets.update(
-          {_id: ticket_id},
-          modifier
-        );
 
         if (incident.sent_notes !== undefined) {
             var sent_notes = incident.sent_notes.concat(incident.pending_notes);

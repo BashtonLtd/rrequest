@@ -354,27 +354,28 @@ Template.createTicketDialog.events({
       extrafields: extrafields
     };
 
+
+
     Meteor.call('createTicket', args, function (error, ticketId) {
-      if (! error) {
-        // create new users
-        new_users.forEach(function (email_address) {
-          Meteor.call('createAutoUser', email_address, function (error, userId) {
-            if (!error) {
-              // Add user to the ticket
-              Meteor.call('addTicketRequester', {
-                ticketId: ticketId,
-                requesterId: userId
-              }, function (error, ticket_id) {
+        if (! error) {
+            // create new users
+            new_users.forEach(function (email_address) {
+                Meteor.call('createAutoUser', email_address, function (error, userId) {
+                    if (!error) {
+                        // Add user to the ticket
+                        var ticket = Tickets.findOne({_id: ticketId})
+                        if (ticket !== undefined) {
+                            var user = Meteor.users.findOne({_id: userId});
+                            ticket.add_requester(user, true);
+                        }
+                    }
+                });
+            });
 
-              });
-            }
-          });
-        });
-
-        Router.go('ticket', {_id: ticketId});
-      } else {
-        console.log('CreateTicket Error: ' + error);
-      }
+            Router.go('ticket', {_id: ticketId});
+        } else {
+            console.log('CreateTicket Error: ' + error);
+        }
     });
     Session.set("showCreateTicketDialog", false);
   },

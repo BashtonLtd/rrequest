@@ -48,7 +48,8 @@ var getFilter = function() {
 	var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
 	var searchfilter = Session.get('usersSearchfilter');
 	var selected_filter_states = Session.get('selected_filter_states');
-	var groups = Groups.find({_id: {$in: ticket.group}});
+
+	var groups = Groups.find({_id: {$in: ticket.groups}});
 	var userids = [];
 	groups.forEach(function(group){
 		group.members.forEach(function(groupuser){
@@ -60,14 +61,16 @@ var getFilter = function() {
 	if (searchfilter === '' || searchfilter === undefined) {
 		return {_id: {$in: requesters}};
 	} else {
-		return {
-		_id: {$in: requesters},
+
+		filter = {
 		$or:
 		[
+			{_id: {$in: requesters}},
 			{'profile.name': {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
 			{'profile.email': {$regex: ".*"+ searchfilter +".*", $options: 'i'}}
 		]
 		};
+		return filter;
 	}
 };
 
@@ -95,7 +98,7 @@ var initRequesterBox = function() {
 			}
 		}
 	});
-	var ticket = Tickets.findOne({_id:Session.get('viewticketId')}, {fields: {requesters: 1, group: 1}});
+	var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
 	$(".ticketrequester").val(_.pluck(ticket.requesters, 'id')).trigger('change');
 };
 
@@ -216,46 +219,35 @@ Template.editTicketDialog.events({
 
 		var extras = $('#ticketeditextrafields').serializeArray();
 
-		var extrafields = [];
 		$.each(extras, function() {
-			extrafields.push({name: this.name, value: this.value || ''});
+			ticket[this.name] = this.value;
 		});
 
-		var args = {
-			_id: ticket._id,
-			subject: subject,
-			requesters: existing_users,
-			groups: groups,
-			status: status,
-			extrafields: extrafields
-		};
+		ticket.subject = subject;
+		ticket.requesters = existing_users;
+		ticket.groups = groups;
+		ticket.status = status;
 
-		Meteor.call('updateTicket', args, function (error, ticketId) {
-			if (! error) {
-				// create new users
-				new_users.forEach(function (email_address) {
-					Meteor.call('createAutoUser', email_address, function (error, userId) {
-						if (!error) {
-							// Add user to the ticket
-							Meteor.call('addTicketRequester', {
-								ticketId: ticketId,
-								requesterId: userId
-							}, function (error, ticket_id) {
+		ticket.save();
 
-							});
-						}
-					});
-				});
-			}
+		new_users.forEach(function (email_address) {
+			ticketId = ticket.id;
+			Meteor.call('createAutoUser', email_address, function (error, userId) {
+				if (!error) {
+					// Add user to the ticket
+					var ticket = Tickets.findOne({_id: ticketId})
+					if (ticket !== undefined) {
+						var user = Meteor.users.findOne({_id: userId});
+						ticket.add_requester(user, true);
+					}
+				}
+			});
 		});
 
 		if (status !== original_status) {
-			Meteor.call('insertEvent', {
-				ticketId: Session.get('viewticketId'),
-				user: Meteor.user()._id,
+			ticket.insert_event({
+				user: {id: current_user._id, email: current_user.profile.email},
 				body: 'Ticket status changed to "' + status + '" by ' + useremail(Meteor.userId()) + '.'
-			}, function(error, ticketId) {
-
 			});
 		}
 		Session.set("showEditTicketDialog", false);
