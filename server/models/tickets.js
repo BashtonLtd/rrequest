@@ -53,7 +53,7 @@ create_ticket = function (options) {
 
     var ticket = new Ticket(args._id, now, now, options.resolved, options.subject, options.status, options.requesters, options.groups, args.replies, true, options.extrafields);
     ticket.insert();
-    return ticket.id;
+    return ticket;
 };
 
 get_ticket = function(ticketId) {
@@ -126,9 +126,8 @@ get_or_create_ticket = function(requesters, subject) {
     });
 
     args.extrafields = extrafields;
-    var new_ticketId = create_ticket(args);
-    ticket = Tickets.findOne({_id: new_ticketId});
-    return ticket;
+    var new_ticket = create_ticket(args);
+    return new_ticket;
   }
 
 };
