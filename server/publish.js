@@ -116,7 +116,7 @@ Meteor.publish('singleTicket', function(id) {
   if (user && user.profile.isStaff) {
     return Tickets.find({_id: id, isVisible: {$ne: false}});
   } else {
-    return Tickets.find({_id: id, isVisible: {$ne: false}, $or: [{group: {$in: groupids}}, {'requesters.id': {$in: [this.userId]}}]});
+    return Tickets.find({_id: id, isVisible: {$ne: false}, $or: [{groups: {$in: groupids}}, {'requesters.id': {$in: [this.userId]}}]});
   }
 });
 
@@ -139,7 +139,7 @@ Meteor.publish('sortedTickets', function(sort, filter, limit) {
                         status: filter.status,
                         $and: [
                             {$or: [
-                                {group: {$in: groupids}},
+                                {groups: {$in: groupids}},
                                 {'requesters.id': {$in: [this.userId]}}
                             ]},
                             {$or: filter['$or']}
@@ -155,7 +155,7 @@ Meteor.publish('sortedTickets', function(sort, filter, limit) {
                         isVisible: {$ne: false},
                         status: filter.status,
                         $or: [
-                            {group: {$in: groupids}},
+                            {groups: {$in: groupids}},
                             {'requesters.id': {$in: [this.userId]}}
                         ]
                     };
@@ -206,7 +206,7 @@ Meteor.publish("counts-by-group", function(group) {
   var date28 = new Date();
   date28.setDate(date28.getDate() - 28);
 
-  var handle28 = Tickets.find({group: group, created: {$gte: date28}, isVisible: {$ne: false}}).observeChanges({
+  var handle28 = Tickets.find({groups: group, created: {$gte: date28}, isVisible: {$ne: false}}).observeChanges({
       added: function (id, fields) {
         count28++;
         if (!initializing)
@@ -221,7 +221,7 @@ Meteor.publish("counts-by-group", function(group) {
   var date7 = new Date();
   date7.setDate(date7.getDate() - 7);
 
-  var handle7 = Tickets.find({group: group, created: {$gte: date7}, isVisible: {$ne: false}}).observeChanges({
+  var handle7 = Tickets.find({groups: group, created: {$gte: date7}, isVisible: {$ne: false}}).observeChanges({
       added: function (id, fields) {
         count7++;
         if (!initializing)
@@ -236,7 +236,7 @@ Meteor.publish("counts-by-group", function(group) {
   var date1 = new Date();
   date1.setDate(date1.getDate() - 1);
 
-  var handle1 = Tickets.find({group: group, created: {$gte: date1}, isVisible: {$ne: false}}).observeChanges({
+  var handle1 = Tickets.find({groups: group, created: {$gte: date1}, isVisible: {$ne: false}}).observeChanges({
       added: function (id, fields) {
         count1++;
         if (!initializing)

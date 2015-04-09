@@ -28,13 +28,7 @@ Tickets = new Meteor.Collection("tickets", {
             extrafields.push({name:extra, value:doc[extra]});
         });
 
-
-        // This should be removed when group field has been renamed to group, new Ticket call should use doc.groups and defaultFields method should remove group
-        if (doc.groups !== undefined) {
-            doc.group = doc.groups;
-        }
-
-        return new Ticket(doc._id, doc.created, doc.modified, doc.resolved, doc.subject, doc.status, doc.requesters, doc.group, doc.replies, doc.isVisible, extrafields);
+        return new Ticket(doc._id, doc.created, doc.modified, doc.resolved, doc.subject, doc.status, doc.requesters, doc.groups, doc.replies, doc.isVisible, extrafields);
     }
 });
 

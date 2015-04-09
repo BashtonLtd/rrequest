@@ -233,14 +233,14 @@ var getFilter = function() {
 	var filter = {};
 	if (searchfilter === '' || searchfilter === undefined || searchfilter.length < 3) {
 		if (groups !== '' && groups.length > 0) {
-			filter = {group: {$in: groups}}
+			filter = {groups: {$in: groups}}
 		} else {
 			filter = {};
 		}
 	} else {
 		if (groups !== '' && groups.length > 0) {
 			filter = {
-			group: {$in: groups},
+			groups: {$in: groups},
 			$or:
 			[
 				{_id: {$regex: ".*"+ searchfilter +".*", $options: 'i'}},
@@ -388,7 +388,7 @@ Template.addTicket.helpers({
 		if (incident !== undefined) {
 			if (searchfilter == '' || searchfilter == undefined || searchfilter.length < 3) {
 				if (incident.groups !== undefined && incident.groups.length > 0) {
-					tickets = Tickets.find({group: {$in: incident.groups}},
+					tickets = Tickets.find({groups: {$in: incident.groups}},
 					{sort: {created: -1}, limit: incidentAddTicketListSub.limit()}
 					);
 				} else {
@@ -399,7 +399,7 @@ Template.addTicket.helpers({
 			} else {
 				if (incident.groups !== undefined && incident.groups.length > 0) {
 					tickets = Tickets.find(
-						{group: {$in: incident.groups},
+						{groups: {$in: incident.groups},
 						$or:
 						[
 							{_id: {$regex: ".*"+ searchfilter+".*", $options: 'i'}},

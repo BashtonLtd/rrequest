@@ -101,24 +101,24 @@ get_user_group=function(user) {
 };
 
 useremail=function(requester) {
-  if (requester === undefined) {
-    return 'Unknown';
-  }
-
-  var userId = null;
-  if (typeof(requester) == 'string') {
-    // Old style requester
-    userId = requester;
-  } else {
-    // New requester with ID and email
-    return requester.email;
-  }
-
-  if (userId != null) {
-    var user = Meteor.users.findOne(userId);
-    if (user !== undefined) {
-      return user.profile.email;
+    if (requester === undefined) {
+        return 'Unknown';
     }
-  }
-  return 'Unknown';
+
+    var userId = null;
+    if (typeof(requester) == 'string') {
+        // Old style requester
+        userId = requester;
+    } else {
+        // New requester with ID and email
+        return requester.email;
+    }
+
+    if (userId != null) {
+        var user = Meteor.users.findOne(userId);
+        if (user !== undefined) {
+            return user.profile.email;
+        }
+    }
+    return 'Unknown';
 };

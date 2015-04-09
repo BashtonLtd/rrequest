@@ -32,7 +32,7 @@ Template.group.helpers({
             listLabel: "Group's Tickets",
             name: 'groupsTickets',
             collection: Tickets,
-            collectionFilterKey: 'group',
+            collectionFilterKey: 'groups',
             collectionFilterValue: 'viewgroupId',
             publication: 'sortedTickets',
             rowtemplate: 'ticketrow',
