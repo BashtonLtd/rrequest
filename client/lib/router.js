@@ -152,6 +152,10 @@ Router.map(function() {
       Session.set('viewticketId', this.params._id);
       this.next();
     },
+    onBeforeAction: function() {
+      Session.set('viewticketId', this.params._id);
+      this.next();
+    },
     onAfterAction: function() {
       var site_name = get_sitename();
       var ticket = Tickets.findOne({_id: Session.get('viewticketId')}, {reactive: false});
