@@ -83,7 +83,7 @@ autostatus_staffupdating = function (ticketId, postedBy) {
         if (settings !== undefined) {
             if (settings.staff_typing != ticket.status) {
                 ticket.original_status = ticket.status;
-                ticket.status = staff_typing;
+                ticket.status = settings.staff_typing;
                 ticket.insert_event({
                     user: Meteor.user()._id,
                     body: 'Ticket status changed to "' + settings.staff_typing + '" by ' + useremail(Meteor.userId()) + '.',
