@@ -109,8 +109,8 @@ Template.editTicketDialog.rendered = function () {
 		multiple: true
 	});
 
-	var ticket = Tickets.findOne({_id:Session.get('viewticketId')}, {fields: {requesters: 1, group: 1}});
-	$(".ticketgroup").val(ticket.group, 'id').trigger('change');
+	var ticket = Tickets.findOne({_id:Session.get('viewticketId')});
+	$(".ticketgroup").val(ticket.groups, 'id').trigger('change');
 };
 
 get_requesters = function (query_opts) {
