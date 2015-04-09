@@ -191,15 +191,17 @@ var pagerduty_close = function(incident_id) {
 var pagerduty_ack = function(incident_id, alert_data, useremail) {
 	Fiber(function() {
 		var ticket = Tickets.findOne({pagerduty_id: incident_id});
-		var user = Meteor.users.findOne({'profile.email':useremail.toLowerCase()});
-		var userdata = {id: '', email: 'System'};
-		if (user !== undefined) {
-			userdata = {id: user._id, email:user.profile.email};
+		if (ticket !== undefined) {
+			var user = Meteor.users.findOne({'profile.email':useremail.toLowerCase()});
+			var userdata = {id: '', email: 'System'};
+			if (user !== undefined) {
+				userdata = {id: user._id, email:user.profile.email};
+			}
+			var args = {};
+			args.body = 'Pagerduty alert acknowledged by ' + userdata.email + '.';
+			args.level = 'staff';
+			args.user = userdata;
+			ticket.insert_event(args);
 		}
-		var args = {};
-		args.body = 'Pagerduty alert acknowledged by ' + userdata.email + '.';
-		args.level = 'staff';
-		args.user = userdata;
-		ticket.insert_event(args);
 	}).run();
 };
