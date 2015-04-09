@@ -22,6 +22,13 @@
 Session.set('showEditor', false);
 
 Template.ticketheader.helpers({
+    ticketcreated: function () {
+        var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
+        if (ticket !== undefined) {
+            return ticket.created;
+        }
+    },
+
     ticketfooter_items: function() {
         var hooks = Hooks.find({hook:'ticketfooter_items'});
         return hooks;
@@ -288,15 +295,6 @@ Template.ticketreplies.helpers({
     }
 
 });
-
-
-
-Template.ticketheader.ticketcreated = function () {
-  var ticket = Tickets.findOne({_id: Session.get('viewticketId')});
-  if (ticket !== undefined) {
-    return ticket.created;
-  }
-};
 
 Template.ticket.created = function () {
   Session.set('lastkeypresswasspace', false);
