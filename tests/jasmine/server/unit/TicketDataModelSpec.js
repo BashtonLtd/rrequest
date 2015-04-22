@@ -28,13 +28,10 @@
 "use strict";
 describe("core:ticket", function () {
 	it("ticket should be created with all basic fields", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 
 		var now = new Date();
-		var ticket = new Ticket(null, now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
+		var ticket = new Ticket('1', now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
 
 		expect(ticket.subject).toBe("Ticket 1");
 		expect(ticket.status).toBe("new");
@@ -47,6 +44,7 @@ describe("core:ticket", function () {
 		// id should be set
 		expect(ticket.id).toEqual("1");
 		expect(Tickets.insert).toHaveBeenCalledWith({
+			_id: '1',
 			subject: "Ticket 1",
 			created: now,
 			modified: now,
@@ -56,17 +54,14 @@ describe("core:ticket", function () {
 			groups: ["gr1234"],
 			replies: [],
 			isVisible: true,
-		}, jasmine.any(Function));
+		});
 	});
 
 	it("ticket should be able to be deleted", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		spyOn(Tickets, "remove");
 		var now = new Date();
-		var ticket = new Ticket(null, now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
+		var ticket = new Ticket('1', now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
 
 		expect(ticket.subject).toBe("Ticket 1");
 		expect(ticket.status).toBe("new");
@@ -79,6 +74,7 @@ describe("core:ticket", function () {
 		// id should be set
 		expect(ticket.id).toEqual("1");
 		expect(Tickets.insert).toHaveBeenCalledWith({
+			_id: '1',
 			subject: "Ticket 1",
 			created: now,
 			modified: now,
@@ -88,7 +84,7 @@ describe("core:ticket", function () {
 			groups: ["gr1234"],
 			replies: [],
 			isVisible: true,
-		}, jasmine.any(Function));
+		});
 
 		ticket.remove();
 
@@ -96,14 +92,11 @@ describe("core:ticket", function () {
 	});
 
 	it("ticket should be created with id field if specified", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		var now = new Date();
-		var ticket = new Ticket(99, now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
+		var ticket = new Ticket('99', now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
 
-		expect(ticket.id).toBe(99);
+		expect(ticket.id).toBe('99');
 		expect(ticket.subject).toBe("Ticket 1");
 		expect(ticket.status).toBe("new");
 		expect(ticket.requesters[0]).toBe("r1234");
@@ -113,9 +106,9 @@ describe("core:ticket", function () {
 		ticket.insert();
 
 		// id should be set
-		expect(ticket.id).toEqual("1");
+		expect(ticket.id).toEqual("99");
 		expect(Tickets.insert).toHaveBeenCalledWith({
-			_id: 99,
+			_id: '99',
 			subject: "Ticket 1",
 			created: now,
 			modified: now,
@@ -125,7 +118,38 @@ describe("core:ticket", function () {
 			groups: ["gr1234"],
 			replies: [],
 			isVisible: true,
-		}, jasmine.any(Function));
+		});
+	});
+
+	it("ticket should be created with id field if not specified", function () {
+		spyOn(Tickets, "insert");
+		spyOn(Random, 'id').and.returnValue('109');
+		var now = new Date();
+		var ticket = new Ticket(null, now, now, null, "Ticket 109", "new", ["r1234"], ["gr1234"], [], true, []);
+
+		expect(ticket.id).toBe(null);
+		expect(ticket.subject).toBe("Ticket 109");
+		expect(ticket.status).toBe("new");
+		expect(ticket.requesters[0]).toBe("r1234");
+		expect(ticket.groups[0]).toBe("gr1234");
+		expect(ticket.replies.length).toBe(0);
+
+		ticket.insert();
+
+		// id should be set
+		expect(ticket.id).toEqual("109");
+		expect(Tickets.insert).toHaveBeenCalledWith({
+			_id: "109",
+			subject: "Ticket 109",
+			created: now,
+			modified: now,
+			resolved: null,
+			status: "new",
+			requesters: ["r1234"],
+			groups: ["gr1234"],
+			replies: [],
+			isVisible: true,
+		});
 	});
 
 	it("ticket should be created with an additional field", function () {
@@ -141,13 +165,10 @@ describe("core:ticket", function () {
 			configurable: true
 		});
 
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "2"
-			callback(null, "2");
-		});
+		spyOn(Tickets, "insert");
 
 		var now = new Date();
-		var ticket = new Ticket(null, now, now, null, "Ticket 2", "new", ["r1234"], ["gr1234"], [], true, [{name: 'extra1', value: 'extra1value'}]);
+		var ticket = new Ticket("2", now, now, null, "Ticket 2", "new", ["r1234"], ["gr1234"], [], true, [{name: 'extra1', value: 'extra1value'}]);
 
 		expect(ticket.subject).toBe("Ticket 2");
 		expect(ticket.status).toBe("new");
@@ -161,6 +182,7 @@ describe("core:ticket", function () {
 		// id should be set
 		expect(ticket.id).toEqual("2");
 		expect(Tickets.insert).toHaveBeenCalledWith({
+			_id: "2",
 			subject: "Ticket 2",
 			created: now,
 			modified: now,
@@ -171,7 +193,7 @@ describe("core:ticket", function () {
 			replies: [],
 			isVisible: true,
 			extra1: 'extra1value'
-		}, jasmine.any(Function));
+		});
 
 		delete Ticket.prototype.extra1;
 	});
@@ -200,13 +222,10 @@ describe("core:ticket", function () {
 			configurable: true
 		});
 
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "2"
-			callback(null, "2");
-		});
+		spyOn(Tickets, "insert");
 
 		var now = new Date();
-		var ticket = new Ticket(null, now, now, null, "Ticket 2", "new", ["r1234"], ["gr1234"], [], true, [{name: 'extra2', value: 'extra2value'}, {name: 'extra3', value: 'extra3value'}]);
+		var ticket = new Ticket("1", now, now, null, "Ticket 2", "new", ["r1234"], ["gr1234"], [], true, [{name: 'extra2', value: 'extra2value'}, {name: 'extra3', value: 'extra3value'}]);
 
 		expect(ticket.subject).toBe("Ticket 2");
 		expect(ticket.status).toBe("new");
@@ -219,8 +238,9 @@ describe("core:ticket", function () {
 		ticket.insert();
 
 		// id should be set
-		expect(ticket.id).toEqual("2");
+		expect(ticket.id).toEqual("1");
 		expect(Tickets.insert).toHaveBeenCalledWith({
+			_id: "1",
 			subject: "Ticket 2",
 			created: now,
 			modified: now,
@@ -232,20 +252,17 @@ describe("core:ticket", function () {
 			isVisible: true,
 			extra2: 'extra2value',
 			extra3: 'extra3value'
-		}, jasmine.any(Function));
+		});
 		delete Ticket.prototype.extra2;
 		delete Ticket.prototype.extra3;
 	});
 
 	it("ticket should be saved properly after editting", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		spyOn(Tickets, "update");
 
 		var now = new Date();
-		var ticket = new Ticket(null, now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
+		var ticket = new Ticket("1", now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
 
 		expect(ticket.subject).toBe("Ticket 1");
 		expect(ticket.status).toBe("new");
@@ -258,6 +275,7 @@ describe("core:ticket", function () {
 		// id should be set
 		expect(ticket.id).toEqual("1");
 		expect(Tickets.insert).toHaveBeenCalledWith({
+			_id: "1",
 			subject: "Ticket 1",
 			created: now,
 			modified: now,
@@ -267,7 +285,7 @@ describe("core:ticket", function () {
 			groups: ["gr1234"],
 			replies: [],
 			isVisible: true,
-		}, jasmine.any(Function));
+		});
 
 		ticket.subject = "New name";
 		ticket.save();
@@ -291,13 +309,10 @@ describe("core:ticket", function () {
 	});
 
 	it("ticket should set resolved date when ticket status set to closed", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "2"
-			callback(null, "2");
-		});
+		spyOn(Tickets, "insert");
 
 		var now = new Date();
-		var ticket = new Ticket(null, now, now, null, "Ticket 2", "new", ["r1234"], ["gr1234"], [], true, []);
+		var ticket = new Ticket("1", now, now, null, "Ticket 2", "new", ["r1234"], ["gr1234"], [], true, []);
 
 		expect(ticket.subject).toBe("Ticket 2");
 		expect(ticket.status).toBe("new");
@@ -312,19 +327,15 @@ describe("core:ticket", function () {
 		expect(ticket.resolved).not.toBe(resolved_before);
 
 		delete Ticket.prototype.extra1;
-});
-
+	});
 
 	it("ticket.insert_event should add event to the ticket", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		spyOn(Tickets, "update");
 		spyOn(Random, 'id').and.returnValue('1234ABCD');
 
 		var now = new Date();
-		var ticket = new Ticket(null, now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
+		var ticket = new Ticket("1", now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
 		ticket.insert();
 
 		var event_reply = ticket.insert_event({
@@ -364,15 +375,12 @@ describe("core:ticket", function () {
 	});
 
 	it("ticket.insert_event should set posted_by to system if not supplied", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		spyOn(Tickets, "update");
 		spyOn(Random, 'id').and.returnValue('1234ABCD');
 
 		var now = new Date();
-		var ticket = new Ticket(null, now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
+		var ticket = new Ticket("1", now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
 		ticket.insert();
 
 		var event_reply = ticket.insert_event({
@@ -390,15 +398,12 @@ describe("core:ticket", function () {
 	});
 
 	it("ticket.insert_event should set created to if not supplied", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		spyOn(Tickets, "update");
 		spyOn(Random, 'id').and.returnValue('1234ABCD');
 
 		var now = new Date();
-		var ticket = new Ticket(null, now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
+		var ticket = new Ticket("1", now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
 		ticket.insert();
 
 		var event_reply = ticket.insert_event({
@@ -415,15 +420,12 @@ describe("core:ticket", function () {
 	});
 
 	it("ticket.insert_event only return reply if update is false", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		spyOn(Tickets, "update");
 		spyOn(Random, 'id').and.returnValue('1234ABCD');
 
 		var now = new Date();
-		var ticket = new Ticket(null, now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
+		var ticket = new Ticket("1", now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
 		ticket.insert();
 
 		var event_reply = ticket.insert_event({
@@ -441,15 +443,12 @@ describe("core:ticket", function () {
 	});
 
 	it("ticket.create_reply should add reply to ticket as staff", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		spyOn(Tickets, "update");
 		spyOn(Random, 'id').and.returnValue('1234ABCD');
 
 		var now = new Date();
-		var ticket = new Ticket(null, now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
+		var ticket = new Ticket("1", now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
 		ticket.insert();
 
 		// Stub user
@@ -479,15 +478,12 @@ describe("core:ticket", function () {
 	});
 
 	it("ticket.create_reply should add reply to ticket as a requester", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		spyOn(Tickets, "update");
 		spyOn(Random, 'id').and.returnValue('1234ABCD');
 
 		var now = new Date();
-		var ticket = new Ticket(null, now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
+		var ticket = new Ticket("1", now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
 		ticket.insert();
 
 		// Stub user
@@ -517,10 +513,7 @@ describe("core:ticket", function () {
 	});
 
 	it("ticket.create_reply should set created if passed in", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		spyOn(Tickets, "update");
 		spyOn(Random, 'id').and.returnValue('1234ABCD');
 
@@ -556,15 +549,12 @@ describe("core:ticket", function () {
 	});
 
 	it("ticket.create_reply should increase reply count", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		spyOn(Tickets, "update");
 		spyOn(Random, 'id').and.returnValue('1234ABCD');
 
 		var now = new Date();
-		var ticket = new Ticket(null, now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
+		var ticket = new Ticket("1", now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
 		ticket.insert();
 
 		// Stub user
@@ -600,16 +590,13 @@ describe("core:ticket", function () {
 	});
 
 	it("ticket.create_reply should updated the modified time of the ticket", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		spyOn(Tickets, "update");
 		spyOn(Random, 'id').and.returnValue('1234ABCD');
 
 		var now = new Date();
 		var createtime = new Date(2015, 0, 1, 0, 0, 0, 0);
-		var ticket = new Ticket(null, createtime, createtime, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
+		var ticket = new Ticket("1", createtime, createtime, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
 		ticket.insert();
 
 		// Stub user
@@ -630,31 +617,54 @@ describe("core:ticket", function () {
 			}
 		});
 
-		replyId = ticket.create_reply({
+		expect(ticket.modified).toEqual(now);
+
+		expect(Tickets.update).toHaveBeenCalled();
+	});
+
+	it("ticket.create_reply should use the id passed in if available", function () {
+		spyOn(Tickets, "insert");
+		spyOn(Tickets, "update");
+		spyOn(Random, 'id').and.returnValue('1234ABCD');
+
+		var now = new Date();
+		var createtime = new Date(2015, 0, 1, 0, 0, 0, 0);
+		var ticket = new Ticket("1", createtime, createtime, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
+		ticket.insert();
+
+		// Stub user
+		var user = {
+			_id: "STUB1234",
+			profile: {
+				email : "stubuser@email.address",
+				isStaff: true
+			}
+		};
+
+		var replyId = ticket.create_reply({
 			user: user,
 			created: now,
 			reply: {
+				_id: "5678EFGH",
 				body: "This is the reply body.",
 				status: 'posted'
 			}
 		});
 
 		expect(ticket.modified).toEqual(now);
+		expect(ticket.replies[0]._id).toBe("5678EFGH");
 
 		expect(Tickets.update).toHaveBeenCalled();
-	});
+	})
 
 	it("ticket.create_reply should updated the modified time of the ticket", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		spyOn(Tickets, "update");
 		spyOn(Random, 'id').and.returnValue('1234ABCD');
 
 		var now = new Date();
 		var createtime = new Date(2015, 0, 1, 0, 0, 0, 0);
-		var ticket = new Ticket(null, createtime, createtime, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
+		var ticket = new Ticket("1", createtime, createtime, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
 		ticket.insert();
 
 		// Stub user
@@ -690,10 +700,7 @@ describe("core:ticket", function () {
 	});
 
 	it("ticket.create_reply should call create_event_log", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		spyOn(Tickets, "update");
 		spyOn(Random, 'id').and.returnValue('1234ABCD');
 		create_event_log = jasmine.createSpy('create_event_log() spy').and.callFake(function(args) {
@@ -702,7 +709,7 @@ describe("core:ticket", function () {
 
 		var now = new Date();
 		var createtime = new Date(2015, 0, 1, 0, 0, 0, 0);
-		var ticket = new Ticket(null, createtime, createtime, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
+		var ticket = new Ticket("1", createtime, createtime, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
 		ticket.insert();
 
 		// Stub user
@@ -728,15 +735,12 @@ describe("core:ticket", function () {
 	});
 
 	it("ticket.create_reply should not change status to new if staff reply", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		spyOn(Tickets, "update");
 		spyOn(Random, 'id').and.returnValue('1234ABCD');
 
 		var now = new Date();
-		var ticket = new Ticket(null, now, now, null, "Ticket 1", "in progress", ["r1234"], ["gr1234"], [], true, []);
+		var ticket = new Ticket("1", now, now, null, "Ticket 1", "in progress", ["r1234"], ["gr1234"], [], true, []);
 		ticket.insert();
 
 		// Stub user
@@ -762,15 +766,12 @@ describe("core:ticket", function () {
 	});
 
 	it("ticket.create_reply should change status to new if requester reply", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		spyOn(Tickets, "update");
 		spyOn(Random, 'id').and.returnValue('1234ABCD');
 
 		var now = new Date();
-		var ticket = new Ticket(null, now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
+		var ticket = new Ticket("1", now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
 		ticket.insert();
 
 		// Stub user
@@ -796,14 +797,11 @@ describe("core:ticket", function () {
 	});
 
 	it("ticket.add_requester should not add duplicates", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		spyOn(Tickets, "update");
 
 		var now = new Date();
-		var ticket = new Ticket(null, now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
+		var ticket = new Ticket("1", now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
 		ticket.insert();
 
 		// Stub user
@@ -827,17 +825,14 @@ describe("core:ticket", function () {
 // separated due to is_staff_by_id spy
 describe("core:ticket", function () {
 	it("ticket should not allow staff members to be added as requesters", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 
 		is_staff_by_id = jasmine.createSpy('is_staff_by_id() spy').and.callFake(function(userId) {
 			return true;
 		});
 
 		var now = new Date();
-		var ticket = new Ticket(null, now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
+		var ticket = new Ticket("1", now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, []);
 		expect(ticket.requesters.length).toBe(0);
 
 		ticket.insert();
@@ -845,6 +840,7 @@ describe("core:ticket", function () {
 		// id should be set
 		expect(ticket.id).toEqual("1");
 		expect(Tickets.insert).toHaveBeenCalledWith({
+			_id: "1",
 			subject: "Ticket 1",
 			created: now,
 			modified: now,
@@ -854,6 +850,6 @@ describe("core:ticket", function () {
 			groups: ["gr1234"],
 			replies: [],
 			isVisible: true,
-		}, jasmine.any(Function));
+		});
 	});
 });

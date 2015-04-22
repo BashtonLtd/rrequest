@@ -334,11 +334,19 @@ var pagerduty_post_notes = function(incident_id, ticket_id) {
                 body = body + '**' + note.created_at + ':** ' + note.content + '\n\n';
             });
 
+            var user = {
+    			_id: "",
+    			profile: {
+    				email : "Pagerduty",
+    				isStaff: false
+    			}
+    		};
+
             replyId = ticket.create_reply({
                 user: user,
                 created: now,
                 reply: {
-                    body: "This is the reply body.",
+                    body: body,
                     posted_by: {email: 'Pagerduty'},
                     status: 'posted',
                     notified: false,

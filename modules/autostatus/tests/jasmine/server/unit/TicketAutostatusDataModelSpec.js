@@ -22,12 +22,9 @@
 "use strict";
 describe("module:autostatus", function () {
 	it("ticket should be created with original_status field", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		var now = new Date();
-		var ticket = new Ticket(null, now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, [{name: 'original_status', value: 'new'}]);
+		var ticket = new Ticket("1", now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, [{name: 'original_status', value: 'new'}]);
 
 		expect(ticket.original_status).toBe('new');
 		ticket.insert();
@@ -35,6 +32,7 @@ describe("module:autostatus", function () {
 		// id should be set
 		expect(ticket.id).toEqual("1");
 		expect(Tickets.insert).toHaveBeenCalledWith({
+			_id: "1",
 			subject: "Ticket 1",
 			created: now,
 			modified: now,
@@ -45,6 +43,6 @@ describe("module:autostatus", function () {
 			replies: [],
 			isVisible: true,
 			original_status: 'new'
-		}, jasmine.any(Function));
+		});
 	});
 });

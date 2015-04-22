@@ -22,12 +22,9 @@
 "use strict";
 describe("module:ticket-merge", function () {
 	it("ticket should be created with all extra fields", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		var now = new Date();
-		var ticket = new Ticket(null, now, now, null, 'Ticket 1', 'new', ['r1234'], ['gr1234'], [], true, [{name: 'original_requester', value: ['r5678']}, {name: 'original_group', value: ['g5678']}, {name: 'mergedInto', value: "tid1234"}]);
+		var ticket = new Ticket("1", now, now, null, 'Ticket 1', 'new', ['r1234'], ['gr1234'], [], true, [{name: 'original_requester', value: ['r5678']}, {name: 'original_group', value: ['g5678']}, {name: 'mergedInto', value: "tid1234"}]);
 
 		expect(ticket.original_requester[0]).toBe('r5678');
 		expect(ticket.original_group[0]).toBe('g5678');
@@ -37,6 +34,7 @@ describe("module:ticket-merge", function () {
 		// id should be set
 		expect(ticket.id).toEqual("1");
 		expect(Tickets.insert).toHaveBeenCalledWith({
+			_id: "1",
 			subject: "Ticket 1",
 			created: now,
 			modified: now,
@@ -49,6 +47,6 @@ describe("module:ticket-merge", function () {
 			original_requester: ['r5678'],
 			original_group: ['g5678'],
 			mergedInto: 'tid1234'
-		}, jasmine.any(Function));
+		});
 	});
 });

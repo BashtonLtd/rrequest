@@ -22,10 +22,7 @@
 "use strict";
 describe("module:email-gateway", function () {
 	it("ticket.set_reply_notified should set date on the correct reply", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		spyOn(Tickets, "update");
 		spyOn(Random, 'id').and.returnValue('1234ABCD');
 
@@ -41,7 +38,7 @@ describe("module:email-gateway", function () {
 		};
 
 		var ticket = new Ticket(
-			null,
+			"1",
 			now,
 			now,
 			null,

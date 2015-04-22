@@ -22,12 +22,9 @@
 "use strict";
 describe("module:autoclose", function () {
 	it("ticket should be created with close_warning field", function () {
-		spyOn(Tickets, "insert").and.callFake(function(doc, callback) {
-			// simulate async return of id = "1"
-			callback(null, "1");
-		});
+		spyOn(Tickets, "insert");
 		var now = new Date();
-		var ticket = new Ticket(null, now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, [{name: 'close_warning', value: now}]);
+		var ticket = new Ticket("1", now, now, null, "Ticket 1", "new", ["r1234"], ["gr1234"], [], true, [{name: 'close_warning', value: now}]);
 
 		expect(ticket.close_warning).toBe(now);
 		ticket.insert();
@@ -35,6 +32,7 @@ describe("module:autoclose", function () {
 		// id should be set
 		expect(ticket.id).toEqual("1");
 		expect(Tickets.insert).toHaveBeenCalledWith({
+			_id: "1",
 			subject: "Ticket 1",
 			created: now,
 			modified: now,
@@ -45,6 +43,6 @@ describe("module:autoclose", function () {
 			replies: [],
 			isVisible: true,
 			close_warning: now
-		}, jasmine.any(Function));
+		});
 	});
 });

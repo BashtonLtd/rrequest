@@ -100,14 +100,15 @@ editgroups_action = function (userId, target, groups) {
 resolvetickets_action = function (userId, targets) {
     var user = Meteor.users.findOne({_id: userId});
     targets.forEach(function (ticket) {
-        ticket.status = 'closed';
+        var target_ticket = Tickets.findOne({_id: ticket});
+        target_ticket.status = 'closed';
 
-        ticket.insert_event({
+        target_ticket.insert_event({
             body: 'Ticket status changed to "closed" by ' + useremail(user._id) + '.',
             update: false
         });
 
-        ticket.save();
+        target_ticket.save();
     });
 
 };
