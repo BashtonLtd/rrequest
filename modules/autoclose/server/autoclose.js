@@ -194,31 +194,33 @@ autoclose_warnticket = function(data) {
 autoclose = function(data) {
 	Fiber(function() {
 		var settings = AutocloseSettings.findOne();
-		warnedtickets = Tickets.find({status: {$ne: 'closed'}, close_warning: {$exists:true}});
+		warnedtickets = Tickets.find({status: {$ne: 'closed'}, close_warning: {$ne:null}});
 		bound_create_event_log({level:'INFO', tags:['tasks', 'autoclose'], message:'Starting ticket autoclose tasks.'});
 		warnedtickets.forEach(function (ticket) {
 			// if more than 'age_close' days after close_warning date then close
 			// if there is newer activity on the ticket remove close_warning field
 
 			if (ticket !== undefined) {
-				var warned = moment(ticket.close_warning).valueOf();
-				var modified = moment(ticket.modified).valueOf();
+				if (ticket.close_warning !== null && ticket.close_warning !== undefined) {
+					var warned = moment(ticket.close_warning).valueOf();
+					var modified = moment(ticket.modified).valueOf();
 
-				if (warned > modified) {
-					var target = moment(ticket.close_warning).add('days', data.age_close).valueOf();
-					var now = moment().valueOf();
+					if (warned > modified) {
+						var target = moment(ticket.close_warning).add('days', data.age_close).valueOf();
+						var now = moment().valueOf();
 
-					if ( target <= now) {
-						tasks.create('tasks', {
-							title: 'closing ticket'
-							, args: { ticket_id: ticket._id, age_warning: settings.inactivity_warning, age_close: settings.close_period }
-							, callback: 'autoclose_closeticket'
-						}).save();
+						if ( target <= now) {
+							tasks.create('tasks', {
+								title: 'closing ticket'
+								, args: { ticket_id: ticket._id, age_warning: settings.inactivity_warning, age_close: settings.close_period }
+								, callback: 'autoclose_closeticket'
+							}).save();
+						}
+					} else {
+						//remove close_warning field
+						ticket.close_warning = null;
+						ticket.save();
 					}
-				} else {
-					//remove close_warning field
-					ticket.close_warning = null;
-					ticket.save();
 				}
 			}
 		});
