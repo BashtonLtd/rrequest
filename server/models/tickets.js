@@ -101,11 +101,9 @@ get_or_create_ticket = function(requesters, subject) {
     requesters.forEach(function(requester) {
       var idx = _.indexOf(_.pluck(ticket.requesters, 'id'), requester.id);
       if (idx === -1) {
+        requester_to_add = get_or_create_user(requester.email);
         // add requester
-        add_ticket_requester({
-          ticketId: ticket._id,
-          requesterId: requester.id
-        });
+        ticket.add_requester(requester_to_add, true);
       }
     });
     return ticket;
